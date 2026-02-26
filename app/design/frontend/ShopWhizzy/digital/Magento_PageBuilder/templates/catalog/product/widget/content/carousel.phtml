@@ -1,0 +1,33 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Catalog\Block\Product\ListProduct;
+
+/** @var ListProduct $block */
+/** @var ViewModelRegistry $viewModels */
+
+$sliderViewModel = $viewModels->require(\Hyva\Theme\ViewModel\Slider::class);
+
+?>
+<?php if ($block->getProductCollection() && $block->getProductCollection()->getSize()): ?>
+    <?php
+    $items = $block->getProductCollection()->getItems();
+    ?>
+    <section class="mx-auto relative overflow-hidden w-full">
+        <div>
+            <?php
+            $itemsTemplate = 'Magento_Catalog::product/list/item.phtml';
+            $sliderTemplate = 'Hyva_PageBuilder::catalog/product/widget/content/carousel-slider.phtml';
+            ?>
+            <?= $sliderViewModel->getSliderForItems($itemsTemplate, $items, $sliderTemplate)->toHtml() ?>
+        </div>
+    </section>
+<?php endif ?>

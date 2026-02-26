@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="hyva_form_validation"/>
+    <body>
+        <!--referenceBlock name="page.main.title">
+            <block class="Bss\SocialLogin\Block\SocialLogin" name="customer_form_social_login" template="Hyva_BssSocialLogin::sociallogin.phtml" />
+        </referenceBlock-->
+        <!--move element="customer_form_social_login" destination="customer.login.container" before="-"/-->
+
+        <referenceContainer name="form.additional.info">
+            <block name="form_additional_info_customer" template="Magento_Customer::additionalinfocustomer.phtml"/>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block name="password.validate.js" template="Magento_Customer::js/password-validation.phtml"/>
+        </referenceContainer>
+
+        <referenceBlock name="page.main.title" remove="true" />
+    </body>
+</page>

@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+	<system>
+		<tab id="digitaltheme" translate="label" sortOrder="10">
+			<label>Digital Theme - v0.0.1</label>
+		</tab>
+		<section id="digitaltheme_settings" sortOrder="10" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+			<label>Theme Settings</label>
+			<tab>digitaltheme</tab>
+			<resource>ShopWhizzy_DigitalTheme::config_shopwhizzy_digitaltheme</resource>
+
+			<group id="general" sortOrder="10" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+				<label>General</label>
+				<field id="enable" type="select" sortOrder="10" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+					<label>Enable Theme</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>This is core extension for Digital Theme (Hyva) by ShopWhizzy.com. If you want to use another theme for specific store view then disable this extension for that store view.</comment>
+				</field>
+				<field id="spacer_1" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>ShopWhizzy\DigitalTheme\Model\Spacer</frontend_model>
+                </field>
+				<field id="product_image_background" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Image Background</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Enable product image background.</comment>
+                </field>
+				<field id="product_image_background_custom" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom Background Color</label>
+					<comment>Leave field empty for default (#F2F4F5) or input a custom HEX color starting with #. Example #xxxxxx.</comment>
+					<depends>
+                        <field id="product_image_background">1</field>
+                    </depends>
+                </field>
+                <field id="product_image_background_mixblend" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Mix Blend</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Enable product image mix blend. Only Suitable if whole catalog has images with white background.</comment>
+					<depends>
+                        <field id="product_image_background">1</field>
+                    </depends>
+                </field>
+                <field id="product_image_padding" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add image padding</label>
+                    <frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Adds product image padding. Handy when product images are too near of the edge.</comment>
+                </field>
+                <field id="product_image_square" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Force square images</label>
+                    <frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Force parent div aspect-ratio: 1 / 1 (square images) and align product image at center.</comment>
+                </field>
+                <field id="slider_images" translate="label" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Slider Images</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\SliderImages</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment>Add multiple slider images with a name and path.</comment>
+                </field>
+			</group>
+
+			<group id="header" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Header</label>
+                <field id="header_layout" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Header Layout</label>
+                    <frontend_class>select-image</frontend_class>
+                    <!--source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Header\Layout</source_model-->
+                </field>
+                <field id="support_text" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Support Text</label>
+					<comment>Do not include html tags. If empty, it will be hidden.</comment>
+                </field>
+                <field id="support_phone" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Support Phone</label>
+					<comment>Example xxx-xxxxxxx. If empty, it will be hidden.</comment>
+                </field>
+                <field id="support_email" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Support Email</label>
+					<comment>Example info@myshop.com. If empty, it will be hidden.</comment>
+                </field>
+			</group>
+
+			<group id="footer" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Footer</label>
+                <field id="show_footer" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Footer block</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                </field>
+			</group>
+
+            <group id="product" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Product Page</label>
+                <field id="product_page_layout" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Catalog (Product Pages) Version</label>
+					<frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Product\Version</source_model>
+                </field>
+			</group>
+
+			<group id="products_listing" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Category Page</label>
+                <field id="category_page_layout" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Catalog (Category Pages) Version</label>
+                    <!--source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\PageLayouts</source_model-->
+                </field>
+			</group>
+
+		</section>
+	</system>
+</config>

@@ -1,0 +1,65 @@
+<?php
+/**
+ * @var $block \ShopWhizzy\DigitalTheme\Block\SubCategories
+ */
+use Magento\Framework\Escaper;
+use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+
+/** @var Escaper $escaper */
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$mediaUrl = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+$category = $objectManager->get('Magento\Framework\Registry')->registry('current_category');
+$subcategories = $category->getChildrenCategories();
+$productCollectionFactory = $objectManager->get(CollectionFactory::class);
+?>
+
+<?php if (!count($subcategories) > 0): ?>
+    <?php
+    $subparentid = $category->getParentId();
+    $subparentcategory = $objectManager->create('Magento\Catalog\Model\Category')->load($subparentid);
+    $childrens = $subparentcategory->getChildrenCategories();
+    $childrenscount = count($childrens);
+    if ($childrenscount > 0): ?>
+        <section class="container">
+            <div class="flex flex-col gap-6 lg:gap-12 mt-6 lg:mt-12">
+                <div class="flex flex-col gap-3 font-bold">
+                    <div class="text-black text-sm font-semibold uppercase mb-3">
+                        <?= __("Take a look at") ?>
+                    </div>
+                    <div class="text-xl lg:text-3xl font-semibold tracking-tight">
+                        <?php if ($subparentcategory->getName() == 'Root' || $subparentcategory->getName() == 'Default Category'): ?>
+                            <?= __('More options from our shop') ?>
+                        <?php else: ?>
+                            <?= __('More options inside <a href="%2" class="text-whizzy-primary hover:text-whizzy-primary-darker">%1</a>', $subparentcategory->getName(), $subparentcategory->getUrl()) ?>
+                        <?php endif ?>
+                    </div>
+                </div>
+
+                <ol class="flex flex-wrap gap-y-2">
+                    <?php $i = 1;
+                    foreach ($childrens as $subcategory): ?>
+                        <?php $subcategory = $objectManager->create('Magento\Catalog\Model\Category')->load($subcategory->getId()); ?>
+                        <?php if ($subcategory->getId() != $category->getId()): ?>
+                            <li class="item flex items-center">
+                                <?php if ($i != 1): ?>
+                                    <?= $themeIcons->renderHtml('circle-solid-rounded', 'text-whizzy-graylighter mx-2 lg:mx-4', 6, 6, ['aria-hidden' => 'true']) ?>
+                                <?php endif ?>
+                                <a class="block py-2 font-semibold whitespace-nowrap hover:text-whizzy-primary flex gap-1 items-center"
+                                    href="<?= $subcategory->getUrl() ?>">
+                                    <span><?= $subcategory->getName() ?></span>
+                                    <?= $themeIcons->renderHtml('link', '', 20, 20, ['aria-hidden' => 'true']) ?>
+                                </a>
+                            </li>
+                            <?php $i++; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </ol>
+            </div>
+        </section>
+    <?php endif; ?>
+<?php endif; ?>

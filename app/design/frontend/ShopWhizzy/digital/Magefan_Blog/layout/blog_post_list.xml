@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock class="Magefan\Blog\Block\Post\PostList\Toolbar\Pager" name="post_list_toolbar_pager">
+            <arguments>
+                <argument name="list_wrapper" xsi:type="string">.post-list-wrapper, .blog-list-wrapper .blog-list, .column > .mosaica-holder, .column >[class*=template-]</argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>
+

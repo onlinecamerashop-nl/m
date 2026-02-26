@@ -1,0 +1,577 @@
+"Search for a brand","Search for a brand"
+"Search brand here...","Search brand here..."
+"All Brands","All Brands"
+Previous,Previous
+Next,Next
+"Add to Wish List","Add to Wish List"
+"View Product","View Product"
+"Filter %1 in %2 filters","Filter %1 in %2 filters"
+" star(s)"," star(s)"
+item,item
+items,items
+"Filter %1 in sidebar","Filter %1 in sidebar"
+lower,lower
+upper,upper
+"Active filtering","Active filtering"
+"Remove This Item","Remove This Item"
+"Clear All","Clear All"
+"Shop By","Shop By"
+"Placeholder Image Atomik","Placeholder Image Atomik"
+"See post","See post"
+"There are no posts matching your selection.","There are no posts matching your selection."
+"Select Category","Select Category"
+"Search blogs","Search blogs"
+Category,Category
+"%1 filter","%1 filter"
+"%1 filter options","%1 filter options"
+"1 product available in filter","1 product available in filter"
+"%1 products available in filter","%1 products available in filter"
+None,None
+"Please select one of the options.","Please select one of the options."
+"-- Please Select --","-- Please Select --"
+"Excl. Tax","Excl. Tax"
+"We can't find products matching the selection.","We can't find products matching the selection."
+"Product list","Product list"
+Nouveautes,Nouveautes
+Promotions,Promotions
+"Add to Cart","Add to Cart"
+"Could not add item to wishlist.","Could not add item to wishlist."
+"%1 has been added to your Wish List.","%1 has been added to your Wish List."
+"Items %1-%2 of %3","Items %1-%2 of %3"
+"%1 Item","%1 Item"
+"%1 Items","%1 Items"
+Show,Show
+"Show items per page","Show items per page"
+"Sort By","Sort By"
+"Set Ascending Direction","Set Ascending Direction"
+"Set Descending Direction","Set Descending Direction"
+"Products view mode","Products view mode"
+"Products view mode - %1","Products view mode - %1"
+Details,Details
+Description,Description
+Carousel,Carousel
+"Carousel %1","Carousel %1"
+"Navigating through the elements of the carousel is possible using the tab key. You can skip the carousel or go straight to carousel navigation using the skip links.","Navigating through the elements of the carousel is possible using the tab key. You can skip the carousel or go straight to carousel navigation using the skip links."
+"Press to skip carousel","Press to skip carousel"
+"Press to go to carousel navigation","Press to go to carousel navigation"
+"Item %1","Item %1"
+"Previous slide","Previous slide"
+"Display slide %1","Display slide %1"
+"Next slide","Next slide"
+"Update item","Update item"
+"%1 Gallery","%1 Gallery"
+"Play video","Play video"
+"Open fullscreen","Open fullscreen"
+"View less","View less"
+"View more","View more"
+"%1 Gallery Navigation","%1 Gallery Navigation"
+"Close fullscreen","Close fullscreen"
+"As low as","As low as"
+"Apply Discount Code","Apply Discount Code"
+"Discount Code","Discount Code"
+"Apply Discount","Apply Discount"
+Apply,Apply
+"Cancel Coupon","Cancel Coupon"
+Cancel,Cancel
+Product,Product
+Price,Price
+Qty,Qty
+Subtotal,Subtotal
+"Are you sure?","Are you sure?"
+"Are you sure you want to remove all items from your shopping cart?","Are you sure you want to remove all items from your shopping cart?"
+"Clear Shopping Cart","Clear Shopping Cart"
+"Update Shopping Cart","Update Shopping Cart"
+"Update Cart","Update Cart"
+Item,Item
+"Sku: ","Sku: "
+"Remove %1","Remove %1"
+Remove,Remove
+"You have no items in your shopping cart.","You have no items in your shopping cart."
+"<a href=""%1""> Click here to continue shopping </a>","<a href=""%1""> Click here to continue shopping </a>"
+"Proceed to Secure Checkout","Proceed to Secure Checkout"
+"Secure Checkout","Secure Checkout"
+"Shopping Cart","Shopping Cart"
+"You can track your order status by creating an account.","You can track your order status by creating an account."
+"Email Address:","Email Address:"
+"Create an Account","Create an Account"
+"Your order number is: %1.","Your order number is: %1."
+"Your order # is: <span>%1</span>.","Your order # is: <span>%1</span>."
+"We'll email you an order confirmation with details and tracking info.","We'll email you an order confirmation with details and tracking info."
+"Continue Shopping","Continue Shopping"
+"Minimal %1","Minimal %1"
+"Maximum %1","Maximum %1"
+to,to
+"Apply %1 Filter","Apply %1 Filter"
+"Apply Filter","Apply Filter"
+"Remove filter for %1: %2","Remove filter for %1: %2"
+"Remove all filters","Remove all filters"
+"Product filters","Product filters"
+"Skip to product list","Skip to product list"
+"Recevoir la Newsletter Atomik","Recevoir la Newsletter Atomik"
+"Email Address","Email Address"
+"Votre adresse email","Votre adresse email"
+Inscription,Inscription
+"This form is protected by reCAPTCHA - the <a class=""underline"" href=""%1"" target=""_blank"" rel=""noopener"">Google Privacy Policy</a> and <a class=""underline"" href=""%2"" target=""_blank"" rel=""noopener"">Terms of Service</a> apply.","This form is protected by reCAPTCHA - the <a class=""underline"" href=""%1"" target=""_blank"" rel=""noopener"">Google Privacy Policy</a> and <a class=""underline"" href=""%2"" target=""_blank"" rel=""noopener"">Terms of Service</a> apply."
+"Be the first to review this product","Be the first to review this product"
+"%1 rating. %2 out of %3 stars. Click to go to reviews.","%1 rating. %2 out of %3 stars. Click to go to reviews."
+"%1 rating. %2 out of %3 stars","%1 rating. %2 out of %3 stars"
+Items,Items
+"Gift Message for this Order","Gift Message for this Order"
+From:,From:
+To:,To:
+Message:,Message:
+"Product Image","Product Image"
+SKU,SKU
+QTY,QTY
+"Gift Message","Gift Message"
+"Order # %1","Order # %1"
+"Refund #","Refund #"
+"Print Refund","Print Refund"
+"Product Name","Product Name"
+"Discount Amount","Discount Amount"
+"Row Total","Row Total"
+"My Orders","My Orders"
+Order,Order
+Date,Date
+"Ship To","Ship To"
+"Order Total","Order Total"
+Status,Status
+View,View
+"View Order","View Order"
+"View order","View order"
+"Billing Address","Billing Address"
+"Shipping Address","Shipping Address"
+"Shipping Method","Shipping Method"
+"No shipping information available","No shipping information available"
+"Payment Method","Payment Method"
+Reorder,Reorder
+"Print Order","Print Order"
+"Print All Refunds","Print All Refunds"
+"Print All Invoices","Print All Invoices"
+"Print All Shipments","Print All Shipments"
+"Invoice #","Invoice #"
+"Print Invoice","Print Invoice"
+"Qty Invoiced","Qty Invoiced"
+Close,Close
+From,From
+To,To
+"Active customizations","Active customizations"
+"Qty Shipped","Qty Shipped"
+Ordered,Ordered
+Shipped,Shipped
+Canceled,Canceled
+Refunded,Refunded
+"Recent Orders","Recent Orders"
+"View all orders","View all orders"
+"View All","View All"
+"You have placed no orders.","You have placed no orders."
+"Shipment #","Shipment #"
+"Tracking Number(s):","Tracking Number(s):"
+"My Order","My Order"
+"Gift Message for This Order","Gift Message for This Order"
+"Cannot add product to cart","Cannot add product to cart"
+"Recently Ordered","Recently Ordered"
+"Last Ordered Items","Last Ordered Items"
+"Select product ""%1"" to reorder","Select product ""%1"" to reorder"
+"Product ""%1"" is not salable","Product ""%1"" is not salable"
+"Add to cart selected products from list","Add to cart selected products from list"
+"Pin It","Pin It"
+"Add to Compare","Add to Compare"
+"Your browser does not support the video tag.","Your browser does not support the video tag."
+"Your email","Your email"
+"First Name","First Name"
+"Last Name","Last Name"
+Subscribe,Subscribe
+"There was a problem adding your item to the cart.","There was a problem adding your item to the cart."
+"Know more about it","Know more about it"
+"Customer Questions","Customer Questions"
+"Please, mind that only logged in users can submit questions","Please, mind that only logged in users can submit questions"
+"Did you find what you were looking for?","Did you find what you were looking for?"
+"Ask a Question","Ask a Question"
+"Go to the form below","Go to the form below"
+"Your question:","Your question:"
+Question,Question
+"Type your question here...","Type your question here..."
+GDPR,GDPR
+"Your name:","Your name:"
+Name,Name
+Notification,Notification
+"get notification on email when the answer is ready","get notification on email when the answer is ready"
+"Your e-mail:","Your e-mail:"
+Email,Email
+"Send the Question","Send the Question"
+"Hide form","Hide form"
+"Something went wrong. Please try again later.","Something went wrong. Please try again later."
+"Find answer (deliver, etc.)","Find answer (deliver, etc.)"
+Search,Search
+Category:,Category:
+"Something went wrong. Please try again.","Something went wrong. Please try again."
+"Read More","Read More"
+"Our Brands","Our Brands"
+"Add to Wishlist %1","Add to Wishlist %1"
+"More from this brand","More from this brand"
+"slide {{index}} of {{slidesLength}} slide","slide {{index}} of {{slidesLength}} slide"
+"This is a slide for a brand","This is a slide for a brand"
+"File Downloads","File Downloads"
+Size,Size
+Downloads,Downloads
+"min read","min read"
+and,and
+"We can't find posts matching the selection.","We can't find posts matching the selection."
+"Updated on","Updated on"
+Newsroom,Newsroom
+"%1 Comment(s)","%1 Comment(s)"
+"Add a comment...","Add a comment..."
+"Sign in to add a comment...","Sign in to add a comment..."
+"Full Name","Full Name"
+Submit,Submit
+"Sign In","Sign In"
+"Load more comments","Load more comments"
+"Add a reply...","Add a reply..."
+Reply,Reply
+"Show more replies in this thread","Show more replies in this thread"
+"Read %1","Read %1"
+Blog,Blog
+"Related Posts","Related Posts"
+Archive,Archive
+"Archive %1","Archive %1"
+"Explore Categories","Explore Categories"
+"Trending Posts","Trending Posts"
+"Search Posts","Search Posts"
+Tags,Tags
+"Latest from our Blog","Latest from our Blog"
+"Latest From %1","Latest From %1"
+"Post Contents","Post Contents"
+"Your Customization","Your Customization"
+Summary,Summary
+"Customize %1","Customize %1"
+"No options of this product are available.","No options of this product are available."
+"Hot Rated","Hot Rated"
+"The price depends on the options chosen on the product page","The price depends on the options chosen on the product page"
+"Out of stock","Out of stock"
+"Sort by","Sort by"
+"Buy <strong class=""text-whizzy-body"">%1</strong> for <strong class=""text-whizzy-body"">%2</strong> each and <strong class=""benefit text-whizzy-body"">save<span class=""percent text-whizzy-body tier-%3"">&nbsp;%4</span>%</strong>","Buy <strong class=""text-whizzy-body"">%1</strong> for <strong class=""text-whizzy-body"">%2</strong> each and <strong class=""benefit text-whizzy-body"">save<span class=""percent text-whizzy-body tier-%3"">&nbsp;%4</span>%</strong>"
+"Buy %1 for %2 each","Buy %1 for %2 each"
+"Take a look at","Take a look at"
+"Update Wish List","Update Wish List"
+"Product Specifications","Product Specifications"
+"Show Less","Show Less"
+"View More","View More"
+Quantity,Quantity
+Availability,Availability
+"In stock","In stock"
+Contact,Contact
+"Write Us","Write Us"
+"Jot us a note and we’ll get back to you as quickly as possible.","Jot us a note and we’ll get back to you as quickly as possible."
+"Phone Number","Phone Number"
+"What’s on your mind?","What’s on your mind?"
+Map,Map
+"Our Location","Our Location"
+"We use cookies to make your experience better.","We use cookies to make your experience better."
+"Cookies Acceptance","Cookies Acceptance"
+"Close panel","Close panel"
+"To comply with the new e-Privacy directive, we need to ask for your consent to set the cookies.","To comply with the new e-Privacy directive, we need to ask for your consent to set the cookies."
+"Read our policy","Read our policy"
+"Allow Cookies","Allow Cookies"
+"Checkout using your account","Checkout using your account"
+Password,Password
+"Forgot Your Password?","Forgot Your Password?"
+"Checkout as a new customer","Checkout as a new customer"
+"Creating an account has many benefits:","Creating an account has many benefits:"
+"See order and shipping status","See order and shipping status"
+"Track order history","Track order history"
+"Check out faster","Check out faster"
+"Address Book","Address Book"
+"Manage Addresses","Manage Addresses"
+"Default Billing Address","Default Billing Address"
+"Edit Address - billing default","Edit Address - billing default"
+"Default Shipping Address","Default Shipping Address"
+"Edit Address - shipping default","Edit Address - shipping default"
+"Contact Information","Contact Information"
+"Change Password","Change Password"
+"Edit contact information","Edit contact information"
+Newsletters,Newsletters
+"You are subscribed to ""General Subscription"".","You are subscribed to ""General Subscription""."
+"You aren't subscribed to our newsletter.","You aren't subscribed to our newsletter."
+"Edit newsletters","Edit newsletters"
+"Log Out","Log Out"
+Back,Back
+"My Account","My Account"
+"Default Addresses","Default Addresses"
+"You have no default billing address in your address book.","You have no default billing address in your address book."
+"You have no default shipping address in your address book.","You have no default shipping address in your address book."
+"* Required Fields","* Required Fields"
+Address,Address
+"Street Address %1","Street Address %1"
+City,City
+"Please select a region, state or province.","Please select a region, state or province."
+"It's a default billing address.","It's a default billing address."
+"It's a default shipping address.","It's a default shipping address."
+"Use as my default billing address","Use as my default billing address"
+"Use as my default shipping address","Use as my default shipping address"
+"Save Address","Save Address"
+"Go back","Go back"
+"The telephone number is too short.","The telephone number is too short."
+"Provided Zip/Postal Code seems to be invalid.","Provided Zip/Postal Code seems to be invalid."
+" Example: "," Example: "
+"If you believe it is the right one you can ignore this notice.","If you believe it is the right one you can ignore this notice."
+Company,Company
+Country,Country
+Actions,Actions
+Edit,Edit
+Delete,Delete
+"You have no other address entries in your address book.","You have no other address entries in your address book."
+"Add new Address","Add new Address"
+"Are you sure you want to delete this address?","Are you sure you want to delete this address?"
+"Please enter your email below and we will send you the confirmation link.","Please enter your email below and we will send you the confirmation link."
+"Send confirmation link","Send confirmation link"
+"Back to Sign In","Back to Sign In"
+"Account Information","Account Information"
+"Change Email","Change Email"
+"form appears when field is selected","form appears when field is selected"
+"Current Password","Current Password"
+"Hide Password","Hide Password"
+"Show Password","Show Password"
+"New Password","New Password"
+"Password Strength","Password Strength"
+"No Password","No Password"
+"Confirm New Password","Confirm New Password"
+Save,Save
+"Forgot your Password","Forgot your Password"
+"Please enter your email address below to receive a password reset link.","Please enter your email address below to receive a password reset link."
+"Your Email","Your Email"
+"Reset my Password","Reset my Password"
+"Welcome Back","Welcome Back"
+"Email ","Email "
+"Password hidden","Password hidden"
+"Password shown","Password shown"
+"Your Password","Your Password"
+"Log In","Log In"
+"Forgot Password","Forgot Password"
+"Subscription option","Subscription option"
+"General Subscription","General Subscription"
+"Create Account","Create Account"
+"Confirm Password","Confirm Password"
+"Confirm password hidden","Confirm password hidden"
+"confirm password shown","confirm password shown"
+"Sign Up for Newsletter","Sign Up for Newsletter"
+"Sign Up","Sign Up"
+"Have an account?","Have an account?"
+"Address Information","Address Information"
+"Set a New Password","Set a New Password"
+"You have signed out and will be redirected to our homepage in 5 seconds.","You have signed out and will be redirected to our homepage in 5 seconds."
+"Thank you for your visit, we're looking forward to see you again soon.","Thank you for your visit, we're looking forward to see you again soon."
+"No account yet?","No account yet?"
+Fax,Fax
+"Your Name","Your Name"
+"Your Last Name","Your Last Name"
+"%1 filter, 1 available product","%1 filter, 1 available product"
+"%1 filter, %2 available products","%1 filter, %2 available products"
+"Remove active %1 filter: %2","Remove active %1 filter: %2"
+filter,filter
+"Subscribe to Newsletter","Subscribe to Newsletter"
+"Sign Up For Newsletter","Sign Up For Newsletter"
+"Join 60.000+ Subscribers and get a new discount coupon on every Saturday.","Join 60.000+ Subscribers and get a new discount coupon on every Saturday."
+"You're reviewing:","You're reviewing:"
+"Your Rating","Your Rating"
+"1 star","1 star"
+"%1 stars","%1 stars"
+Nickname,Nickname
+Review,Review
+"Submit Review","Submit Review"
+Loading...,Loading...
+"You submitted your review for moderation.","You submitted your review for moderation."
+"Please verify you've entered all required information","Please verify you've entered all required information"
+"Submitting your review failed, please try again.","Submitting your review failed, please try again."
+"Only registered users can write reviews. Please <a href=""%1"" class=""underline"">Sign in</a> or <a href=""%2"" class=""underline"">create an account</a>","Only registered users can write reviews. Please <a href=""%1"" class=""underline"">Sign in</a> or <a href=""%2"" class=""underline"">create an account</a>"
+Reviews,Reviews
+"Customer Reviews","Customer Reviews"
+"From %1, %2","From %1, %2"
+"Customer since %1","Customer since %1"
+"Choose an Option...","Choose an Option..."
+"%0 of %1 products in cart displayed","%0 of %1 products in cart displayed"
+"Could not remove item from quote.","Could not remove item from quote."
+"You removed the item.","You removed the item."
+Cart,Cart
+"Your cart is empty","Your cart is empty"
+"Looks like you haven't made your choice yet.","Looks like you haven't made your choice yet."
+"Product ""%1""","Product ""%1"""
+Sku:,Sku:
+"Update qty for ""%1""","Update qty for ""%1"""
+"Remove product ""%1"" from cart","Remove product ""%1"" from cart"
+"Tax and shipping calculated at checkout","Tax and shipping calculated at checkout"
+"View Cart","View Cart"
+"Continue shopping","Continue shopping"
+"Account Menu","Account Menu"
+"Your reliable destination for high-quality electronics and innovative tech solutions, designed to keep you connected and productive.","Your reliable destination for high-quality electronics and innovative tech solutions, designed to keep you connected and productive."
+"Terms & Conditions","Terms & Conditions"
+"Shipping & Returns","Shipping & Returns"
+"Privacy Policy","Privacy Policy"
+"News & Updates","News & Updates"
+Sitemap,Sitemap
+FAQ's,FAQ's
+Contacts,Contacts
+"Top Picks","Top Picks"
+"Best Sellers","Best Sellers"
+"New Products","New Products"
+Outlet,Outlet
+"Payment Providers","Payment Providers"
+"Copyright Digital Theme (Hyva) by ShopWhizzy.com","Copyright Digital Theme (Hyva) by ShopWhizzy.com"
+Disclaimer,Disclaimer
+"Disclaimer here if applicable","Disclaimer here if applicable"
+Projectors,Projectors
+Speakers,Speakers
+"Power Banks","Power Banks"
+"Hubs & Docks","Hubs & Docks"
+Chargers,Chargers
+"Cables & Adapters","Cables & Adapters"
+"Shop Paris","Shop Paris"
+"Shop Cergy","Shop Cergy"
+"Paintball/Airsoft Field","Paintball/Airsoft Field"
+"Store Locator","Store Locator"
+"Customer Service","Customer Service"
+"Contact Us","Contact Us"
+"Free Shipping","Free Shipping"
+"Find Location","Find Location"
+"Track Order","Track Order"
+Returns,Returns
+Faq,Faq
+"Store logo","Store logo"
+"Go to Home page","Go to Home page"
+"Toggle search form","Toggle search form"
+"Customer Support","Customer Support"
+Wishlist,Wishlist
+"Toggle minicart","Toggle minicart"
+"View cart","View cart"
+"Cart is empty","Cart is empty"
+"%1 items","%1 items"
+"%1 item","%1 item"
+"Main menu","Main menu"
+"See all %1","See all %1"
+Home,Home
+Shop,Shop
+"Site navigation","Site navigation"
+"Open menu","Open menu"
+"Close menu","Close menu"
+"Site navigation links","Site navigation links"
+"Open %1 subcategories","Open %1 subcategories"
+"Back to main categories","Back to main categories"
+Subcategories,Subcategories
+"View all %1","View all %1"
+"Get ready for a dazzling summer with our new arrivals","Get ready for a dazzling summer with our new arrivals"
+"Close Notification","Close Notification"
+"Minimum Search query length is %1","Minimum Search query length is %1"
+"Search entire store here...","Search entire store here..."
+"Discover Innovative Electronics in Action","Discover Innovative Electronics in Action"
+"Display content on a larger screen.","Display content on a larger screen."
+"High-quality audio output for immersive sound.","High-quality audio output for immersive sound."
+"Portable battery for on-the-go charging.","Portable battery for on-the-go charging."
+"Expand connectivity options for your devices.","Expand connectivity options for your devices."
+"Rapidly replenish device battery life.","Rapidly replenish device battery life."
+"Cabels & Adapters","Cabels & Adapters"
+"Convert between different types of connectors.","Convert between different types of connectors."
+Bestsellers,Bestsellers
+"Discover Top Picks","Discover Top Picks"
+"Top-selling tech essentials, trusted by customers for quality and performance.","Top-selling tech essentials, trusted by customers for quality and performance."
+"Discover the best","Discover the best"
+"Everyday Tech Essentials","Everyday Tech Essentials"
+"Power up with essential electronics.","Power up with essential electronics."
+"Compact & Reliable Projectors for Every Need","Compact & Reliable Projectors for Every Need"
+"Shop Now","Shop Now"
+"Portable Charging Solutions for Everyday Use","Portable Charging Solutions for Everyday Use"
+"Quality Portable Speakers for Music and More","Quality Portable Speakers for Music and More"
+"Durable Cables and Adapters for Every Device","Durable Cables and Adapters for Every Device"
+"Powerful Hubs for Simplified Charging, All at Once","Powerful Hubs for Simplified Charging, All at Once"
+"Keep all your devices powered with a single, efficient charger.","Keep all your devices powered with a single, efficient charger."
+"Powerful Hubs","Powerful Hubs"
+Explore,Explore
+"Our Stores","Our Stores"
+"Find the best digital products in our expertly shops!","Find the best digital products in our expertly shops!"
+"Shops Map","Shops Map"
+"Shop Locations","Shop Locations"
+"Shop Paris Map","Shop Paris Map"
+"Paris shop street","Paris shop street"
+"77777 Paris","77777 Paris"
+"Metro Gambetta","Metro Gambetta"
+"Tel: ","Tel: "
+"01 02 03 04","01 02 03 04"
+"Shop Cergy Map","Shop Cergy Map"
+"Cergy shop street","Cergy shop street"
+"11111 Cergy","11111 Cergy"
+"Acces A15 Sortie 11","Acces A15 Sortie 11"
+"Paintball/Airsoft Field Map","Paintball/Airsoft Field Map"
+"Groups, Bachelor Party, and more","Groups, Bachelor Party, and more"
+"99999 Valmondois","99999 Valmondois"
+"Our partners","Our partners"
+"Produts on Sale","Produts on Sale"
+"Trending Now","Trending Now"
+"Most popular accessories, handpicked for style, function, and everyday convenience.","Most popular accessories, handpicked for style, function, and everyday convenience."
+"25 years experience","25 years experience"
+"We are all enthusiasts from the start, and we always like to share our passions.","We are all enthusiasts from the start, and we always like to share our passions."
+"Receive your order within 24/48 hours anywhere in Europe.","Receive your order within 24/48 hours anywhere in Europe."
+"Secure Payment","Secure Payment"
+"Top-rated payment providers to ensure the highest security standards.","Top-rated payment providers to ensure the highest security standards."
+"Specialized Support","Specialized Support"
+"More than 25 years of accumulated experience.","More than 25 years of accumulated experience."
+"Telefon &amp; Tablet Aksesuarları, Kılıflar ve Fazlası","Telefon &amp; Tablet Aksesuarları, Kılıflar ve Fazlası"
+"Realme Aksesuar","Realme Aksesuar"
+"Omix Aksesuar","Omix Aksesuar"
+"Tecno Aksesuar","Tecno Aksesuar"
+"Infinix Aksesuar","Infinix Aksesuar"
+"Reeder Aksesuar","Reeder Aksesuar"
+"TCL Aksesuar","TCL Aksesuar"
+"Tüm telefon markalari","Tüm telefon markalari"
+"Popüler Kategori̇ler","Popüler Kategori̇ler"
+"Xiaomi Aksesuarları","Xiaomi Aksesuarları"
+"Araç şarj aleti","Araç şarj aleti"
+"Huawei Aksesuarları","Huawei Aksesuarları"
+"Vivo Aksesuarları","Vivo Aksesuarları"
+"Tablet Aksesuarlari","Tablet Aksesuarlari"
+"Apple Ipad Aksesuarları","Apple Ipad Aksesuarları"
+"Şarj Aletleri","Şarj Aletleri"
+"Şimdi alışveriş yap","Şimdi alışveriş yap"
+"Şarj Kabloları","Şarj Kabloları"
+Powerbank,Powerbank
+Kulaklıklar,Kulaklıklar
+"Tech Essentials","Tech Essentials"
+"Power up with the best electronics in the market.","Power up with the best electronics in the market."
+"Apple Aksesuarları","Apple Aksesuarları"
+"Samsung Aksesuarları","Samsung Aksesuarları"
+"Dünya Markalari","Dünya Markalari"
+"Araç Aksesuarlari","Araç Aksesuarlari"
+"Araç Şarj Aleti","Araç Şarj Aleti"
+"Araç Telefon Tutucu","Araç Telefon Tutucu"
+"The product was added to your cart.","The product was added to your cart."
+Sku,Sku
+"Cart Subtotal","Cart Subtotal"
+Checkout,Checkout
+"Scroll back to the top of the page","Scroll back to the top of the page"
+"Satisfactory level of customer service in real time","Satisfactory level of customer service in real time"
+"%1% said great!","%1% said great!"
+"last updated %1","last updated %1"
+"Now Shopping by","Now Shopping by"
+" & Up"," & Up"
+from,from
+OK,OK
+Pros,Pros
+Cons,Cons
+"Photos from Customers","Photos from Customers"
+"Reviews By Rating","Reviews By Rating"
+"Review by","Review by"
+"We can't find reviews to display.","We can't find reviews to display."
+"Load More","Load More"
+"%1 out of %2 stars","%1 out of %2 stars"
+"%1 Reviews","%1 Reviews"
+"Please select other tab to see more results","Please select other tab to see more results"
+"Hot Searches","Hot Searches"
+Products,Products
+"See all results","See all results"
+"No results found.","No results found."
+Categories,Categories
+Pages,Pages
+Posts,Posts
+Articles,Articles
+Footer,Footer
+Header,Header
+"Sign Out","Sign Out"
+Sale,Sale

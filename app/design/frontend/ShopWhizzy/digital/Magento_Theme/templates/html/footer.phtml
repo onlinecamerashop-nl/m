@@ -1,0 +1,157 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Hyva\PaymentIcons\ViewModel\PaymentIconsLight;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var PaymentIconsLight $paymentIcons */
+$paymentIcons = $viewModels->require(PaymentIconsLight::class);
+
+$paymentIconsWidth = 48;
+$paymentIconsHeight = 32;
+
+// Remove any child blocks that don't need to be part of the footer columns
+$footerColumns = array_diff(
+    $block->getChildNames(),
+    array('footer-copyright', 'form.subscribe', 'footer-content-before', 'footer-content-after')
+);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+?>
+<div class="bg-whizzy-artic text-whizzy-body flex flex-col">
+    <div class="container py-10 lg:pt-24 lg:pb-12 mx-auto">
+        <?= $block->getChildHtml('footer-content-before') ?>
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-y-6 lg:gap-x-8">
+            <div class="col-span-2">
+                <?= $this->getLayout()->createBlock(\Magento\Theme\Block\Html\Header\Logo::class)->setLogoPathResolver($viewModels->require(\Hyva\Theme\ViewModel\Logo\LogoPathResolver::class))->setTemplate('Magento_Theme::html/footer/logo-footer.phtml')->toHtml() ?>
+
+                <div class="grid gap-4 lg:gap-6">
+                    <div class="text-sm">
+                        <p><?= __('Your reliable destination for high-quality electronics and innovative tech solutions, designed to keep you connected and productive.') ?>
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-1 w-full">
+                        <div class="flex flex-row gap-1 lg:gap-2 text-black">
+                            <a class="text-black" href="https://www.facebook.com/" target="_blank">
+                                <?= $themeIcons->renderHtml('facebook', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                            <a class="text-black" href="https://www.instagram.com/" target="_blank">
+                                <?= $themeIcons->renderHtml('instagram', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                            <a class="text-black" href="https://x.com/" target="_blank">
+                                <?= $themeIcons->renderHtml('twitter', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                            <a class="text-black" href="https://www.youtube.com/" target="_blank">
+                                <?= $themeIcons->renderHtml('youtube', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                            <a class="text-black" href="https://www.tiktok.com/" target="_blank">
+                                <?= $themeIcons->renderHtml('tiktok', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                        </div>
+                    </div>
+
+                    <?= $block->getChildHtml('store-switcher') ?>
+                    <?= $block->getChildHtml('store-language-switcher') ?>
+                </div>
+            </div>
+
+            <div>
+                <nav aria-label="<?= $escaper->escapeHtmlAttr('Support') ?>">
+                    <div class="mb-4 font-semibold uppercase">
+                        <?= $escaper->escapeHtmlAttr('Support') ?>
+                    </div>
+                    <ul class="flex flex-col gap-y-1 text-whizzy-graylighter pb-4 lg:pb-0">
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Terms & Conditions')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Shipping & Returns')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Privacy Policy')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('News & Updates')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Sitemap')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('FAQ\'s')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Contacts')) ?></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div>
+                <nav aria-label="<?= $escaper->escapeHtmlAttr('Shop') ?>">
+                    <div class="mb-4 font-semibold uppercase">
+                        <?= $escaper->escapeHtmlAttr('Shop') ?>
+                    </div>
+                    <ul class="flex flex-col gap-y-1 text-whizzy-graylighter pb-4 lg:pb-0">
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Top Picks')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Best Sellers')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Promotions')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('New Products')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . '' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Outlet')) ?></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="col-span-2">
+                <?= $block->getChildHtml('subscribe') ?>
+                <div class="flex gap-2 lg:gap-3 flex-wrap items-center mt-8 lg:mt-12"
+                    aria-label="<?= $escaper->escapeHtml(__('Payment Providers')) ?>">
+                    <?= $paymentIcons->visaHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->mastercardHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->discoverHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->paypalHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->bitcoinHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-8 mx-auto border-t border-whizzy-separator">
+        <div class="text-center">
+            <?= $block->getChildHtml('copyright') ?>
+        </div>
+    </div>
+
+</div>

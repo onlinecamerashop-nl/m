@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="retry_send_shipment_events" instance="Bol\CheckoutViaBol\Cron\RetrySendShipmentEventsCron" method="execute">
+            <schedule>*/5 * * * *</schedule>
+        </job>
+        <job name="push_merchant_stats" instance="Bol\CheckoutViaBol\Cron\MerchantStatsCron" method="execute">
+            <schedule>0 18 * * *</schedule>
+        </job>
+    </group>
+</config>

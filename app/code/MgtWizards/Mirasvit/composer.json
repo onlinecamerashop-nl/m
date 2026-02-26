@@ -1,0 +1,22 @@
+{
+    "name": "mgtwizards/module-mirasvit",
+    "description": "",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "MgtWizards",
+            "email": "info@mgt-wizards.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MgtWizards\\Mirasvit\\": ""
+        }
+    }
+}

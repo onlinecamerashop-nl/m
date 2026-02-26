@@ -1,0 +1,79 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\ProductAttributes;
+use Hyva\Theme\ViewModel\ProductCompare;
+use Hyva\Theme\ViewModel\ProductPage;
+use Hyva\Theme\ViewModel\Wishlist;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var ProductPage $productViewModel */
+$productViewModel = $viewModels->require(ProductPage::class);
+/** @var ProductAttributes $attributesViewModel */
+$attributesViewModel = $viewModels->require(ProductAttributes::class);
+/** @var Product $product */
+$product = $productViewModel->getProduct();
+$productType = $product->getTypeId();
+$productName = $product->getName();
+$productId = $product->getId();
+$productShortDescription = $product->getShortDescription();
+$hideRatingSummary = $block->getData('hide_rating_summary') ?: false;
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$show_share_this = $whizzyHelper->getConfigValue('product/show_share_this');
+$share_this_code = $whizzyHelper->getConfigValue('product/share_this_code');
+
+?>
+
+<?= $this->getLayout()->createBlock("Magento\Catalog\Block\Product\View\Attributes")->setTemplate("Magento_Catalog::product/view/attributes.phtml")->toHtml() ?>
+
+<div class="w-full">
+    <?= $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate("Magento_Catalog::product/view/usp-product.phtml")->toHtml() ?>
+</div>
+
+<?= $this->getLayout()->createBlock("MageWorx\Downloads\Block\Catalog\Product\Attachments")->setTemplate("MageWorx_Downloads::attachment_container.phtml")->toHtml() ?>
+
+<hr class="border-t border-whizzy-separator my-8" />
+
+<div class="mb-0 lg:mb-8">
+    <?= $this->getLayout()->createBlock("MgtWizards\Faqs\Block\Faqs")->setFaqsId("product-faqs-$productId")->setTemplate("MgtWizards_Faqs::faqs-products.phtml")->toHtml() ?>
+    <?= $this->getLayout()->createBlock("MgtWizards\Faqs\Block\Faqs")->setFaqsId("product-faqs")->setTemplate("MgtWizards_Faqs::faqs-products.phtml")->toHtml() ?>
+</div>
+
+<?php if ($show_share_this && $share_this_code): ?>
+    <div class="sharethis-inline-share-buttons"></div>
+<?php endif; ?>
+
+<?php /*if ($product->getData('usage')): ?>
+<div class="relative z-10 rounded-lg bg-whizzy-greenshadow p-6 block lg:hidden">
+<div class="text-sm uppercase font-bold mb-4">
+<?= __('How to use kratom?') ?>
+</div>
+<div class="text-sm [&_a]:text-whizzy-greendarker [&_a:hover]:text-whizzy-green mb-4">
+<p class="mb-1">
+<?= __('The taste of kratom is very bitter. To mask the taste of kratom, people use different methods. Some make capsules, some make tea, some mix <a href="https://www.authentickratom.com/education/can-we-mix-kratom-with-coffee" target="_black">kratom with their morning coffee or tea</a>, and some add it to their favorite juice; grape juice, orange juice, mango juice.') ?>
+</p>
+<p><?= __('Mixing with a morning cup of coffee seems to be one of the best methods. However, if you are not a coffee drinker, feel free to use other methods.') ?>
+</p>
+</div>
+<div
+class="text-sm [&_table]:w-full [&_table]:table-fixed [&_thead]:font-medium [&_td]:py-1.5 [&_tbody_td]:border-t bg-white rounded-lg shadow-whizzy-header px-4 py-2">
+<?= $product->getData('usage') ?>
+</div>
+</div>
+<?php endif*/ ?>

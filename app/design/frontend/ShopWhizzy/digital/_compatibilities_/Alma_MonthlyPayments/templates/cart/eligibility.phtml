@@ -1,0 +1,24 @@
+<?php
+/** @var $block \Alma\MonthlyPayments\Block\Cart\Eligibility
+ * 
+ * namespace Alma\MonthlyPayments\Helpers\Eligibility::checkEligibility()
+ * if ($cartTotal > $maxAmount)
+ * {
+ * $price = $this->getFormattedPrice(Helpers\Functions::priceFromCents($maxAmount));
+ * $this->message .= sprintf(__('(Maximum amount: %s)'), $price);
+ * }
+ * elseif ($cartTotal < $minAmount)
+ * {
+ * $price = $this->getFormattedPrice(Helpers\Functions::priceFromCents($minAmount));
+ * $this->message .= sprintf(__('(Minimum amount: %s)'), $price);
+ * }
+ */
+?>
+<?php if ($block->showEligibilityMessage() && $block->hasEnabledPaymentPlansInBo()): ?>
+    <div class="alma-cart-eligibility bg-amber-100 pt-3 mt-1 rounded-lg text-center text-xs">
+        <img class="mx-auto" src="<?= $block->getViewFileUrl('Alma_MonthlyPayments::images/alma_logo.svg') ?>" alt="Alma">
+        <div class="alma-cart-eligibility--message pb-3">
+            <?= $block->getEligibilityMessage() ?>
+        </div>
+    </div>
+<?php endif; ?>

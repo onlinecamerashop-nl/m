@@ -1,0 +1,43 @@
+<?php
+/**
+ * @category    FishPig
+ * @package     FishPig_WordPress
+ * @author      Ben Tideswell <help@fishpig.co.uk>
+ */
+// phpcs:ignoreFile -- long lines (todo)
+/**
+ * Add filters using hidden inputs:
+ *
+ * <input type="hidden" name="cat" value="enter_category_slug" />
+ * <input type="hidden" name="tag" value="enter_tag_slug" />
+ */
+
+/** @var ViewModelRegistry $viewModels */
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+<div class="block block-blog block-blog-search mb-4 lg:mb-6">
+    <?php if ($title = $block->getTitle()): ?>
+        <div class="font-semibold uppercase text-heading mb-2 lg:mb-4">
+            <span><?= $block->escapeHtml(__($title)) ?></span>
+        </div>
+    <?php endif; ?>
+    <div class="block-content">
+        <form method="get" action="<?= $block->escapeUrl($block->getFormActionUrl()) ?>" id="blog-search-form">
+            <?php if ($block->getPostType()): ?>
+                <input type="hidden" name="post_type" value="<?= $block->escapeHtml($block->getPostType()) ?>"/>
+            <?php endif; ?>
+            <fieldset class="fieldset flex flex-col gap-y-2 w-full relative my-3 lg:my-0">
+                <div class="field required">
+                    <div class="control">
+                        <input type="text" name="s" class="input-text form-input w-full pl-4 py-4 shadow-whizzy-header border-0 focus:border-0 focus:ring-0 focus:offset-0 focus:outline-none rounded-lg text-sm lg:text-base" value="<?= $block->escapeHtml($block->getSearchTerm()) ?>" placeholder="<?= $block->escapeHtml(__('Search blogs')) ?>"/>
+                    </div>
+                </div>
+                <button type="submit" name="submit"  class="action submit absolute mt-0.5 top-1/2 right-2 lg:right-2.5 -translate-y-1/2 btn bg-black hover:bg-transparent flex justify-center transition-all duration-300 lg:text-base p-1.5 rounded focus:ring-0 cursor-pointer group">
+                    <span>
+                        <?= $themeIcons->renderHtml('search', 'text-white group-hover:text-black transition-all duration-300', 22, 22) ?>
+                    </span>
+                </button>
+            </fieldset>
+        </form>
+    </div>
+</div>

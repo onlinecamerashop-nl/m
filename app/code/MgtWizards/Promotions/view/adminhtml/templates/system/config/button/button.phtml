@@ -1,0 +1,26 @@
+<?php
+/**
+ * Copyright © MgtWizards. All rights reserved.
+ * See MS-LICENSE.txt for license details.
+ */
+/** @var \MgtWizards\Promotions\Block\Adminhtml\System\Config\Form\Field\Buttons $block */
+?>
+
+<div class="actions">
+    <div class="message-validation hidden validation-result"></div>
+    <?php foreach ($block->getButtons() as $button): ?>
+        <button class="action-default" type="button"
+            id="<?php /* @escapeNotVerified */ echo $block->escapeHtml($button->getId()) ?>">
+            <span><?php /* @escapeNotVerified */ echo $block->escapeHtml($button->getButtonLabel()) ?></span>
+        </button>
+        <script type="text/x-magento-init">
+            {
+                "#<?php /* @escapeNotVerified */ echo $block->escapeHtml($button->getId()) ?>": {
+                    "MgtWizards_Promotions/js/regenerate-promotions": {
+                         "action_url": "<?php /* @noEscape */ echo $button->getAjaxUrl() ?>"
+                    }
+                }
+            }
+            </script>
+    <?php endforeach; ?>
+</div>

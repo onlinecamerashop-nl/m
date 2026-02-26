@@ -1,0 +1,53 @@
+<?php
+/** @var \Mirasvit\LayeredNavigation\Block\Renderer\Element\SearchBoxElement $block */
+if (!$block->isShowSearchBox()) {
+    return;
+}
+$filterAccessor = $block->getFilterAccessor();
+?>
+
+<input type="text"
+       placeholder="<?= __('Search')?>"
+       data-element="search"
+       x-data="initFilterSearch()"
+       class="w-full form-input mb-1"
+       @keyup="search"
+       @change="search"
+>
+
+<script>
+    function initFilterSearch() {
+        return {
+            search: function () {
+                getEventManager().triggerEvent(this.$el.closest('.filter-option'), 'showhide'); // communicate with size limiter
+
+                let value = this.$el.value.trim().toLowerCase();
+
+                getEventManager().triggerEvent(this.$el.closest('.filter-option').querySelector('[data-mst-nav-filter]'), 'nested-toggle', {q: value}); // communicate with collapsible categories
+
+                this.$el.parentNode
+                    .querySelectorAll('[data-element = filter]')
+                    .forEach(function (filter) {
+                        if (!filter.getAttribute('data-value')) {
+                            filter.setAttribute('data-search-hidden', !!value);
+                            return;
+                        }
+
+                        let label = filter.tagName === 'A'
+                            ? filter.ariaLabel
+                            : filter.querySelector('a').ariaLabel;
+
+                        if (!label) {
+                            return;
+                        }
+
+                        label = label.trim().toLowerCase();
+
+                        filter.setAttribute('data-search-hidden', label.indexOf(value) < 0 || (value && filter.classList.contains('_disabled')));
+                    }.bind(this));
+
+                getEventManager().triggerEvent(this.$el.closest('.filter-option'), 'alphabetical'); // communicate with alphabetical index
+            },
+        }
+    }
+</script>

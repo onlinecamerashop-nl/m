@@ -1,0 +1,68 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\Sales\PaymentInfo;
+use Magento\Framework\Escaper;
+use Magento\Sales\Block\Order\Info;
+
+/** @var Info $block */
+/** @var Escaper $escaper */
+/** @var PaymentInfo $paymentInfo */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$order = $block->getOrder();
+$paymentInfo = $viewModels->require(PaymentInfo::class);
+?>
+<div
+    class="flex flex-col lg:flex-row gap-4 lg:gap-6 p-6 bg-white shadow-whizzy-header rounded-lg h-full mb-4 text-base">
+    <div class="flex flex-col gap-4 w-full lg:w-1/3 h-full">
+        <div class="text-lg lg:text-2xl text-heading"><?= $escaper->escapeHtml(__('Billing Address')) ?></div>
+        <div class="box-content text-whizzy-graylighter">
+            <address class="not-italic">
+                <?= /* @noEscape */ $block->getFormattedAddress($order->getBillingAddress()) ?>
+            </address>
+        </div>
+    </div>
+    <?php if (!$order->getIsVirtual()): ?>
+        <div class="flex flex-col gap-4 w-full lg:w-1/3 h-full">
+            <div class="text-lg lg:text-2xl text-heading"><?= $escaper->escapeHtml(__('Shipping Address')) ?>
+            </div>
+            <div class="box-content text-whizzy-graylighter">
+                <address class="not-italic">
+                    <?= /* @noEscape */ $block->getFormattedAddress($order->getShippingAddress()) ?>
+                </address>
+            </div>
+        </div>
+    <?php endif; ?>
+    <div class="w-full lg:w-1/3 h-full">
+        <div class="flex flex-col gap-6">
+            <div class="flex flex-col gap-4">
+                <div class="text-lg lg:text-2xl text-heading">
+                    <?= $escaper->escapeHtml(__('Shipping Method')) ?>
+                </div>
+                <div class="box-content text-whizzy-graylighter">
+                    <?php if ($order->getShippingDescription()): ?>
+                        <?= $escaper->escapeHtml($order->getShippingDescription()) ?>
+                    <?php else: ?>
+                        <?= $escaper->escapeHtml(__('No shipping information available')) ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="text-lg lg:text-2xl text-heading">
+                    <?= $escaper->escapeHtml(__('Payment Method')) ?>
+                </div>
+                <div class="box-content text-whizzy-graylighter">
+                    <?= $escaper->escapeHtml($paymentInfo->getPaymentTitle($order)) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

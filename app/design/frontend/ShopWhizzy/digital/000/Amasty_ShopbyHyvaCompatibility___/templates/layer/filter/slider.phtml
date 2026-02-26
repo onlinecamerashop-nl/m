@@ -1,0 +1,556 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Shop By Hyva Compatibility
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+use Amasty\Shopby\Block\Navigation\FilterRenderer;
+use Amasty\ShopbyBase\Model\FilterSetting;
+use Amasty\ShopbyHyvaCompatibility\ViewModel\ProductListAjax;
+
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+/** @var FilterSetting $filterSetting */
+/** @var FilterRenderer $block */
+/** @var ProductListAjax $productListAjax */
+$productListAjax = $viewModels->require(ProductListAjax::class);
+
+/**
+ * These variables are assigned in Amasty\Shopby\Block\Navigation\FilterRenderer
+ *
+ * @var array $fromToConfig
+ */
+
+$uniqId = "_" . uniqid();
+$filterCode = $filterSetting->getAttributeCode();
+$max = ceil($fromToConfig['max']);
+$min = floor($fromToConfig['min']);
+$sliderStyle = $block->getSliderStyle();
+$sliderColor = $block->getSliderColor();
+$hideDigitsAfterDot = $filterSetting->getHideZeros();
+$expandedMode = $filterSetting->getData('is_expanded');
+$isCurrencyUnitLabel = $filterSetting->getData('units_label_use_currency_symbol');
+$isAjaxButtonEnabled = $block->collectFilters();
+$filterName = $block->getFilter()->getName();
+// phpcs:disable Generic.Files.LineLength.TooLong
+?>
+<div id="ranges<?= $escaper->escapeJs($uniqId) ?>"
+     x-data="initRanges<?= $escaper->escapeJs($uniqId) ?>()"
+     x-init="amShopbyFilterSlider($el)"
+     x-bind="eventListeners"
+     x-spread="eventListeners"
+     class="amshopby-slider-wrapper am-filter <?= $escaper->escapeHtmlAttr($sliderStyle) ?>"
+     <?= $expandedMode ? "data-amshopby-expanded=" . $escaper->escapeHtml($expandedMode) : "data-amshopby-expanded='0'"; ?>>
+    <div class="items am-filter-items-<?= $escaper->escapeHtmlAttr($filterCode) ?>">
+        <form data-amshopby-filter="<?= $escaper->escapeHtmlAttr($filterCode) ?>"
+              data-amshopby-filter-request-var="<?= $escaper->escapeHtmlAttr($block->getFilter()->getRequestVar()) ?>"
+              :aria-label="ariaText"
+              <?= $fromToConfig['from'] || $fromToConfig['to'] ? 'class="amshopby-link-selected"' : '' ?>>
+            <div id="am-shopby-filter-<?= $escaper->escapeHtmlAttr($filterCode . $uniqId) ?>"
+                    class="p-4 amshopby-slider-container amshopby_currency_rate <?= $escaper->escapeHtmlAttr($sliderStyle) ?>"
+                    data-am-js="slider-container"
+                    data-min="<?= $escaper->escapeHtmlAttr($min) ?>"
+                    data-max="<?= $escaper->escapeHtmlAttr($max) ?>"
+                    data-rate="<?= /* @noEscape */
+                    $fromToConfig['curRate'] ?>"
+                    role="group"
+                    aria-labelledby="amslider-id-<?= $escaper->escapeHtmlAttr($filterCode . $uniqId) ?>"
+            >
+                <input data-amshopby-slider-id="value"
+                       :value="currentInputValues"
+                       type="hidden"
+                       :aria-label="ariaText"
+                       id="amslider-id-<?= $escaper->escapeHtmlAttr($filterCode . $uniqId) ?>"
+                       name="amshopby[<?= $escaper->escapeHtmlAttr($block->getFilter()->getRequestVar()) ?>][]"/>
+                <div data-amshopby-slider-id="slider" class="am-slider"></div>
+                <template x-if="!options.isAddFromWidget">
+                    <div data-amshopby-slider-id="display"
+                         class="amshopby-slider-display mt-5 flex justify-center"
+                         data-am-js="slider-display">
+                        <span class="current-min-value inline-flex">
+                            <template x-if="!+options.currencyPosition">
+                                <span :class="+options.isCurrencyUnitLabel ? '' : 'mr-1'" x-text="options.currencySymbol"></span>
+                            </template>
+                            <span x-text="_parseValue(currentMin * +options.curRate)"></span>
+                            <template x-if="+options.currencyPosition">
+                                <span class="ml-1" x-text="options.currencySymbol"></span>
+                            </template>
+                        </span>
+                        <span class="current-value-delimeter mx-1">-</span>
+                        <span class="current-min-value inline-flex">
+                            <template x-if="!+options.currencyPosition">
+                                <span :class="+options.isCurrencyUnitLabel ? '' : 'mr-1'" x-text="options.currencySymbol"></span>
+                            </template>
+                            <span x-text="_parseValue(currentMax * +options.curRate)"></span>
+                            <template x-if="+options.currencyPosition">
+                                <span class="ml-1" x-text="options.currencySymbol"></span>
+                            </template>
+                        </span>
+                    </div>
+                </template>
+            </div>
+        </form>
+    </div>
+
+    <?php if ($filterSetting->getAddFromToWidget()): ?>
+        <?= /* @noEscape */
+        $block->getFromToWidget('slider') ?>
+    <?php endif; ?>
+</div>
+
+
+<script>
+    function initRanges<?= $escaper->escapeJs($uniqId) ?>() {
+        return {
+            options: {
+                style: "<?= $escaper->escapeHtml($sliderStyle) ?>",
+                colors: {
+                    "main": "<?= $escaper->escapeHtml($sliderColor) ?>",
+                    "default": "#ff5502"
+                },
+                collectFilters: <?= /* @noEscape */ $block->collectFilters() ?>,
+                template: "<?= $escaper->escapeHtml($fromToConfig['template']) ?>",
+                currencySymbol: "<?= $escaper->escapeHtml($fromToConfig['currencySymbol']) ?>",
+                currencyPosition: "<?= $escaper->escapeHtml($fromToConfig['currencyPosition']) ?>",
+                isCurrencyUnitLabel: "<?= $escaper->escapeHtml($isCurrencyUnitLabel) ?>",
+                step: <?= /* @noEscape */ $escaper->escapeHtml(floatval($fromToConfig['step'])) ?>,
+                from: "<?= /* @noEscape */ $fromToConfig['from'] ?>",
+                to: "<?= /* @noEscape */ $fromToConfig['to'] ?>",
+                deltaFrom: "<?= /* @noEscape */ $fromToConfig['deltaFrom'] ?>",
+                deltaTo: "<?= /* @noEscape */ $fromToConfig['deltaTo'] ?>",
+                curRate: "<?= /* @noEscape */ $fromToConfig['curRate'] ?>",
+                min: <?= (float)$min ?>,
+                max: <?= (float)$max ?>,
+                url: "<?= /* @noEscape */ $block->getSliderUrlTemplate() ?>",
+                code: "<?= $escaper->escapeHtml($filterSetting->getAttributeModel()->getAttributeCode()) ?>",
+                isAddFromWidget: <?= /* @noEscape */ $filterSetting->getAddFromToWidget() ? "1" : '0' ?>,
+                hideDigitsAfterDot: <?= /* @noEscape */ $hideDigitsAfterDot ? '1' : '0' ?>
+            },
+            selectors: {
+                sliderWrapper: "[data-amshopby-slider-id='slider']",
+                sliderInput: "[data-amshopby-slider-id='value']",
+                sliderHandles: ".noUi-handle",
+                sliderConnect: ".noUi-connect",
+                sliderTooltip: ".noUi-tooltip",
+                widgetFrom: "[data-amshopby-fromto='from']",
+                widgetTo: "[data-amshopby-fromto='to']",
+                topNav: ".amasty-catalog-topnav"
+            },
+            filterElement: false,
+            sliderElement: false,
+            initialValuesArray: false,
+            currentInputValues: false,
+            seted: false,
+            currentMin: 0,
+            currentMax: 0,
+            widgetMinValue: 0,
+            widgetMaxValue: 0,
+            sliderLoaded: false,
+            ariaText: '<?= $escaper->escapeHtml(__('Filter %1 in sidebar', $filterName)) ?>',
+
+            filterWrapperCheck(el) {
+                let parent = el.closest(this.selectors.topNav);
+                if (parent) {
+                    this.ariaText = '<?= $escaper->escapeHtml($filterName) ?>'
+                }
+            },
+
+            amShopbyFilterSlider(element) {
+                this.filterWrapperCheck(element);
+                this.filterElement = element;
+                this.sliderElement = element.querySelector(this.selectors.sliderWrapper);
+                this.formInput = element.querySelector(this.selectors.sliderInput);
+
+                this.$watch('sliderLoaded', () => {
+                    if (!this.seted) {
+                        this.setSlider();
+                    }
+                });
+
+                if (typeof window.noUiSlider !== 'undefined') {
+                    this.seted = true;
+                    this.setSlider();
+                }
+            },
+
+            setSlider() {
+                let slider = this.createSlider(this.sliderElement);
+
+                this.setSliderValues(slider);
+                if (this.options.isAddFromWidget) {
+                    this.setFromWidgetValues(slider);
+                }
+                this.applyStyles(this.filterElement, this.options.style);
+                /* set default values */
+
+                this.currentMin = this.options.from && this.options.from >= this.options.min
+                    ? this.options.from
+                    : this.options.min;
+                this.currentMax = this.options.to && this.options.to <= this.options.max
+                    ? this.options.to
+                    : this.options.max;
+
+                this.currentMin = this._parseValue(this.currentMin);
+                this.currentMax = this._parseValue(this.currentMax);
+
+                this.widgetMinValue = this._parseValue(this.currentMin * +this.options.curRate);
+                this.widgetMaxValue = this._parseValue(this.currentMax * +this.options.curRate);
+
+                this.currentInputValues = '';
+            },
+
+            generateValues() {
+                this.currentInputValues = this.currentMin + "-" + this.currentMax;
+            },
+
+            applyFilter() {
+                /* dispatch event on sliderAplly */
+                <?php if ($productListAjax->canShowBlock()): ?>
+                    this._dispatchEventsForAjax(this._generateSearchHref(), this.currentInputValues);
+                <?php else: ?>
+                    window.location.href = this._generateSearchHref();
+                <?php endif ?>
+            },
+
+            /**
+             *
+             * @param slider {object} slider object
+             */
+            setSliderValues(slider) {
+                window.dispatchEvent(new CustomEvent('clearSlider', {}));
+                slider.on('slide', (values, handle) => {
+                    if (handle) {
+                        this.currentMax = values[handle];
+                        this.widgetMaxValue = this._parseValue(this.currentMax * +this.options.curRate);
+                    } else {
+                        this.currentMin = values[handle];
+                        this.widgetMinValue = this._parseValue(this.currentMin * +this.options.curRate);
+                    }
+                    if (!this.initialValuesArray) {
+                        this.initialValuesArray = values;
+                    }
+                });
+                slider.on('change', (values) => {
+                    /*apply filters*/
+                    this.generateValues();
+                    this.applyFilter();
+                    window.dispatchEvent(new CustomEvent('amSetButtonPosition', { detail: { element: this.sliderElement } }));
+                });
+
+            },
+
+            /**
+             * @param slider {object} slider object
+             */
+            setFromWidgetValues(slider) {
+                this.$watch('currentMin', (value) => {
+                    slider.setHandle(0, value, true, false);
+                });
+                this.$watch('currentMax', (value) => {
+                    slider.setHandle(1, value, true, false);
+                });
+            },
+
+            calcWidgetMin(el) {
+                this.currentMin = el.value / +this.options.curRate;
+                this.generateValues();
+            },
+
+            calcWidgetMax(el) {
+                this.currentMax = el.value / +this.options.curRate;
+                this.generateValues();
+            },
+
+            setValue(flag) {
+                window.dispatchEvent(new CustomEvent('amSetButtonPosition', { detail: { element: this.sliderElement } }));
+                switch (flag) {
+                    case 'min':
+                        if (parseFloat(this.currentMin) >  parseFloat(this.options.min)) {
+                            this.applyFilter();
+                        }
+                        break;
+                    case 'max':
+                        if (parseFloat(this.currentMax) > parseFloat(this.options.min)) {
+                            this.applyFilter();
+                        }
+                        break;
+                }
+            },
+
+            createSlider(element) {
+                return noUiSlider.create(element, this._getParams());
+            },
+
+            /**
+             * Apply styles to filter elements depend on design
+             * @param element
+             * @param style {string}
+             */
+            applyStyles(element, style) {
+                let colors = {
+                    white: "#ffffff",
+                    defaultRgb: "rgb(255, 85, 2)"
+                }
+                let handles = element.querySelectorAll(this.selectors.sliderHandles);
+                let connect = element.querySelector(this.selectors.sliderConnect);
+                let tooltips = element.querySelectorAll(this.selectors.sliderTooltip);
+                let gradientMainColor = this.options.colors.main;
+                if (this.options.colors.main === this.options.colors.default) {
+                    gradientMainColor = colors.defaultRgb;
+                }
+
+                switch (style) {
+                    case '-volumetric':
+                        handles.forEach((handle) => {
+                            handle.style.background = this._generateGradient(
+                                this._newShade(0.35, gradientMainColor),
+                                gradientMainColor,
+                                'vertical'
+                            );
+                            handle.style.borderColor = this._newShade(0.3, this.options.colors.main);
+                            handle.style.boxShadow = "0 3px 4px 0" + " " + this._newShade(0.4, this.options.colors.main);
+                        })
+                        tooltips.forEach((tooltip) => {
+                            tooltip.style.background = this._generateGradient(
+                                this._newShade(0.35, gradientMainColor),
+                                gradientMainColor,
+                                'horizontal'
+                            );
+                        })
+                        connect.style.background = this._generateGradient(
+                            this._newShade(0.25, gradientMainColor),
+                            gradientMainColor,
+                            'horizontal'
+                        );
+                        break;
+                    case '-improved':
+                        /* apply color to connect */
+                        connect.style.background = this.options.colors.main;
+                        handles.forEach((handle) => {
+                            handle.style.background = this.options.colors.main;
+                            handle.style.borderColor = this.options.colors.main;
+                        });
+                        break;
+                    case '-light':
+                        connect.style.background = this.options.colors.main;
+                        handles.forEach((handle) => {
+                            handle.style.background = colors.white;
+                            handle.style.borderColor = this.options.colors.main;
+                        });
+                        tooltips.forEach((tooltip) => {
+                            tooltip.style.color = this.options.colors.main;
+                        });
+                        break;
+                    case '-dark':
+                        handles.forEach((handle) => {
+                            handle.style.background = this.options.colors.main;
+                            handle.style.borderColor = this.options.colors.main;
+                            handle.style.boxShadow = "0 3px 4px 0" + " " + this._newShade(0.3, this.options.colors.main);
+                        });
+                        connect.style.background = this.options.colors.main;
+                        break;
+                    default:
+                        handles.forEach((handle) => {
+                            handle.style.background = this.options.colors.main;
+                            handle.style.borderColor = this.options.colors.main;
+                        })
+                        break;
+                }
+            },
+
+            /**
+             * @private
+             * @param {String | Number} value
+             * @returns {String}
+             */
+            _parseValue(value) {
+                let self = this;
+                return this.amToFixed(parseFloat(value), 2, self.options.hideDigitsAfterDot);
+            },
+
+            /**
+             * Cut zeroes from value
+             *
+             * @param value
+             * @param {Number} digits - signs after dot
+             * @param hideDigitsAfterDot
+             * @returns {String | Number}
+             */
+            amToFixed(value, digits, hideDigitsAfterDot) {
+                let modifiedValue = value.toFixed(digits);
+
+                if (hideDigitsAfterDot && parseInt(modifiedValue) === value) {
+                    modifiedValue = parseInt(modifiedValue)
+                }
+
+                return modifiedValue;
+            },
+
+            /**
+             *
+             * @returns {string}
+             * @private
+             */
+            _generateSearchHref() {
+                let min = 0;
+                let max = 0;
+                //restrict min
+                if (parseFloat(this.currentMin) > parseFloat(this.options.max)) {
+                    min = this.options.max;
+                } else if (parseFloat(this.currentMin) < parseFloat(this.options.min)) {
+                    min = this.options.min
+                } else {
+                    min = this.currentMin
+                }
+                //restrict max
+                if (parseFloat(this.currentMax) > parseFloat(this.options.max)) {
+                    max = this.options.max;
+                } else if (parseFloat(this.currentMax) < parseFloat(this.options.min)) {
+                    max = this.options.max
+                } else {
+                    max = this.currentMax
+                }
+                //restrict lover/highter than current max/min
+                if(parseFloat(max) < parseFloat(min)) {
+                    max = this.currentMin;
+                }
+                if(parseFloat(min) > parseFloat(max)) {
+                    min = this.currentMax;
+                }
+                return this.options.url
+                    .replace('amshopby_slider_from', min)
+                    .replace('amshopby_slider_to', max);
+            },
+
+            _getParams() {
+                let self = this;
+                let currencyPosition = +this.options.currencyPosition;
+                let isCurrencyUnitLabel = +this.options.isCurrencyUnitLabel;
+                return {
+                    start: [
+                        this.options.from && this.options.from >= this.options.min
+                        ? this.options.from
+                        : this.options.min,
+                        this.options.to && this.options.to <= this.options.max
+                            ? this.options.to
+                            : this.options.max
+                    ],
+                    step: this.options.step ? this.options.step : 1,
+                    connect: true,
+                    range: {
+                        'min': this.options.min,
+                        'max': this.options.max
+                    },
+                    format: {
+                        to: function (value) {
+                            return self._parseValue(value);
+                        },
+                        from: function (value) {
+                            return self._parseValue(value);
+                        }
+                    },
+                    tooltips: [
+                        {to: function (value) {
+                            let newValue = '';
+
+                            if (currencyPosition) {
+                                newValue =  (self._parseValue(value * +self.options.curRate)) + ' ' + self.options.currencySymbol;
+                            }
+                            if (isCurrencyUnitLabel) {
+                                newValue = self.options.currencySymbol + (self._parseValue(value * +self.options.curRate));
+                            }
+                            newValue = self.options.currencySymbol + ' ' + (self._parseValue(value * +self.options.curRate));
+
+                            return `<div id="amslider-increase-id-<?= $escaper->escapeHtmlAttr($filterCode . $uniqId) ?>">${newValue}</div>`
+                        }},
+                        {to: function (value) {
+                            let newValue = '';
+
+                            if (currencyPosition) {
+                                newValue =  (self._parseValue(value * +self.options.curRate)) + ' ' + self.options.currencySymbol;
+                            }
+                            if (isCurrencyUnitLabel) {
+                                newValue = self.options.currencySymbol + (self._parseValue(value * +self.options.curRate));
+                            }
+                            newValue = self.options.currencySymbol + ' ' + (self._parseValue(value * +self.options.curRate));
+
+                            return `<div id="amslider-decrease-id-<?= $escaper->escapeHtmlAttr($filterCode . $uniqId) ?>">${newValue}</div>`
+                        }}
+                    ],
+                    handleAttributes: [
+                        { 'aria-label': '<?= $escaper->escapeHtmlAttr(__('lower') . '-' . $filterCode) ?>' },
+                        { 'aria-label': '<?= $escaper->escapeHtmlAttr(__('upper') . '-' . $filterCode) ?>' },
+                    ],
+                }
+            },
+
+            /**
+             *
+             * @param coefficient ex. 0.3 - 30% lighter; -0.3 - 30% darker
+             * @param color {string} hex, rgb, rgba
+             * @returns {null|string}
+             * @private
+             */
+            _newShade(coefficient, color) {
+                return pSBC(coefficient, color);
+            },
+
+            /**
+             *
+             * @param lightenColor
+             * @param color
+             * @param type {string} 'vertical' || 'horizontal'
+             * @returns {string}
+             * @private
+             */
+            _generateGradient(lightenColor, color, type) {
+                if (type === 'vertical') {
+                    return 'linear-gradient(160deg, ' + lightenColor + '40%, ' + color + ' 100%)';
+                }
+
+                if (type === 'horizontal') {
+                    return 'linear-gradient(270deg,' + color + ' 0%, ' + lightenColor + ' 100%)';
+                }
+            },
+
+            /**
+             *
+             * @param searchParams {string}
+             * @param values {string}
+             * @private
+             */
+            _dispatchEventsForAjax(searchParams, values) {
+                setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('amSliderValuesUpdated', {
+                        detail: {
+                            searchParams: searchParams,
+                            values: values
+                        }
+                    }));
+                }, 0);
+            },
+
+            eventListeners: {
+                ['@noUiSliderLoaded.window'](event) {
+                    this.sliderLoaded = true;
+                },
+                ['@clearSlider.window'](event) {
+                    const priceInputs = document.querySelectorAll(
+                        '[name="amshopby[<?= $escaper->escapeHtmlAttr($block->getFilter()->getRequestVar()) ?>][]"]'
+                    );
+
+                    if (priceInputs.length > 1) {
+                        priceInputs.forEach(price => {
+                            price.value = '';
+                        });
+                    }
+                }
+            }
+        }
+    }
+</script>

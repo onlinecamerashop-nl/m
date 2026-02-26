@@ -1,0 +1,22 @@
+{
+    "name": "mgtwizards/module-labels",
+    "description": "Product Labels by MgtWizards Team",
+    "require": {
+        "magento/framework": "102.0.*|103.0.*",
+        "magento/module-catalog": "*",
+        "magento/module-catalog-rule": "*"
+    },
+    "type": "magento2-module",
+    "version": "2.2.4",
+    "license": [
+        "proprietary"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MgtWizards\\Labels\\": ""
+        }
+    }
+}

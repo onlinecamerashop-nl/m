@@ -1,0 +1,16 @@
+<!--@subject {{trans "Newsletter subscription success"}} @-->
+<!--@vars {
+"template config_path=\"design\/email\/footer_template\"":"Email Footer Template",
+"template config_path=\"design\/email\/header_template\"":"Email Header Template",
+"var coupon_code":"Coupon Code"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+<p>{{trans "Je bent succesvol aangemeld voor onze nieuwsbrief."}}</p>
+<p></p>
+{{depend coupon_code}}
+<p><strong>{{trans "Je hebt een kortingscode ontvangen met deze code: %coupon_code" coupon_code=$coupon_code}}</strong>
+</p>
+<p>{{trans "De kortingscode verloopt op datum %coupon_expiration." coupon_expiration=$coupon_expiration_date}}</p>
+{{/depend}}
+{{template config_path="design/email/footer_template"}}

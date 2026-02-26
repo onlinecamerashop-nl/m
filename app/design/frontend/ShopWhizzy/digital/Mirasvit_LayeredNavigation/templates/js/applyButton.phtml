@@ -1,0 +1,226 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * @var $block \Mirasvit\LayeredNavigation\Block\ApplyButton
+ */
+?>
+<?php if ($block->isApplyingMode()): ?>
+    <script>
+        function initApplyButton() {
+            return {
+                config:         getMstNavConfig(),
+                selector:       '[data-element="mst-nav__applyButton"]',
+                countSelector:  '[data-count]',
+                buttonSelector: '[data-apply]',
+                label1Selector: '[data-label-1]',
+                labelNSelector: '[data-label-n]',
+
+                $el: function () {
+                    return document.querySelector(this.selector);
+                },
+
+                $count: function () {
+                    return this.$el().querySelector(this.countSelector);
+                },
+
+                $button: function () {
+                    return this.$el().querySelector(this.buttonSelector);
+                },
+
+                clear: function () {
+                    this.$count().innerHTML = '';
+                    this.$button().dataset.apply = '';
+                },
+
+                show: function () {
+                    this.$el().classList.remove('hidden');
+                    this.$el().style.visibility = 'hidden';
+                },
+
+                hide: function () {
+                    this.$el().classList.add('hidden');
+                },
+
+                showLoader: function () {
+                    this.$el().classList.add('_loading');
+                },
+
+                hideLoader: function () {
+                    this.$el().classList.remove('_loading');
+                },
+
+                move: function ($initiator) {
+                    if (!$initiator) {
+                        return;
+                    }
+                    let x = $initiator.getBoundingClientRect().left + parseFloat(window.getComputedStyle($initiator, null).width.replace("px", ""));
+
+                    let baseElement = this.getBaseElement($initiator);
+
+                    let y = baseElement.getBoundingClientRect().top
+                        - parseFloat(window.getComputedStyle(this.$el(), null).height.replace("px", "")) / 2
+                        + parseFloat(window.getComputedStyle(baseElement, null).height.replace("px", "")) / 2
+                        + window.scrollY;
+
+                    if (window.innerWidth <= this.config.getModeSwitchBreakpoint()) {
+                        this.$el().style.right = '10px'
+                    } else {
+                        this.$el().style.left = x + 'px';
+                    }
+
+                    this.$el().style.top  = y + 'px';
+                    this.$el().style.visibility = 'visible';
+                },
+
+                getBaseElement: function ($initiator) {
+                    let filterName = $initiator.closest('[data-mst-nav-filter]').dataset.mstNavFilter;
+
+                    if (filterName === 'price' && $initiator.querySelector('[data-element="slider"]')) {
+                        return $initiator.querySelector('[data-element="slider"]').firstChild;
+                    }
+
+                    return $initiator
+                },
+
+                removeScript: function (leftNav) {
+                    const div = document.createElement('div');
+                    div.innerHTML = leftNav;
+                    const script = div.querySelector('script');
+                    if (script) {
+                        script.remove();
+                    }
+                    return div.innerHTML;
+                },
+
+                update: function (result) {
+                    let productsHtml   = result['products'];
+                    let applyFilterUrl = result['url'];
+                    let productsCount  = result['products_count'];
+                    let leftNav        = result['leftnav'];
+
+                    this.$button().dataset.apply = applyFilterUrl;
+                    this.$count().innerHTML = productsCount;
+                    this.toggleLabel(productsCount);
+                    
+                    if (leftNav && this.config.isPreCalculationEnabled()) {
+                        leftNav = this.removeScript(leftNav);
+                        const sidebarSelector = '.sidebar.sidebar-main [data-mst-nav-part="state"]'
+                        const stateOld = document.querySelector(sidebarSelector);
+                        getContentUpdater().leftnavUpdate(leftNav);
+                        const stateNew = document.querySelector(sidebarSelector);
+                        if (stateOld && stateNew) {
+                            stateNew.innerHTML = stateOld.innerHTML;
+                        } else if (stateNew) {
+                            stateNew.remove();
+                        }
+                    }
+
+                    if (productsHtml.length > 0) {//todo what for?
+                        document.querySelector(this.config.getAjaxProductListWrapperId()).outerHtml = result['products'];
+
+                        let event = document.createEvent('HTMLEvents');
+                        event.initEvent('contentUpdated', true, false);
+                        document.querySelector(this.config.getAjaxProductListWrapperId()).dispatchEvent(event);
+                    }
+
+                    this.$button().addEventListener('click', function (e) {
+                        e.stopImmediatePropagation();
+
+                        const url = this.$button().dataset.apply;
+                        // this.filterApplier.apply(url);
+                        initApplier().apply(url);
+                    }.bind(this))
+                },
+
+                load: function (url, cacheKey, force, $initiator = null) {
+                    this.clear();
+                    cacheKey = 'applyingMode:' + url;
+                    let cachedData = mstNavCache.getData(cacheKey);
+                    if (cachedData) {
+                        this.update(cachedData);
+                        
+                        if ($initiator) {
+                            setTimeout(() => {
+                                this.show();
+                                $initiator = this.restoreInitiator($initiator);
+                                this.move($initiator);
+                            }, 100)
+                        }
+                    } else {
+                        this._request(url, force, $initiator);
+                    }
+                },
+
+                _request: function (url, force, $initiator = null) {
+                    this.showLoader();
+
+                    let data = {isAjax: true};
+                    if (force) {
+                        data.mstNavForceMode = 'by_button_click';
+                    }
+
+                    let queryParams = new URLSearchParams();
+
+                    for (const key in data) {
+                        queryParams.set(key, data[key]);
+                    }
+
+                    const separator = url.indexOf('?') > 0 ? '&' : '?';
+
+                    fetch(url + separator + queryParams.toString())
+                        .then(response => {
+                            if (! response.ok) console.warn('GET request failed');
+                            return response.json()
+                        })
+                        .then(function (result) {
+                            let cacheKey = 'applyingMode:' + url;
+                            mstNavCache.setData(cacheKey, result);
+
+                            this.update(result);
+                        }.bind(this))
+                        .catch(function (error) {
+                            console.log(error);
+                            // window.location = url;
+                        }.bind(this))
+                        .finally(function () {
+                            this.hideLoader();
+                            if ($initiator) {
+                                this.show();
+                                $initiator = this.restoreInitiator($initiator);
+                                this.move($initiator);
+                            }
+                        }.bind(this));
+                },
+
+                toggleLabel: function (number) {
+                    if (number === 1) {
+                        this.$el().querySelector(this.labelNSelector).classList.add('hidden');
+                        this.$el().querySelector(this.label1Selector).classList.remove('hidden');
+                    } else {
+                        this.$el().querySelector(this.labelNSelector).classList.remove('hidden');
+                        this.$el().querySelector(this.label1Selector).classList.add('hidden');
+                    }
+                },
+
+                restoreInitiator: function (oldInitiator) {
+                    let initiator;
+                    let selector = oldInitiator.querySelector('input');
+                    const sidebarSelector = '.sidebar.sidebar-main';
+                    if (selector && selector.id) {
+                        selector = '#' + selector.id.replace(/([^\w \\])/g,"\\$1");
+                        const input = document.querySelector(sidebarSelector + ' ' + selector);
+                        initiator = input ? input.parentNode.closest('li') : null;
+                    } else if (oldInitiator.querySelector(sidebarSelector + ' .filter-options-content .mst-nav__rating .rating-result')) {
+                        initiator = document.querySelector(sidebarSelector + ' .filter-options-content .mst-nav__rating' + `[data-value='${oldInitiator.dataset.value}']`);
+                    } else if (oldInitiator.dataset.value) {
+                        initiator = document.querySelector(sidebarSelector + ' .filter-options-content ' + `[data-value='${oldInitiator.dataset.value}']`).parentElement;
+                    } else if (oldInitiator.dataset.mstNavFilter) {
+                        initiator = document.querySelector(sidebarSelector + ' .filter-options-content ' + `[data-mst-nav-filter='${oldInitiator.dataset.mstNavFilter}']`);
+                    } 
+                    return initiator;  
+                }
+            }
+        }
+    </script>
+<?php endif ?>

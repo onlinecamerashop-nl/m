@@ -1,0 +1,99 @@
+<?php
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+
+/** @var ViewModelRegistry $viewModels */
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+?>
+
+<script>
+    function createCollapsibleCategories() {
+        return {
+            initToggler: function ($el) {
+                const categoryFilter = this.getCategoryFilter($el);
+
+                const parentCatOptions = categoryFilter.querySelectorAll('li._parent');
+
+                if (!parentCatOptions.length) {
+                    return;
+                }
+
+                parentCatOptions.forEach(function (elem) {
+                    this.initCollapsibe(elem)
+                }.bind(this));
+
+                categoryFilter.addEventListener('nested-toggle', function (event) {
+                    const parent = categoryFilter.querySelector('ol.items.collapsible');
+
+                    if (!parent || parent === undefined) {
+                        return;
+                    }
+
+                    parent.querySelectorAll('ol.items, a.mst-nav_category-toggler').forEach(function (elem) {
+                        if (event.detail.q) {
+                            elem.classList.add('_active');
+                            elem.classList.remove('hidden');
+
+                            if (elem.classList.contains('mst-nav_category-toggler')) {
+                                elem.classList.add('hidden');
+                            }
+                        } else {
+                            elem.classList.remove('_active');
+                            elem.classList.add('hidden');
+
+                            if (elem.classList.contains('mst-nav_category-toggler')) {
+                                elem.classList.remove('hidden');
+                            }
+                        }
+                    })
+                })
+            },
+
+            initCollapsibe: function (element) {
+                const $togglerHandler = element;
+                const $target  = element.nextElementSibling;
+                if (!$target) {
+                    return;
+                }
+                const $toggler = document.createElement('A');
+                $toggler.classList.add('mst-nav_category-toggler', 'cursor-pointer', 'inline-block', 'p-1');
+                $toggler.innerHTML = `<?= $heroicons->chevronDownHtml('w-5 h-5 transition-transform transform duration-300 ease-in-out', 25, 25) ?>`;
+
+                $target.querySelectorAll('li').forEach( function (elem) {
+                    if (elem.classList.contains('_checked')) {
+                        $toggler.classList.add('_active');
+                        $toggler.querySelector('svg').classList.add('rotate-180');
+                        $target.classList.add('_active');
+                        $target.classList.remove('hidden');
+                    }
+                });
+
+                $toggler.addEventListener('click', function (e) {
+                    if ($toggler.classList.contains('_active')) {
+                        $toggler.classList.remove('_active');
+                        $toggler.querySelector('svg').classList.remove('rotate-180');
+                        $target.classList.remove('_active');
+                        $target.classList.add('hidden');
+                    } else {
+                        $toggler.classList.add('_active');
+                        $toggler.querySelector('svg').classList.add('rotate-180');
+                        $target.classList.add('_active');
+                        $target.classList.remove('hidden');
+                    }
+                });
+
+                $togglerHandler.style.marginLeft = '0';
+
+                $togglerHandler.parentElement.insertBefore($toggler, $togglerHandler);
+            },
+
+            getCategoryFilter: function ($el) {
+                return $el.closest('.mst-nav__category');
+            }
+        }
+    }
+</script>

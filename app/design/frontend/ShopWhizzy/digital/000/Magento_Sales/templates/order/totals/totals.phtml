@@ -1,0 +1,48 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Sales\Block\Order\Totals;
+
+/* @var Totals $block */
+/* @var Escaper $escaper */
+
+/**
+ * This template is used to render totals in the storefront.
+ * It is not used for order emails, which use Magento_Sales::order/totals.phtml (not part of the hyva-default-theme).
+ */
+?>
+<?php foreach ($block->getTotals() as $code => $total): ?>
+    <?php if ($total->getBlockName()): ?>
+        <?= $block->getChildHtml($total->getBlockName(), false) ?>
+    <?php else: ?>
+        <div class="text-start font-semibold" <?= /* @noEscape */ $block->getLabelProperties() ?>>
+            <?php if ($total->getStrong()): ?>
+                <div class="font-medium lg:border-t border-whizzy-linee h-full py-1.5 lg:py-3.5">
+                    <?= $escaper->escapeHtml($total->getLabel()) ?>
+                </div>
+            <?php else: ?>
+                <?= $escaper->escapeHtml($total->getLabel()) ?>
+            <?php endif ?>
+        </div>
+        <div class="text-end font-medium" <?= /* @noEscape */ $block->getValueProperties() ?>
+            data-th="<?= $escaper->escapeHtmlAttr($total->getLabel()) ?>">
+            <?php if ($total->getStrong()): ?>
+                <div class="text-xl lg:border-t border-whizzy-linee">
+                    <div class="h-full py-3">
+                        <?= /* @noEscape */ $block->formatValue($total) ?>
+                    </div>
+                </div>
+            <?php else: ?>
+                <?= /* @noEscape */ $block->formatValue($total) ?>
+            <?php endif ?>
+        </div>
+    <?php endif; ?>
+<?php endforeach ?>

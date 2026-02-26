@@ -1,0 +1,264 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+use Hyva\Theme\ViewModel\StoreConfig;
+use Magento\Checkout\Block\Cart\Sidebar as SidebarCart;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+/** @var HeroiconsSolid $heroiconsSolid */
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+/** @var StoreConfig $storeConfig */
+$storeConfig = $viewModels->require(StoreConfig::class);
+$showMiniCart = $storeConfig->getStoreConfig(SidebarCart::XML_PATH_CHECKOUT_SIDEBAR_DISPLAY);
+
+$header_classes = "shadow-whizzy-header";
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$support_text = (($support_text_value = $whizzyHelper->getConfigValue('header/support_text')) ? $support_text_value : '');
+$support_phone = (($support_phone_value = $whizzyHelper->getConfigValue('header/support_phone')) ? $support_phone_value : '');
+$support_email = (($support_email_value = $whizzyHelper->getConfigValue('header/support_email')) ? $support_email_value : '');
+$menu_background_color = (($menu_background_color_value = $whizzyHelper->getConfigValue('header/menu_background_color')) ? 'bg-[' . $menu_background_color_value . ']' : 'bg-white');
+?>
+<script>
+    function initHeader() {
+        return {
+            searchOpen: false,
+            cart: {},
+            isCartOpen: false,
+            isMobile: true,
+            wishlist: false,
+            fixedHeader: false,
+            searchContentatMobile: true,
+            init() {
+                this.checkIsSearchMobile();
+            },
+            getData(data) {
+                if (data.cart) { this.cart = data.cart }
+                if (data.wishlist) { this.wishlist = data.wishlist }
+            },
+            getWishlistCount() {
+                if (this.wishlist) {
+                    return this.wishlist.items.length
+                } else {
+                    return '0'
+                }
+            },
+            isWishlistEmpty() {
+                if (this.wishlist) {
+                    if (this.wishlist.items.length == 0) {
+                        return false
+                    }
+                }
+                return true
+            },
+            isCartEmpty() {
+                return !this.cart.summary_count
+            },
+            checkIsSearchMobile() {
+                const mobileElement = this.$refs.searchContainerMobile;
+                this.isMobile = mobileElement
+                    ? getComputedStyle(mobileElement).display !== "none"
+                    : window.matchMedia('(max-width: 1023px)').matches; // Fallback to `md` breakpoint
+
+                if (this.isMobile) {
+                    if (!this.searchContentatMobile) {
+                        this.$refs.searchContainerMobile.appendChild(this.$refs.searchForm);
+                        this.searchContentatMobile = true;
+                    }
+                } else {
+                    if (this.searchContentatMobile) {
+                        this.$refs.searchContainerDesktop.appendChild(this.$refs.searchForm);
+                        this.searchContentatMobile = false;
+                    }
+                }
+            },
+            toggleCart(event) {
+                if (event.detail && event.detail.isOpen !== undefined) {
+                    this.isCartOpen = event.detail.isOpen
+                    if (!this.isCartOpen && this.$refs && this.$refs.cartButton) {
+                        this.$refs.cartButton.focus()
+                    }
+                } else {
+                    <?php
+                    /*
+                     * The toggle-cart event was previously dispatched without parameter to open the drawer (not toggle).
+                     * Keeping this in here for backwards compatibility.
+                     */
+                    ?>
+                    this.isCartOpen = true
+                }
+            },
+            eventListeners: {
+                ['@private-content-loaded.window'](event) {
+                    this.getData(event.detail.data);
+                },
+                ['@resize.window.debounce']() {
+                    this.checkIsSearchMobile();
+                },
+                ['@visibilitychange.window.debounce']() {
+                    this.checkIsSearchMobile();
+                },
+            },
+        }
+    }
+    function initCompareHeader() {
+        return {
+            compareProducts: null,
+            itemCount: 0,
+            receiveCompareData(data) {
+                if (data['compare-products']) {
+                    this.compareProducts = data['compare-products'];
+                    this.itemCount = this.compareProducts.count;
+                }
+            }
+        }
+    }
+</script>
+<div id="header" x-data="initHeader()" class="relative bg-white" x-bind="eventListeners">
+
+    <?= $block->getChildHtml('header-usps'); ?>
+
+    <div class="container flex gap-4 lg:gap-8 items-center w-full px-6 py-3 mx-auto transition-all duration-200 min-h-auto lg:min-h-20"
+        :class="{ 'fixed top-0 z-[100] shadow-whizzy-header bg-white': fixedHeader, 'relative' : !fixedHeader }"
+        @scroll.window="fixedHeader = (window.pageYOffset > 42 & window.innerWidth < 767) ? true : false">
+        <div class="flex lg:w-1/3 items-center order-1 lg:order-2">
+            <?= $block->getChildHtml('topmenu.mobile') ?>
+
+            <div x-ref="searchContainerDesktop" class="hidden lg:block min-h-a11y w-full"></div>
+            <div class="lg:hidden h-full flex items-center">
+                <button id="menu-search-icon" class="inline-block p-[13px]"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('Toggle search form')) ?>" aria-haspopup="true" aa
+                    :aria-expanded="searchOpen" x-ref="searchButton"
+                    @click.prevent="searchOpen = !searchOpen; $dispatch('search-open')">
+                    <span
+                        x-show="!searchOpen"><?= $themeIcons->renderHtml('search', 'lg:w-6 lg:h-6', 18, 18, ["aria-hidden" => "true"]) ?></span>
+                    <span x-show="searchOpen"
+                        x-cloak><?= $themeIcons->renderHtml('close', 'lg:w-6 lg:h-6', 18, 18, ["aria-hidden" => "true"]) ?></span>
+                </button>
+                <div id="search-content"
+                    class="z-30 absolute top-6 left-0 inset-x-0 container w-full m-0 p-0 max-w-full" x-cloak
+                    x-show="searchOpen" @click.outside="searchOpen = false"
+                    @keydown.escape="searchOpen = false; $refs.searchButton.focus()">
+                    <div class="bg-white w-full">
+                        <div x-ref="searchContainerMobile" class="z-30 absolute top-8 inset-x-0 w-full lg:hidden">
+                            <div x-ref="searchForm">
+                                <?= $block->getChildHtml('header-search'); ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center lg:justify-start w-full lg:w-1/3 order-2 lg:order-1">
+            <?= $block->getChildHtml('logo'); ?>
+        </div>
+
+        <div class="lg:ml-auto flex flex-row items-center lg:justify-end lg:w-1/3 order-3">
+
+            <?php if ($support_phone || $support_email): ?>
+                <div class="hidden lg:block h-11 mr-2">
+                    <div
+                        class="relative flex gap-2 items-center bg-white shadow-whizzy-header rounded-lg p-2 pl-4 pr-2 -top-2">
+                        <div>
+                            <div class="flex flex-col gap-0.5 text-sm text-right">
+                                <?php if ($support_text): ?>
+                                    <span class="text-whizzy-graylighter text-xs">
+                                        <?= $escaper->escapeHtmlAttr($support_text) ?>
+                                    </span>
+                                <?php endif; ?>
+                                <?php if ($support_phone): ?>
+                                    <a href="tel:<?= $escaper->escapeHtmlAttr($support_phone) ?>">
+                                        <?= $escaper->escapeHtmlAttr($support_phone) ?>
+                                    </a>
+                                <?php endif; ?>
+                                <?php if ($support_email): ?>
+                                    <span class="text-whizzy-graylighter text-xs">
+                                        <?= $escaper->escapeHtmlAttr($support_email) ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="block p-2.5 bg-white rounded-full" id="customer-help"
+                            aria-label="<?= $escaper->escapeHtmlAttr(__('Customer Support')) ?>">
+                            <?= $themeIcons->renderHtml('customer-support', 'text-whizzy-body hover:text-whizzy-graylighter lg:w-6 lg:h-6', 18, 18, ['aria-hidden' => 'true']) ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <div class="h-11">
+                <?= $block->getChildHtml('customer') ?>
+            </div>
+
+            <div class="p-2.5">
+                <a href="<?= $escaper->escapeUrl($block->getUrl('wishlist/index/index')) ?>"
+                    title="<?= $escaper->escapeHtmlAttr(__('Wishlist')) ?>" class="relative">
+                    <?= $themeIcons->renderHtml('heart', 'text-black hover:text-black lg:w-6 lg:h-6', 18, 18, ["aria-hidden" => "true"]) ?>
+                    <template x-if="isWishlistEmpty()">
+                        <span x-text="getWishlistCount()"
+                            class="tabular-nums absolute bottom-2.5 left-3.5 w-4 h-4 bg-black text-white text-center text-xs rounded"
+                            aria-hidden="true"></span>
+                    </template>
+                </a>
+            </div>
+
+            <div class="p-[13px] lg:p-2.5 flex items-center h-full">
+                <?php if ($showMiniCart): ?>
+                    <button <?php else: ?> <a <?php endif ?> id="menu-cart-icon" class="relative" x-ref="cartButton"
+                    :aria-disabled="isCartEmpty()" :aria-label="`
+                    <?= $escaper->escapeHtmlAttr($showMiniCart ? __('Toggle minicart') : __('View cart')) ?>,
+                    ${isCartEmpty()
+                        ? '<?= $escaper->escapeHtmlAttr(__('Cart is empty')) ?>'
+                        : cart.summary_count > 1
+                            ? hyva.str('<?= $escaper->escapeHtmlAttr(__('%1 items')) ?>', cart.summary_count)
+                            : hyva.str('<?= $escaper->escapeHtmlAttr(__('%1 item')) ?>', cart.summary_count)
+                    }`" <?php if ($showMiniCart): ?> @click.prevent.stop="() => {
+                        $dispatch('toggle-cart', { isOpen: true })
+                    }" @toggle-cart.window="toggleCart($event)" :aria-expanded="isCartOpen" aria-haspopup="dialog"
+                    <?php else: ?> href="<?= $escaper->escapeUrl($block->getUrl('checkout/cart/index')) ?>"
+                        title="<?= $escaper->escapeHtmlAttr(__('View cart')) ?>" <?php endif ?>>
+                    <?= $themeIcons->renderHtml('cart', 'text-black hover:text-black lg:w-6 lg:h-6', 18, 18, ["aria-hidden" => "true"]) ?>
+                    <span x-text="cart.summary_count" x-show="!isCartEmpty()" x-cloak
+                        class="tabular-nums absolute bottom-2 lg:bottom-0.5 lg:-right-full w-5 h-5 bg-black text-white leading-5 text-center text-xs rounded"
+                        aria-hidden="true"></span>
+                    <?php if ($showMiniCart): ?>
+                    </button>
+                <?php else: ?>
+                    </a>
+                <?php endif ?>
+            </div>
+        </div>
+        <?= $block->getChildHtml('cart-drawer'); ?>
+    </div>
+
+    <div class="relative hidden lg:block <?= $menu_background_color . ' ' . $header_classes ?>">
+        <div class="container">
+            <?= $block->getChildHtml('topmenu.desktop') ?>
+        </div>
+    </div>
+</div>
+
+<?= $block->getChildHtml('authentication-popup'); ?>
+</div>

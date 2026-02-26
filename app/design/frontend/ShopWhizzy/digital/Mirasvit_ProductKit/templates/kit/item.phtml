@@ -1,0 +1,104 @@
+<?php
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Catalog\Block\Product\ReviewRendererInterface;
+use Magento\Framework\Escaper;
+use Mirasvit\ProductKit\Block\Kit\Item;
+
+/**
+ * @var Item              $block
+ * @var ViewModelRegistry $viewModels
+ * @var Escaper           $escaper
+ */
+
+$item = $block->getItem();
+$hasVariations = (bool)count($item->getItemVariations());
+$itemId = (int)$item->getId();
+$product = $block->getLinkedProduct($item);
+$productId = (int)$product->getId();
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+?>
+
+<div class="kit-item-outline <?= $item->getIsVisible() ? 'active' : 'hidden' ?> relative w-full px-3 py-4 my-3"
+    data-element="product-block" data-product-id="<?= /* @noEscape */ $productId ?>">
+    <button type="button" class="itemsSet-pager up absolute left-1/2 cursor-pointer top-2 transform -translate-y-1/2"
+        data-element="itemsSet-pager-up" aria-label="<?= $escaper->escapeHtml(__('Previous product variant')) ?>"
+        @click="changeProduct($el)">
+        <div class="arrow w-8 h-8 flex items-center justify-center <?= $hasVariations ? '' : 'hidden' ?>">
+            <?= $heroicons->chevronUpHtml('stroke-gray-400') ?>
+        </div>
+    </button>
+    <button type="button"
+        class="itemsSet-pager down absolute left-1/2 cursor-pointer bottom-[-1.5rem] transform -translate-y-1/2"
+        data-element="itemsSet-pager-down" aria-label="<?= $escaper->escapeHtml(__('Next product variant')) ?>"
+        @click="changeProduct($el)">
+        <div class="arrow w-8 h-8 items-center justify-center <?= $hasVariations ? '' : 'hidden' ?> ">
+            <?= $heroicons->chevronDownHtml('stroke-gray-400') ?>
+        </div>
+    </button>
+
+    <div class="kit-item-image flex-shrink-0 w-60 mt-2 mx-auto">
+        <img src="<?= $escaper->escapeUrl($block->getImageUrl($product, 'category_page_list')) ?>"
+            alt="<?= $escaper->escapeHtml($product->getName()) ?>"
+            class="rounded-sm max-w-full h-full aspect-square object-contain" />
+    </div>
+
+    <div class="kit-item-inner flex flex-col justify-center text-center">
+        <?php if ($product->isVisibleInSiteVisibility()): ?>
+            <a href="<?= $escaper->escapeUrl($block->getProductUrl($product)) ?>"
+                class="kit-item-name block name-elem mt-2 mb-1 items-center font-semibold text-base lg:text-xl tracking-tight leading-5 lg:leading-7 mx-auto">
+                <?= $escaper->escapeHtml($product->getName()) ?>
+            </a>
+        <?php else: ?>
+            <span
+                class="kit-item-name block name-elem mt-2 mb-1 items-center font-semibold text-base lg:text-xl tracking-tight leading-5 lg:leading-7 mx-auto">
+                <?= $escaper->escapeHtml($product->getName()) ?>
+            </span>
+        <?php endif; ?>
+
+        <div class="mx-auto">
+            <?= /* @noEscape */ $block->getReviewsSummaryHtml($product, ReviewRendererInterface::SHORT_VIEW) ?>
+        </div>
+
+        <div class="kit-item-prices flex items-center justify-center mt-4">
+            <?php if ($item->getItemDiscount() > 0): ?>
+                <div class="kit-item-oldPrice text-sm text-gray-500 text-lg line-through mr-2">
+                    <?= /* @noEscape */ $block->getItemOriginalPriceHtml($item) ?>
+                </div>
+            <?php endif ?>
+
+            <div class="kit-item-newPrice kit-item-newPrice-<?= /* @noEscape */ $productId ?> font-bold text-xl <?= $item->getItemDiscount() > 0 ? '_discounted' : '' ?>"
+                data-element="kit-item-newPrice">
+            </div>
+
+            <?php if ($item->getQty() > 1): ?>
+                <span class="kit-item-qty"><?= 'x' . $escaper->escapeHtml($item->getQty()); ?></span>
+            <?php endif ?>
+        </div>
+
+        <?php if (!$product->isSalable()): ?>
+            <din class="kit-item-availability"><?= /* @noEscape */ __('Not Available') ?></din>
+        <?php endif ?>
+    </div>
+
+    <?php if ($item->isOptional()): ?>
+        <div class="kit-item-checkbox absolute top-2 left-2">
+            <input type="checkbox" id="kit_item_checkbox_<?= $escaper->escapeHtml($item->getId()) ?>" <?= /* @noEscape */ $product->isSalable() ? 'checked="checked"' : '' ?> data-element="checkbox"
+                aria-label="<?= $escaper->escapeHtml(__('Include %1 in kit', $product->getName())) ?>"
+                class="relative appearance-none bg-white w-5 h-5 inline-block border border-gray-300 rounded cursor-pointer m-0 checked:bg-orange-500 checked:border-orange-500" />
+        </div>
+    <?php endif ?>
+
+    <?php if ($item->getItemDiscount() > 0): ?>
+        <div class="kit-item-discount kit-item-discount-<?= /* @noEscape */ $productId ?> absolute top-2 right-2 bg-red-500 text-white rounded-lg px-2 py-1 mr-2 text-sm empty:hidden"
+            data-element="kit-item-discount">
+        </div>
+    <?php endif ?>
+
+    <div class="hidden md:block kit-item-icon-plus absolute w-12 h-12 bg-white -right-6 top-1/2 transform translate-y-[-50%] z-10"
+        x-show="<?= /* @noEscape */ $itemId ?> !== lastItemId">
+        <?= $heroicons->plusHtml('text-whizzy-primary', 48, 48) ?>
+    </div>
+</div>

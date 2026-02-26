@@ -1,0 +1,63 @@
+<?php
+/**
+ * @var $block \Mirasvit\LayeredNavigation\Block\Navigation\State
+ */
+
+$filters = $block->getActiveFilters();
+?>
+<?php if (!empty($filters)): ?>
+    <div class="filter-current <?= $block->isHorizontalFilter() ? 'w-full' : '' ?>" data-mst-nav-part="state" x-data="initLabelRenderer()">
+        <strong class="title text-md md:text-lg font-semibold mb-4 block" role="heading" data-role="title" aria-level="2" data-count="<?= count($filters) ?>">
+            <?= __('Now Shopping by') ?>
+        </strong>
+
+        <ol
+            class="items mb-4 <?= $block->isHorizontalFilter() ? 'flex flex-wrap gap-2' : 'flex flex-wrap flex-col gap-2' ?>">
+            <?php if ($block->isHorizontalFilter()): ?>
+                <li class="item block-actions filter-actions font-semibold" data-element="filter" @click="handleClick">
+                    <a href="<?= $block->getClearUrl() ?>"
+                        class="btn py-1 text-sm action clear filter-clear"><span><?= __('Clear All') ?></span></a>
+                </li>
+            <?php endif ?>
+
+            <?php foreach ($filters as $filter): ?>
+                <?php
+                $clearLinkUrl = $filter->getClearLinkUrl();
+                $filterName = __($filter->getName());
+                $filterLabel = __($block->stripTags($filter->getLabel()));
+                ?>
+                <li class="item mst-nav__state-filter cursor-pointer overflow-hidden text-ellipsis px-4 relative text-sm <?= !$block->isHorizontalFilter() ? '-pl-5' : '' ?>"
+                    data-element="filter" @click="handleClick">
+                    <span class="filter-label text-whizzy-graylighter"><?= $filterName ?>: </span>
+                    <span class="filter-value"><?= $filterLabel ?></span>
+
+                    <?php if ($clearLinkUrl): ?>
+                        <a class="action previous" rel="<?= $block->escapeHtmlAttr($block->getRelAttributeValue()) ?>" href="<?= $filter->getRemoveUrl() ?>" title="<?= __('Previous') ?>">
+                            <span>&#10005;</span>
+                        </a>
+
+                        <a class="action remove" rel="<?= $block->escapeHtmlAttr($block->getRelAttributeValue()) ?>"  title="<?= $block->escapeHtml($filter->getFilter()->getClearLinkText()) ?>" href="<?= $clearLinkUrl ?>">
+                            <span>&#10005;</span>
+                        </a>
+                    <?php else: ?>
+                        <a
+                            class="action remove absolute px-1 <?= !$block->isHorizontalFilter() ? '-left-1 -top-px' : '' ?>"
+                            href="<?= $filter->getRemoveUrl() ?>"
+                            title="<?= __('Remove %1', $filterLabel) ?>"
+                            rel="<?= $block->escapeHtmlAttr($block->getRelAttributeValue()) ?>"
+                        >
+                            <span>&#10005;</span>
+                        </a>
+                    <?php endif ?>
+                </li>
+            <?php endforeach ?>
+
+            <?php if (!$block->isHorizontalFilter()): ?>
+                <li class="item block-actions filter-actions font-semibold" data-element="filter" @click="handleClick">
+                    <a href="<?= $block->getClearUrl() ?>"
+                        class="btn py-1 text-sm action clear filter-clear"><span><?= __('Clear All') ?></span></a>
+                </li>
+            <?php endif ?>
+        </ol>
+    </div>
+<?php endif ?>

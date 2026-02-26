@@ -1,0 +1,93 @@
+@font-face {
+  font-display: swap;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/inter/inter-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  src: url("../fonts/inter/inter-600.woff2") format("woff2");
+}
+
+@layer utilities {
+
+  h1,
+  h2 {
+    font-family: "Inter", sans-serif;
+    @apply font-semibold;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inter", sans-serif;
+    @apply font-semibold;
+  }
+
+  .text-heading {
+    font-family: "Inter", sans-serif;
+    @apply font-semibold;
+  }
+
+  /* This class only exists for backwards compatibility, */
+  /* The default is applied in tailwind.config.js since Hyvä 1.2.0 */
+  .text-sans-serif {
+    font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  }
+}
+
+html {
+  @apply antialiased;
+}
+
+body {
+  @apply text-black leading-normal text-base tracking-normal;
+}
+
+.cms-page-view {
+  .column {
+    h2 {
+      @apply text-2xl font-semibold my-4;
+    }
+
+    h3 {
+      @apply text-xl font-semibold mb-4 mt-3;
+    }
+
+    h4,
+    h5,
+    h6 {
+      @apply text-lg font-semibold my-3;
+    }
+
+    table {
+      @apply my-8 p-0;
+    }
+
+    td {
+      @apply p-0;
+    }
+
+    p {
+      @apply text-sm lg:text-base mb-4 mt-2;
+    }
+
+    li {
+      @apply list-disc list-inside font-medium my-1;
+    }
+
+    a {
+      @apply text-whizzy-primary hover:text-opacity-80 font-bold transition-all duration-200;
+    }
+
+    strong {
+      @apply mb-4;
+    }
+  }
+}

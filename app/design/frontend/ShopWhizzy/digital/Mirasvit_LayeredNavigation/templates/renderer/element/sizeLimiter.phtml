@@ -1,0 +1,93 @@
+<?php
+/** @var \Mirasvit\LayeredNavigation\Block\Renderer\Element\SizeLimiterElement $block */
+
+$filterAccessor = $block->getFilterAccessor();
+?>
+<?php if ($block->isShowHideMode()): ?>
+    <span class="mst-nav__sizeLimiter cursor-pointer btn mt-2 py-1 font-normal" data-element="sizeToggle"
+        x-data="initSizeLimiter('<?= $block->getLinkLimit() ?>','<?= $block->getTextLess() ?>','<?= $block->getTextMore() ?>')"
+          x-init="initHandler"
+          @click="initToggle"
+          x-text="isOpen ? textLess : textMore"
+    ></span>
+
+    <script>
+        function initSizeLimiter(limit, textLess, textMore) {
+            return {
+                limit: limit ? limit : 5,
+                textLess: textLess ? textLess : 'less',
+                textMore: textMore ? textMore : 'more',
+                isOpen: false,
+
+                initHandler: function () {
+                    this.hideOptions();
+
+                    let filter = this.$el.closest('.filter-option');
+
+                    filter.addEventListener('showhide', function (event) {
+                        const searchValue = event.target.querySelector('[data-element = search]')
+                            ? event.target.querySelector('[data-element = search]').value
+                            : '';
+
+                        this.isOpen = !!(searchValue
+                            || event.target.querySelectorAll('.mst-nav__alphabetical span._checked').length);
+
+                        this.toggleOptions();
+
+                        if (this.isOpen) {
+                            this.$el.classList.add('hidden');
+                        } else {
+                            this.$el.classList.remove('hidden');
+                            this.isOpen = !this.isOpen;
+                        }
+                    }.bind(this))
+                },
+
+                initToggle: function () {
+                    this.isOpen = !this.isOpen;
+
+                    this.toggleOptions();
+                },
+
+                toggleOptions: function () {
+                    this.$el.parentNode
+                        .querySelectorAll('[data-element = filter]')
+                        .forEach(function (filter, idx) {
+                            if (!this.isOpen) {
+                                this.hideOptions();
+                            } else {
+                                filter.setAttribute('data-hidden', false);
+                            }
+                        }.bind(this))
+                },
+
+                hideOptions: function () {
+                    var items = this.$el.parentElement.querySelectorAll('[data-element="filter"]');
+                    let limit = this.limit;
+
+                    items.forEach(function (elem, idx) {
+                        if (limit == 0) {
+                            elem.setAttribute('data-hidden', 'true')
+                            return;
+                        }
+
+                        elem.setAttribute('data-hidden', 'false')
+
+                        if (elem.getAttribute('data-value')) {
+                            limit--;
+                        }
+                    });
+                },
+            }
+        }
+    </script>
+<?php endif ?>
+
+<?php if ($block->isScrollMode()): ?>
+    <style>
+        [data-mst-nav-filter=<?= $filterAccessor ?>] {
+            max-height:<?= $block->getScrollHeight() ?>px;
+            overflow-x: hidden;
+        }
+    </style>
+<?php endif ?>

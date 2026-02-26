@@ -1,0 +1,40 @@
+<?php
+
+use Bol\CheckoutViaBol\Block\Checkout\Link;
+use Hyva\Theme\ViewModel\HyvaCsp;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+
+/**
+ * @var Link $block
+ * @var Escaper $escaper
+ * @var SecureHtmlRenderer $secureRenderer
+ * @var HyvaCsp $hyvaCsp
+ */
+
+?>
+<?php if ($block->isMethodAllowed() && $block->displayCvbCheckoutButton()): ?>
+    <?php $id = sprintf('bol-cart-cvb-button-%s', uniqid('', false)); ?>
+    <div class="cvb-link mb-8">
+        <cvb-checkout-button
+            id="<?= $id ?>"
+            type="checkout"
+            font-url="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl("Bol_CheckoutViaBol::fonts/Graphik-Regular.ttf")) ?>"
+            label-url="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl("Bol_CheckoutViaBol::images/button_checkout_via_bol.svg")) ?>"
+            info="<?= $block->getButtonDescription() ?>"
+            label="<?= $block->getButtonLabel() ?>"
+        />
+    </div>
+
+    <script>
+        (function () {
+            const element = document.getElementById('<?= $id ?>');
+            element.onclick = CVBCheckoutButton.wrapOnClick(element, async function (event) {
+                const response = await fetch('/cvb/session/create');
+                const json = await response.json();
+                window.location.href = json['redirectUrl'];
+            });
+        })();
+    </script>
+    <?php $hyvaCsp->registerInlineScript() ?>
+<?php endif ?>

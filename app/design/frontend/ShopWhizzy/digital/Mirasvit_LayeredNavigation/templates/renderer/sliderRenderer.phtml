@@ -1,0 +1,82 @@
+<?php
+/**
+ * @var $block \Mirasvit\LayeredNavigation\Block\Renderer\SliderRenderer
+ */
+
+$attributeCode = $block->getAttributeCode();
+$style         = 'display: none;';
+$sliderData    = $block->getSliderData();
+
+if (!$sliderData) {
+    return;
+}
+
+$initParams = [
+    'paramTemplate' => $block->getSliderParamTemplate(),
+    'urlTemplate'   => $sliderData['url'],
+    'min'           => $sliderData['min'],
+    'max'           => $sliderData['max'],
+    'from'          => (float)$sliderData['from'],
+    'to'            => (float)$sliderData['to'],
+    'valueTemplate' => $block->getValueTemplate(),
+    'separator'     => $block->getSeparator(),
+    'rate'          => $block->getRate(),
+    'step'          => $sliderData['step'] ?? 1,
+];
+?>
+
+<div class="mst-nav__slider px-2"
+     data-mst-nav-filter="<?= $attributeCode ?>"
+     x-data='renderRangeSlider(<?= \Mirasvit\Core\Service\SerializeService::encode($initParams) ?>)'
+     x-init="initSlider"
+>
+    <?php if (!$block->isFromTo()): ?>
+        <div class="mst-nav__slider-text text-center pt-4 font-semibold text-lg leading-7" data-element="text"></div>
+    <?php endif ?>
+
+    <?php if ($block->isSlider()): ?>
+        <div class="mst-nav__slider-slider my-4 h-3" data-element="slider"></div>
+    <?php endif ?>
+
+    <?php if ($block->isFromTo()): ?>
+        <div class="mst-nav__slider-from-to flex items-center justify-between mb-2 mt-6">
+            <input type="number"
+                   class="mst-nav__slider-from form-input w-1/3 px-2 py-1"
+                   data-element="from"
+                   placeholder="<?= __('from') ?>"
+            >
+            <span class="mst-nav__slider-del">—</span>
+            <input type="number"
+                   class="mst-nav__slider-to form-input w-1/3 px-2 py-1"
+                   data-element="to"
+                   placeholder="<?= __('to') ?>"
+            >
+            <button class="btn py-1 px-3 ml-3" data-element="submit" @click="applyFilter"><?= __('OK') ?></button>
+        </div>
+    <?php endif ?>
+</div>
+
+<style>
+    .mst-nav__slider-slider {
+        height: 12px; /* redefining slider's height from lib css*/
+    }
+
+    .mst-nav__slider-slider .noUi-handle {
+        width: 20px!important;
+        right: -10px!important;
+        height: 28px!important;
+        top: -9px!important;
+    }
+
+    .mst-nav__slider-slider .noUi-handle:before {
+        left: 8px!important;
+    }
+
+    .mst-nav__slider-slider .noUi-handle:after {
+        left: 10px!important;
+    }
+
+    .mst-nav__slider-slider .noUi-connect {
+        background-color: rgba(29,78,216,1);
+    }
+</style>

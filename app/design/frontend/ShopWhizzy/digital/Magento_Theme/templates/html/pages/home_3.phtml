@@ -1,0 +1,610 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+$url = $storeManager->getStore()->getBaseUrl();
+
+/** @var ViewModelRegistry $viewModels */
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+
+?>
+
+<section class="container pb-8 lg:pb-16">
+    <div class="flex flex-col lg:flex-row gap-8 items-stretch">
+        <div class="w-full lg:w-1/4 flex items-center justify-center">
+            <div class="w-full h-full flex items-center justify-center bg-whizzy-gray rounded-lg overflow-hidden">
+                <?= $block->getLayout()->createBlock('Amasty\Finder\Block\Form')->setBlockId('finder_form')->setLocation('cms')->setId(1)->toHtml(); ?>
+            </div>
+        </div>
+        <div class="w-full lg:w-3/4">
+            <?= $block->getLayout()->createBlock('MgtWizards\SlideBannerHyva\Block\Slider')->setSliderId('home2')->toHtml() ?>
+        </div>
+    </div>
+</section>
+
+<section class="container pb-8 lg:pb-16">
+    <div class="mb-12">
+        <h1 class="text-2xl lg:text-4xl font-semibold tracking-tight">
+            <?= __('High-Performance Motorsports Parts & Gear') ?>
+        </h1>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-6 gap-6 mb-8 lg:mb-12">
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/wheels.png' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Wheels')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Wheels')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium line-clamp-3 lg:line-clamp-none">
+                        <?= $escaper->escapeHtmlAttr(__('Performance wheels for all vehicles.')) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Wheels')) ?>"
+                href="<?= $this->getBaseUrl() . 'wheels.html' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Wheels')) ?></span>
+            </a>
+        </div>
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/lighting.png' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Lighting')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Lighting')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium line-clamp-3 lg:line-clamp-none">
+                        <?= $escaper->escapeHtmlAttr(__('LED bars, headlights, accent lighting.')) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Lighting')) ?>"
+                href="<?= $this->getBaseUrl() . 'lighting.html' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Lighting')) ?></span>
+            </a>
+        </div>
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/engine.png' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Engine')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Engine')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium line-clamp-3 lg:line-clamp-none">
+                        <?= $escaper->escapeHtmlAttr(__('High-performance engine components.')) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Engine')) ?>"
+                href="<?= $this->getBaseUrl() . 'engine.html' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Engine')) ?></span>
+            </a>
+        </div>
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/braking.png' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Braking')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Braking')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium line-clamp-3 lg:line-clamp-none">
+                        <?= $escaper->escapeHtmlAttr(__('Brakes, rotors, pads & performance kits.')) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Braking')) ?>"
+                href="<?= $this->getBaseUrl() . 'braking.html' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Braking')) ?></span>
+            </a>
+        </div>
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/electronics.png' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Electronics')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Electronics')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium line-clamp-3 lg:line-clamp-none">
+                        <?= $escaper->escapeHtmlAttr(__('Gauges, controllers & vehicle electronics.')) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Electronics')) ?>"
+                href="<?= $this->getBaseUrl() . 'electronics.html' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Electronics')) ?></span>
+            </a>
+        </div>
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/exhaust.png' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Exhaust')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Exhaust')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium line-clamp-3 lg:line-clamp-none">
+                        <?= $escaper->escapeHtmlAttr(__('Exhaust systems, mufflers & upgrades.')) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Exhaust')) ?>"
+                href="<?= $this->getBaseUrl() . 'exhaust.html' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Exhaust')) ?></span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<hr class="container border-t">
+</hr>
+
+<section class="py-8 lg:py-16">
+    <div class="container">
+        <div class="mb-8 lg:mb-12">
+            <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-3">
+                <?= $escaper->escapeHtmlAttr(__('Explore')) ?>
+            </div>
+            <h2 class="text-3xl lg:text-4xl font-semibold tracking-tight">
+                <?= $escaper->escapeHtmlAttr(__('A sneak-peek into our featured products')) ?>
+            </h2>
+            <div class="text-base font-medium mt-3">
+                <?= $escaper->escapeHtmlAttr(__('Explore our extensive range of products catalog and we are confident that you will find the right part for your tuning project!')) ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="tabstop"
+            class="relative flex flex-nowrap lg:justify-center p-4 gap-3 lg:gap-x-6 lg:gap-y-3 overflow-x-auto snap-proximity snap-x mb-6 bg-white rounded-lg shadow-whizzy-header border border-whizzy-separator scrollbar-hide">
+
+            <div id="active-pill"
+                class="absolute inset-y-0 left-0 w-40 h-12 my-auto bg-whizzy-primary-lighter rounded-full transition-all duration-300 ease-out pointer-events-none"
+                style="z-index: 1;">
+            </div>
+
+            <button
+                class="tab-button snap-center relative z-10 px-6 py-3 rounded-full text-lg font-semibold whitespace-nowrap flex gap-2 items-center transition-colors duration-300 text-gray-700"
+                data-target="tab-top-1">
+                <?= $themeIcons->renderHtml('speed', 'text-current pointer-events-none', 24, 24, ['aria-hidden' => 'true']) ?>
+                <?= __('Turbos and Housings') ?>
+            </button>
+
+            <button
+                class="tab-button snap-center relative z-10 px-6 py-3 rounded-full text-lg font-semibold whitespace-nowrap flex gap-2 items-center transition-colors duration-300 text-gray-700"
+                data-target="tab-top-2">
+                <?= $themeIcons->renderHtml('package-speed', 'text-current pointer-events-none', 24, 24, ['aria-hidden' => 'true']) ?>
+                <?= __('Turbo Kits') ?>
+            </button>
+
+            <button
+                class="tab-button snap-center relative z-10 px-6 py-3 rounded-full text-lg font-semibold whitespace-nowrap flex gap-2 items-center transition-colors duration-300 text-gray-700"
+                data-target="tab-top-3">
+                <?= $themeIcons->renderHtml('wind', 'text-current pointer-events-none', 24, 24, ['aria-hidden' => 'true']) ?>
+                <?= __('Blow Off Valves') ?>
+            </button>
+
+            <button
+                class="tab-button snap-center relative z-10 px-6 py-3 rounded-full text-lg font-semibold whitespace-nowrap flex gap-2 items-center transition-colors duration-300 text-gray-700"
+                data-target="tab-top-4">
+                <?= $themeIcons->renderHtml('keyframes', 'text-current pointer-events-none', 24, 24, ['aria-hidden' => 'true']) ?>
+                <?= __('Billet Parts') ?>
+            </button>
+        </div>
+    </div>
+
+    <div id="tabtop-contents" class="container">
+        <div id="tab-top-1" class="" data-role="content" role="tabpanel">
+            <?= $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('home_tab1_products_grid')->toHtml(); ?>
+            <a href="#" class="block text-center">
+                <button class="btn btn-primary px-10 py-3 mt-12 mx-auto">
+                    <?= __('See More Products') ?>
+                </button>
+            </a>
+        </div>
+        <div id="tab-top-2" class="hidden" data-role="content" role="tabpanel" aria-hidden="true">
+            <?= $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('home_tab2_products_grid')->toHtml(); ?>
+            <a href="#" class="block text-center">
+                <button class="btn btn-primary px-10 py-3 mt-12 mx-auto">
+                    <?= __('See More Products') ?>
+                </button>
+            </a>
+        </div>
+        <div id="tab-top-3" class="hidden" data-role="content" role="tabpanel" aria-hidden="true">
+            <?= $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('home_tab3_products_grid')->toHtml(); ?>
+            <a href="#" class="block text-center">
+                <button class="btn btn-primary px-10 py-3 mt-12 mx-auto">
+                    <?= __('See More Products') ?>
+                </button>
+            </a>
+        </div>
+        <div id="tab-top-4" class="hidden" data-role="content" role="tabpanel" aria-hidden="true">
+            <?= $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('home_tab4_products_grid')->toHtml(); ?>
+            <a href="#" class="block text-center">
+                <button class="btn btn-primary px-10 py-3 mt-12 mx-auto">
+                    <?= __('See More Products') ?>
+                </button>
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+    'use strict';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('tabstop');
+        const buttons = container.querySelectorAll('.tab-button');
+        const pill = document.getElementById('active-pill');
+        const contents = document.getElementById('tabtop-contents');
+
+        function movePill(button) {
+            const buttonRect = button.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const scrollLeft = container.scrollLeft;
+
+            const buttonLeft = buttonRect.left - containerRect.left + scrollLeft;
+
+            const extraPadding = 32;
+            const pillWidth = button.offsetWidth + extraPadding;
+
+            pill.style.width = `${pillWidth}px`;
+            pill.style.transform = `translateX(${buttonLeft - extraPadding / 2}px)`;
+        }
+
+        let activeButton = buttons[0];
+        activeButton.classList.remove('text-gray-700');
+        activeButton.classList.add('text-whizzy-body');
+        movePill(activeButton);
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.dataset.target;
+
+                contents.querySelectorAll('div[id^="tab-top-"]').forEach(tab => {
+                    tab.classList.add('hidden');
+                    tab.setAttribute('aria-hidden', 'true');
+                });
+                const target = document.getElementById(targetId);
+                if (target) {
+                    target.classList.remove('hidden');
+                    target.setAttribute('aria-hidden', 'false');
+                }
+
+                buttons.forEach(b => b.classList.remove('text-whizzy-body') || b.classList.add('text-gray-700'));
+                this.classList.remove('text-gray-700');
+                this.classList.add('text-whizzy-body');
+
+                activeButton = this;
+                movePill(this);
+            });
+        });
+
+        const update = () => activeButton && movePill(activeButton);
+        window.addEventListener('resize', update);
+        container.addEventListener('scroll', update, { passive: true });
+    });
+</script>
+
+<style>
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+
+<section class="bg-whizzy-secondary-darker py-12 lg:py-24">
+    <div class="container">
+        <h2 class="text-xl lg:text-3xl font-semibold tracking-tight mb-8 lg:mb-12 text-white">
+            <?= $escaper->escapeHtmlAttr(__('Braking Parts')) ?>
+        </h2>
+        <div class="flex flex-wrap flex-row items-stretch">
+            <div class="hidden lg:block w-full lg:w-1/4 flex-auto flex flex-col gap-6">
+                <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                    alt="<?= $escaper->escapeHtmlAttr(__('Braking Parts')) ?>" width="380" height="600"
+                    src="<?= $this->getBaseUrl() . 'media/home/racing_tire_rear_wheel_high_detail.jpg' ?>" />
+            </div>
+            <div class="w-full lg:w-3/4 flex-auto relative pl-0 lg:pl-12">
+                <?= $this->getLayout()->createBlock("Magento\Catalog\Block\Product\ListProduct")->setTemplate("ShopWhizzy_DigitalTheme::sliders/carousel_2.phtml")->setCategoryId(3)->setCount(10)->toHtml(); ?>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-12 lg:py-24">
+    <div class="mb-8 lg:mb-12">
+        <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-3">
+            <?= $escaper->escapeHtmlAttr(__('Discover the best')) ?>
+        </div>
+        <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight">
+            <?= $escaper->escapeHtmlAttr(__('High Performance Parts')) ?>
+        </h2>
+        <div class="text-base font-medium mt-3">
+            <?= $escaper->escapeHtmlAttr(__('Power up with essential electronics and parts.')) ?>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 grid-rows-4 lg:grid-cols-4 lg:grid-rows-2 gap-6">
+        <a class="col-span-2 row-span-2 lg:col-span-2 lg:row-span-2 relative group"
+            href="<?= $this->getBaseUrl() . '#' ?>"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('KDN Performance Shifters')) ?>">
+            <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                alt="<?= $escaper->escapeHtmlAttr(__('KDN Performance Shifters')) ?>" width="1080" height="1080"
+                loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/kdn_performance.jpg' ?>" />
+            <span
+                class="absolute z-10 opacity-50 bg-gradient-to-t from-black to-transparent h-full w-full rounded-lg bottom-0 left-0"></span>
+            <div
+                class="absolute bottom-0 left-0 p-6 lg:p-12 transition-all duration-300 group-hover:-translate-y-8 transform-gpu w-full z-10">
+                <div class="text-lg lg:text-3xl font-semibold tracking-normal text-white">
+                    <?= $escaper->escapeHtmlAttr(__('KDN Performance Shifters')) ?>
+                </div>
+            </div>
+            <div
+                class="group/svg absolute bottom-0 left-6 lg:left-12 transition-all duration-300 font-medium opacity-0 group-hover:opacity-100 group-hover:bottom-8 lg:group-hover:bottom-10 flex items-center gap-1 text-white z-10">
+                <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                <?= $themeIcons->renderHtml('arrow-up-right', 'text-white group-hover/svg:rotate-45 transition-all duration-200', 18, 18, ['aria-hidden' => 'true']) ?>
+            </div>
+        </a>
+
+        <a class="col-span-2 row-start-3 lg:col-span-2 lg:col-start-3 lg:row-start-1 relative group"
+            href="<?= $this->getBaseUrl() . '#' ?>" aria-label="<?= $escaper->escapeHtmlAttr(__('KW Suspensions')) ?>">
+            <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                alt="<?= $escaper->escapeHtmlAttr(__('KW Suspensions')) ?>" width="1080" height="540" loading="lazy"
+                src="<?= $this->getBaseUrl() . 'media/home/kw_suspensions.jpg' ?>" />
+            <span
+                class="absolute z-10 opacity-50 bg-gradient-to-t from-black to-transparent h-full w-full rounded-lg bottom-0 left-0"></span>
+            <div
+                class="absolute bottom-0 left-0 p-6 lg:p-9 transition-all duration-300 group-hover:-translate-y-8 transform-gpu z-10">
+                <div class="text-lg lg:text-3xl font-semibold tracking-normal text-white">
+                    <?= $escaper->escapeHtmlAttr(__('KW Suspensions')) ?>
+                </div>
+            </div>
+            <div
+                class="group/svg absolute bottom-0 left-6 lg:left-10 transition-all duration-300 font-medium opacity-0 group-hover:opacity-100 group-hover:bottom-8 flex items-center gap-1 text-white z-10">
+                <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                <?= $themeIcons->renderHtml('arrow-up-right', 'text-white group-hover/svg:rotate-45 transition-all duration-200', 18, 18, ['aria-hidden' => 'true']) ?>
+            </div>
+        </a>
+
+        <a class="row-start-4 lg:col-start-3 lg:row-start-2 relative group" href="<?= $this->getBaseUrl() . '#' ?>"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('DynoJet Dynamometers')) ?>">
+            <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                alt="<?= $escaper->escapeHtmlAttr(__('DynoJet Dynamometers')) ?>" width="540" height="540"
+                loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/dynojet.jpg' ?>" />
+            <span
+                class="absolute z-10 opacity-50 bg-gradient-to-t from-black to-transparent h-full w-full rounded-lg bottom-0 left-0"></span>
+            <div
+                class="absolute bottom-0 left-0 p-6 lg:p-9 transition-all duration-300 group-hover:-translate-y-8 transform-gpu z-10">
+                <div class="text-lg lg:text-2xl font-semibold tracking-normal text-white">
+                    <?= $escaper->escapeHtmlAttr(__('DynoJet Dynamometers')) ?>
+                </div>
+            </div>
+            <div
+                class="group/svg absolute bottom-0 left-6 lg:left-10 transition-all duration-300 font-medium opacity-0 group-hover:opacity-100 group-hover:bottom-8 flex items-center gap-1 text-white z-10">
+                <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                <?= $themeIcons->renderHtml('arrow-up-right', 'text-white group-hover/svg:rotate-45 transition-all duration-200', 18, 18, ['aria-hidden' => 'true']) ?>
+            </div>
+        </a>
+
+        <a class="row-start-4 lg:col-start-4 lg:row-start-2 relative group" href="<?= $this->getBaseUrl() . '#' ?>"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Used Car Parts')) ?>">
+            <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                alt="<?= $escaper->escapeHtmlAttr(__('Used Car Parts')) ?>" width="540" height="540" loading="lazy"
+                src="<?= $this->getBaseUrl() . 'media/home/used_parts.jpg' ?>" />
+            <span
+                class="absolute z-10 opacity-50 bg-gradient-to-t from-black to-transparent h-full w-full rounded-lg bottom-0 left-0"></span>
+            <div
+                class="absolute bottom-0 left-0 p-6 lg:p-9 transition-all duration-300 group-hover:-translate-y-8 transform-gpu z-10">
+                <div class="text-lg lg:text-2xl font-semibold tracking-normal text-white">
+                    <?= $escaper->escapeHtmlAttr(__('Used Car Parts')) ?>
+                </div>
+            </div>
+            <div
+                class="group/svg absolute bottom-0 left-6 lg:left-10 transition-all duration-300 font-medium opacity-0 group-hover:opacity-100 group-hover:bottom-8 flex items-center gap-1 text-white z-10">
+                <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                <?= $themeIcons->renderHtml('arrow-up-right', 'text-white group-hover/svg:rotate-45 transition-all duration-200', 18, 18, ['aria-hidden' => 'true']) ?>
+            </div>
+        </a>
+    </div>
+</section>
+
+<hr class="container my-8 lg:my-12 border-t">
+</hr>
+
+<section class="container">
+
+    <div class="mb-12">
+        <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-3">
+            <?= $escaper->escapeHtmlAttr(__('World Brands')) ?>
+        </div>
+    </div>
+
+    <div class="w-full max-w-none mx-auto">
+        <div class="text-center">
+            <div x-data="{}" x-init="$nextTick(() => {
+   let ul = $refs.brandsslider;
+   ul.insertAdjacentHTML('afterend', ul.outerHTML);
+   ul.nextSibling.setAttribute('aria-hidden', 'true');
+   ul.insertAdjacentHTML('afterend', ul.outerHTML);
+   ul.nextSibling.setAttribute('aria-hidden', 'true');
+   function brandssliderrun() {
+       var brandsslider = document.getElementsByClassName('brandsslider'),
+           len = brandsslider !== null ? brandsslider.length : 0,
+           i = 0;
+       for(i; i < len; i++) {
+           brandsslider[i].className += ' animate-infinite-scroll-brands'; 
+       }
+   };
+   brandssliderrun();
+})" class="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear_gradient(to_right,transparent_0,_rgba(48,36,34,1.0)_64px,_rgba(48,36,34,1.0)_calc(100%-64px),transparent_100%)] md:[mask-image:_linear_gradient(to_right,transparent_0,_rgba(48,36,34,1.0)_128px,_rgba(48,36,34,1.0)_calc(100%-128px),transparent_100%)]">
+                <ul x-ref="brandsslider"
+                    class="brandsslider flex flex-nowrap items-center justify-start gap-8 lg:gap-12 mr-8 lg:mr-12">
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/wysiwyg/brand/IE-Logo.jpg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/wysiwyg/brand/Eurodyne-Logo.jpg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/wysiwyg/brand/APR-Logo.jpg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/wysiwyg/brand/UM-logo.jpg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/wysiwyg/brand/Malone-Logo.jpg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/wysiwyg/brand/JHM-Logo.jpg' ?>" alt="brand" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="container mb-8 lg:mb-12 border-0">
+</hr>
+
+<section class="py-8 lg:py-16">
+    <div class="container">
+        <div class="mb-8 lg:mb-12">
+            <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-3">
+                <?= $escaper->escapeHtmlAttr(__('Just Arrived')) ?>
+            </div>
+            <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight">
+                <?= $escaper->escapeHtmlAttr(__("Trending Now")) ?>
+            </h2>
+            <div class="text-base font-medium mt-3">
+                <?= $escaper->escapeHtmlAttr(__("Most popular accessories, handpicked for style, function, and performance.")) ?>
+            </div>
+        </div>
+        <?= $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('home_products_grid_2')->toHtml(); ?>
+        <div class="flex justify-center mt-6">
+            <a href="<?= $block->getBaseUrl() . '#' ?>" class="btn w-full lg:w-auto"><?= __('Shop Now') ?></a>
+        </div>
+    </div>
+</section>
+
+<section class="py-8 lg:py-16 mb-8 lg:mb-12">
+    <div class="container">
+        <div class="flex flex-wrap gap-6 lg:gap-12 items-center">
+            <div class="mb-8 lg:mb-12">
+                <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-3">
+                    <?= $escaper->escapeHtmlAttr(__('Must Have')) ?>
+                </div>
+                <h2 class="text-2xl lg:text-4xl font-semibold tracking-tight text-balance">
+                    <?= $escaper->escapeHtmlAttr(__('Merch & Accessories')) ?>
+                </h2>
+                <div class="text-base font-medium mt-3">
+                    <p><?= $escaper->escapeHtmlAttr(__('Where performance meets style. Explore the gear that completes your ride.')) ?>
+                    </p>
+                </div>
+            </div>
+            <div class="w-full flex-auto relative">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-4">
+                    <a href="<?= $block->getBaseUrl() . '' ?>"
+                        aria-label="<?= $escaper->escapeHtmlAttr(__('Co Merch')) ?>" class="relative group">
+                        <img class="block h-full w-full aspect-square object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                            alt="Merchanding" width="1080" height="540"
+                            src="<?= $this->getBaseUrl() . 'media/home/merch.jpg' ?>" />
+                    </a>
+                    <a href="<?= $block->getBaseUrl() . 'co-motorsports-merch.html' ?>"
+                        aria-label="<?= $escaper->escapeHtmlAttr(__('Co Merch')) ?>"
+                        class="relative bg-whizzy-body text-[#F8FAFB] group flex flex-col justify-between p-6 lg:p-10 rounded-lg">
+                        <div>
+                            <?= $themeIcons->renderHtml('long-sleeve-shirt', 'max-w-6 lg:max-w-full', 48, 48, ['aria-hidden' => 'true']) ?>
+                        </div>
+                        <div class="transition-all duration-300 transform-gpu w-full z-10 cursor-pointer">
+                            <div class="text-[#F8FAFB] flex flex-col gap-1 lg:gap-2">
+                                <span
+                                    class="text-lg lg:text-2xl font-semibold"><?= $escaper->escapeHtmlAttr(__('Merchanding')) ?></span>
+                                <span class="text-sm inline-flex gap-1">
+                                    <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                                    <?= $themeIcons->renderHtml('arrow-up-right', 'text-inherit group-hover:rotate-45 transition-all duration-200', 18, 18, ['aria-hidden' => 'true']) ?>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="<?= $block->getBaseUrl() . 'univ-forced-induction-parts/turbos-and-housings.html' ?>"
+                        aria-label="<?= $escaper->escapeHtmlAttr(__('Turbos and Housings ')) ?>" class="relative group">
+                        <img class="block h-full w-full aspect-square object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                            alt="Turbos and Housings " width="1080" height="540"
+                            src="<?= $this->getBaseUrl() . 'media/home/turbo-housing.jpg' ?>" />
+                    </a>
+                    <a href="<?= $block->getBaseUrl() . '' ?>"
+                        aria-label="<?= $escaper->escapeHtmlAttr(__('Turbos and Housings ')) ?>"
+                        class="relative bg-whizzy-body text-[#F8FAFB] group flex flex-col justify-between p-6 lg:p-10 rounded-lg">
+                        <div>
+                            <?= $themeIcons->renderHtml('speed', 'max-w-6 lg:max-w-full	', 48, 48, ['aria-hidden' => 'true']) ?>
+                        </div>
+                        <div class="transition-all duration-300 transform-gpu w-full z-10 cursor-pointer">
+                            <div class="text-[#F8FAFB] flex flex-col gap-1 lg:gap-2">
+                                <span
+                                    class="text-lg lg:text-2xl font-semibold"><?= $escaper->escapeHtmlAttr(__('Turbos and Housings ')) ?></span>
+                                <span class="text-sm inline-flex gap-1">
+                                    <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                                    <?= $themeIcons->renderHtml('arrow-up-right', 'text-inherit group-hover:rotate-45 transition-all duration-200', 18, 18, ['aria-hidden' => 'true']) ?>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

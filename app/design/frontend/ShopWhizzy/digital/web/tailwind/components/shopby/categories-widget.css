@@ -1,0 +1,14 @@
+/* categories widget styles */
+.amwidget-children-categories{
+    .amslider{
+        .slide{
+            @apply max-w-none;
+            flex-basis: auto;
+        }
+        .swiper-slide{
+            img{
+                @apply mx-auto;
+            }
+        }
+    }
+}

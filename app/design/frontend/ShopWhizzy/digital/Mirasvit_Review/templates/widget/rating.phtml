@@ -1,0 +1,106 @@
+<?php
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+
+/** @var \Mirasvit\Review\Block\Widget\Rating $block */
+
+$reviewsCount = $block->getReviewsCount();
+
+if (!$reviewsCount)
+{
+    return '';
+}
+
+$overallRating = $block->getOverallRating();
+
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+/** @var HeroiconsSolid $heroiconsSolid */
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+
+$headingTag = $block->getData('heading_tag') ?: 'h3';
+
+?>
+
+<div class="rating-widget mb-4">
+    <?php if ($title = $block->getTitle()): ?>
+        <div
+            class="review-widget-title container mx-auto flex pt-6 pb-3 mb-6 justify-start items-center flex-wrap border-b-2 border-gray-300">
+            <<?= /* @noEscape */ $headingTag ?> class="text-gray-900 text-2xl title-font font-base text-center md:text-left
+                relative mr-1">
+                <?= $block->escapeHtml($block->getTitle()) ?>
+            </<?= /* @noEscape */ $headingTag ?>>
+        </div>
+    <?php endif; ?>
+
+    <div class="rating-content flex flex-wrap justify-center">
+        <div class="rating-summary rating-overall flex justify-between items-center mb-4 md:border-r border-gray-300">
+            <div class="rating-result w-auto mx-auto" title="<?= $overallRating * 20 ?>%">
+                <?php
+                $rating = $overallRating * 20;
+                $ratingSteps = 5;
+                $starsFilled = is_numeric($rating) ? round($rating / 100 * $ratingSteps) : 0;
+                $starsEmpty = round($ratingSteps - $starsFilled);
+                ?>
+
+                <div class="flex flex-row" role="img"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('%1 out of %2 stars', $starsFilled, $ratingSteps)) ?>">
+                    <?php $i = 0; ?>
+                    <?php while ($i < $starsFilled): ?>
+                        <?= $heroiconsSolid->starHtml('text-yellow-400', 40, 40, ["aria-hidden" => "true"]); ?>
+                        <?php $i++; ?>
+                    <?php endwhile; ?>
+                    <?php $i = 0; ?>
+                    <?php while ($i < $starsEmpty): ?>
+                        <?= $heroiconsSolid->starHtml('text-gray-400', 40, 40, ["aria-hidden" => "true"]); ?>
+                        <?php $i++; ?>
+                    <?php endwhile; ?>
+                </div>
+            </div>
+            <div class="review-count text-2xl px-4 text-gray-900">
+                <span class="label"><?= (string)__('%1 Reviews', $reviewsCount) ?></span>
+            </div>
+        </div>
+        <div class="rating-counts md:pl-4 grow">
+            <?php for ($rate = 5; $rate >= 1; $rate--): ?>
+                <?php $ratingCount = $block->getReviewsCount($rate); ?>
+                <div class="rating-summary mb-2 flex justify-between items-center">
+                    <div class="rating-result w-32 inline-block relative items-center" title="<?= $rate * 20 ?>%">
+                        <?php
+                        $rating = $rate * 20;
+                        $ratingSteps = 5;
+                        $starsFilled = is_numeric($rating) ? round($rating / 100 * $ratingSteps) : 0;
+                        $starsEmpty = round($ratingSteps - $starsFilled);
+                        ?>
+                        <div class="flex flex-row" role="img"
+                            aria-label="<?= $escaper->escapeHtmlAttr(__('%1 out of %2 stars', $starsFilled, $ratingSteps)) ?>">
+                            <?php $i = 0; ?>
+                            <?php while ($i < $starsFilled): ?>
+                                <?= $heroiconsSolid->starHtml('text-yellow-400', 24, 24, ["aria-hidden" => "true"]); ?>
+                                <?php $i++; ?>
+                            <?php endwhile; ?>
+                            <?php $i = 0; ?>
+                            <?php while ($i < $starsEmpty): ?>
+                                <?= $heroiconsSolid->starHtml('text-gray-400', 24, 24, ["aria-hidden" => "true"]); ?>
+                                <?php $i++; ?>
+                            <?php endwhile; ?>
+                        </div>
+                    </div>
+                    <div class="bar w-full h-3 bg-gray-200 block mx-2">
+                        <div class="progress bg-gray-300 h-3" style="width: <?= ($ratingCount / $reviewsCount) * 100 ?>%">
+                        </div>
+                    </div>
+                    <div class="review-count w-20 text-center text-gray-900">
+                        <span class="label">(<?= $block->escapeHtml($ratingCount) ?>)</span>
+                    </div>
+                </div>
+            <?php endfor; ?>
+        </div>
+    </div>
+</div>

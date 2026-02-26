@@ -1,0 +1,292 @@
+<?php
+declare(strict_types=1);
+
+/** @var \Mirasvit\Review\Block\Product\Review\Gallery $block */
+
+$identifier = $block->getIdentifier();
+$identifier = str_replace('gallery-', '', $identifier);
+$identifier = str_replace('-', '_', $identifier);
+?>
+
+<?php if ($images = $block->getImages()): ?>
+    <?php if ($title = $block->getTitle()): ?>
+        <div
+            class="review-widget-title mx-auto flex pt-6 pb-3 mb-6 justify-start items-center flex-wrap border-b-2 border-gray-300">
+            <span class="title text-gray-900 text-2xl title-font font-base text-center md:text-left relative mr-1"
+                role="heading">
+                <?= $block->escapeHtml($block->getTitle()) ?>
+            </span>
+        </div>
+    <?php endif; ?>
+    <div class="review-gallery-wrapper overflow-hidden relative mt-3"
+        data-review-gallery-id="<?= $block->escapeHtmlAttr($identifier) ?>"
+        x-data="createReviewGallery<?= $block->escapeHtmlAttr($identifier) ?>" x-init="initGallery">
+        <div class="swiper-wrapper loading image-hidden">
+            <div class="loading-mask" data-role="loader" x-show="galleryLoading">
+                <div class="loader">
+                    <img alt="Loading..." src="<?= $block->escapeUrl($block->getViewFileUrl('images/loader-2.gif')); ?>">
+                </div>
+            </div>
+            <?php foreach ($images as $image): ?>
+                <div class="swiper-slide" data-review-id="<?= $block->escapeHtmlAttr($image->getReviewId()) ?>">
+                    <img src="<?= $block->escapeUrl($block->getImageUrl($image)) ?>"
+                        class="rounded object-cover w-full h-full cursor-pointer hover:opacity-50"
+                        @click="openGallaryWidget($event)" />
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <div class="nav-button absolute bg-white opacity-50 hover:opacity-80 cursor-pointer swiper-button-next"
+            style="top: 0; bottom: 0; height: 100%; width: 2rem; margin: 0; right: 0"></div>
+        <div class="nav-button absolute bg-white opacity-50 hover:opacity-80 cursor-pointer swiper-button-prev"
+            style="top: 0; bottom: 0; height: 100%; width: 2rem; margin: 0; left: 0"></div>
+    </div>
+
+    <script type="module">
+        import Swiper from "https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.esm.browser.min.js";
+
+        if (!window.Swiper) {
+            window.Swiper = Swiper
+        }
+    </script>
+
+    <style>
+        .review-gallery-wrapper .swiper-wrapper.loading {
+            height: 140px;
+        }
+
+        .review-gallery-wrapper .swiper-wrapper.loading .swiper-slide {
+            height: 140px;
+        }
+
+        .review-gallery-wrapper .swiper-wrapper.image-hidden .swiper-slide img {
+            opacity: 0;
+        }
+
+        .review-gallery-wrapper .swiper-button-disabled {
+            pointer-events: auto !important;
+        }
+    </style>
+
+    <script>
+        function createReviewGallery<?= $block->escapeHtmlAttr($identifier) ?>() {
+            return {
+                requestUrl: '<?= $block->getReviewRequestUrl() ?>',
+                loaderUrl: '<?= $block->getViewFileUrl('images/loader-2.gif') ?>',
+                selector: '[data-review-gallery-id="<?= $identifier ?>"]',
+                widgetTemplate: `<?= $block->getWidgetTemplate() ?>`,
+                galleryLoading: true,
+
+                displayReviewId: null,
+                loadedReviews: {},
+
+                initGallery: function () {
+                    const sliderWraper = this.getSliderWrapper();
+
+                    const swiper = new Swiper(
+                        this.selector,
+                        {
+                            navigation: {
+                                nextEl: ".swiper-button-next",
+                                prevEl: ".swiper-button-prev",
+                            },
+                            breakpoints: {
+                                "@0.00": {
+                                    slidesPerView: 4,
+                                    spaceBetween: 10,
+                                },
+                                "@0.75": {
+                                    slidesPerView: 8,
+                                    spaceBetween: 10,
+                                },
+                                "@1.00": {
+                                    slidesPerView: 10,
+                                    spaceBetween: 10,
+                                },
+                                "@1.50": {
+                                    slidesPerView: 14,
+                                    spaceBetween: 10,
+                                },
+                            },
+                            on: {
+                                resize: function () {
+                                    document.querySelectorAll(this.selector + ' .swiper-slide').forEach(function (slide) {
+                                        slide.style.height = slide.style.width;
+                                    });
+
+                                    this.galleryLoading = false;
+                                    if (sliderWraper) {
+                                        sliderWraper.classList.remove('image-hidden'); // do not display images until they resized properly
+                                    }
+                                }.bind(this),
+                                afterInit: function () {
+                                    if (sliderWraper) {
+                                        this.getSliderWrapper().classList.remove('loading');
+                                    }
+                                }.bind(this)
+                            }
+                        }
+                    );
+                },
+
+                openGallaryWidget: function (e) {
+                    document.body.classList.add('review-gallery-active');
+
+                    const initialSlide = e.target.closest('.swiper-slide');
+                    const initialSlideId = initialSlide.getAttribute('aria-label').split('/')[0].trim();
+
+                    this.displayReviewId = initialSlide.getAttribute('data-review-id');
+
+                    let idsToRequest = [this.displayReviewId];
+
+                    this.requestReviewContent(this.getIdsToRequest(initialSlide, idsToRequest));
+
+                    this.createGalleryWidget();
+
+                    const slides = this.$el.closest('.swiper-wrapper').querySelectorAll('.swiper-slide');
+
+                    slides.forEach((slide) => {
+                        const newSlide = this.prepareWidgetSlide(slide)
+
+                        this.getGalleryWidgetContainer().querySelector('.swiper-wrapper').appendChild(newSlide)
+                    })
+
+                    this.renderReviewContent(this.displayReviewId)
+
+                    const widgetGallery = new Swiper(
+                        '#review-gallery-widget',
+                        {
+                            navigation: {
+                                nextEl: ".swiper-button-next",
+                                prevEl: ".swiper-button-prev",
+                            },
+                            keyboard: {
+                                enabled: true,
+                            },
+                            initialSlide: initialSlideId ? initialSlideId - 1 : 0,
+                            on: {
+                                slideChangeTransitionStart: this.updateReviewContent.bind(this),
+                                keyPress: function (e, keyCode) {
+                                    if (keyCode == 27) {
+                                        document.body.classList.remove('review-gallery-active');
+                                        this.removeGalleryWidget();
+                                    }
+                                }.bind(this)
+                            }
+                        }
+                    );
+                },
+
+                prepareWidgetSlide: function (slide) {
+                    const newSlide = slide.cloneNode(true);
+                    newSlide.className = '';
+                    newSlide.classList.add('swiper-slide');
+                    newSlide.setAttribute('style', '');
+
+                    const sliderImage = newSlide.querySelector('img');
+                    sliderImage.classList.remove('hover:opacity-50');
+                    sliderImage.classList.remove('object-cover');
+                    sliderImage.classList.add('rounded');
+                    sliderImage.removeAttribute('@click');
+
+                    return newSlide;
+                },
+
+                requestReviewContent: function (reviewIds) {
+                    let idsToRequest = reviewIds.filter(function (id) {
+                        return !this.loadedReviews[id];
+                    }.bind(this));
+
+                    if (idsToRequest.length) {
+                        fetch(
+                            this.requestUrl + '?review_ids=' + idsToRequest.join(',')
+                        ).then(response => {
+                            return response.json()
+                        }).then(result => {
+                            for (let idx in result.data) {
+                                this.loadedReviews[idx] = result.data[idx];
+                            }
+                        }).catch(e => {
+                            console.error(e)
+                        })
+                    }
+                },
+
+                getIdsToRequest: function (slide, ids) {
+                    if (slide.previousElementSibling && slide.previousElementSibling.classList.contains('swiper-slide')) {
+                        ids.push(slide.previousElementSibling.getAttribute('data-review-id'));
+                    }
+
+                    if (slide.nextElementSibling && slide.nextElementSibling.classList.contains('swiper-slide')) {
+                        ids.push(slide.nextElementSibling.getAttribute('data-review-id'));
+                    }
+
+                    return [...new Set(ids)];
+                },
+
+                createGalleryWidget: function () {
+                    this.removeGalleryWidget();
+
+                    const galleryWidget = document.createElement('div');
+                    galleryWidget.className = 'review-gallery-widget-wrapper fixed top-0 left-0 flex justify-center items-center';
+
+                    galleryWidget.innerHTML = this.widgetTemplate;
+
+                    document.body.appendChild(galleryWidget);
+
+                    galleryWidget.querySelector('.close-button').addEventListener('click', () => {
+                        document.body.classList.remove('review-gallery-active');
+                        this.removeGalleryWidget();
+                    })
+                },
+
+                removeGalleryWidget: function () {
+                    const galleryWidget = this.getGalleryWidgetContainer();
+
+                    if (galleryWidget) {
+                        galleryWidget.parentElement.removeChild(galleryWidget)
+                    }
+                },
+
+                renderReviewContent: function (reviewId) {
+                    if (!this.loadedReviews[reviewId]) {
+                        setTimeout(function () {
+                            this.renderReviewContent(reviewId);
+                        }.bind(this), 200)
+                    } else {
+                        if (this.getGalleryWidgetContainer().querySelector('.title')) {
+                            this.getGalleryWidgetContainer().querySelector('.title').innerText = this.loadedReviews[reviewId].title;
+                        }
+
+                        const reviewGalleryContent = this.getGalleryWidgetContainer().querySelector('.review-gallery-content');
+
+                        reviewGalleryContent.innerHTML = this.loadedReviews[reviewId].content;
+                        reviewGalleryContent.setAttribute('x-data', '{isLoading: false}');
+                    }
+                },
+
+                updateReviewContent: function () {
+                    const activeSlide = this.getGalleryWidgetContainer().querySelector('.swiper-slide-active');
+                    const activeSlideReviewId = activeSlide.getAttribute('data-review-id');
+
+                    this.requestReviewContent(this.getIdsToRequest(activeSlide, []));
+
+                    if (activeSlideReviewId == this.displayReviewId) {
+                        return;
+                    }
+
+                    this.displayReviewId = activeSlideReviewId;
+
+                    this.renderReviewContent(this.displayReviewId);
+                },
+
+                getGalleryWidgetContainer: function () {
+                    return document.querySelector('.review-gallery-widget-wrapper');
+                },
+
+                getSliderWrapper: function () {
+                    return document.querySelector(this.selector + ' .swiper-wrapper');
+                }
+            }
+        }
+    </script>
+<?php endif; ?>

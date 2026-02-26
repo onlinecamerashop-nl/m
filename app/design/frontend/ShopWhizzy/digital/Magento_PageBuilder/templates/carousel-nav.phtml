@@ -1,0 +1,30 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+
+<button aria-label="<?= $escaper->escapeHtml(__('Previous')) ?>"
+    class="glider-prev flex items-center justify-center bg-white shadow-whizzy-header w-11 h-11 -mt-16 -ml-2 lg:-ml-4 text-black rounded outline-none focus:outline-none absolute top-1/2 left-0 -translate-y-1/2 z-10 opacity-100 cursor-pointer">
+    <?= $themeIcons->renderHtml('arrow-left', '', 20, 20, ["aria-hidden" => "true"]) ?>
+</button>
+<button aria-label="<?= $escaper->escapeHtml(__('Next')) ?>"
+    class="glider-next flex items-center justify-center bg-white shadow-whizzy-header w-11 h-11 -mt-16 -mr-2 lg:-mr-4 text-black rounded outline-none focus:outline-none absolute top-1/2 right-0 -translate-y-1/2 z-10 opacity-100 cursor-pointe">
+    <?= $themeIcons->renderHtml('arrow-right', '', 20, 20, ["aria-hidden" => "true"]) ?>
+</button>
+<div class="carousel-nav w-full flex justify-center">
+    <div role="tablist" class="glider-dots select-none flex flex-row mx-1 justify-center p-0 focus:outline-none"></div>
+</div>

@@ -1,0 +1,22 @@
+{
+    "name": "mgtwizards/module-shipping-bar",
+    "description": "Free shipping bar",
+    "require": {
+        "mgtwizards/core": "^1.0.1",
+        "magento/module-sales-rule": "*",
+        "magento/module-offline-shipping": "*"
+    },
+    "type": "magento2-module",
+    "version": "1.1.18",
+    "license": [
+        "Commercial"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MgtWizards\\ShippingBar\\": ""
+        }
+    }
+}

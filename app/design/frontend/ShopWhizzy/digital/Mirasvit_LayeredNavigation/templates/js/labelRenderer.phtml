@@ -1,0 +1,82 @@
+<script>
+    function initLabelRenderer() {
+        return {
+            config: getMstNavConfig(),
+
+            handleClick(e) {
+                 if (e.target.tagName !== 'INPUT') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                 }
+
+                let $item = e.target.closest('[data-element = filter]');
+
+                const link = $item.tagName === 'A' ? $item : $item.querySelector('a');
+
+                if (link.classList.contains('disabled')) {
+                    return;
+                }
+
+                if ($item.tagName !== 'A') {
+                    if (e.target.tagName !== 'INPUT') {
+                        this.toggleCheckbox($item);
+                    }
+                }
+
+                this.toggleSwatch($item);
+                this.showHighLight($item);
+
+                const url = $item.tagName === 'A'
+                    ? $item.href
+                    : $item.querySelector('a').href;
+
+                if (this.config.isCategoryFilterModeLink() && $item.closest('.mst-nav__category')) {
+                    window.location.href = url
+                    return;
+                }
+
+                initApplier().apply(url, $item);
+            },
+
+            showHighLight: function ($el) {
+                if ($el.classList.contains('_checked')) {
+                    $el.classList.add("_highlight");
+                } else {
+                    $el.classList.remove("_highlight");
+                }
+            },
+
+            toggleCheckbox: function ($el) {
+                const $checkbox = $el.querySelector('input[type=checkbox]');
+
+                if (!$checkbox) {
+                    return
+                }
+
+                if ($checkbox.disabled) {
+                    return true;
+                }
+
+                $checkbox.checked = !$checkbox.checked;
+            },
+
+            toggleSwatch: function ($el) {
+                if ($el.classList.contains('_checked')) {
+                    $el.classList.remove('_checked');
+
+                    if ($el.classList.contains('swatch-option-link-layered')) {
+                        $el.classList.remove('ring');
+                        $el.classList.remove('ring-primary');
+                    }
+                } else {
+                    $el.classList.add('_checked');
+
+                    if ($el.classList.contains('swatch-option-link-layered')) {
+                        $el.classList.add('ring');
+                        $el.classList.add('ring-primary');
+                    }
+                }
+            }
+        }
+    }
+</script>

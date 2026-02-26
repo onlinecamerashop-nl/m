@@ -1,0 +1,44 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Custom Stock Status Hyva compatibility
+ */
+?>
+<?php
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+
+/** @var \Magento\Framework\View\Element\Template $block */
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var Hyva\Theme\ViewModel\HeroiconsSolid $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+$uniqueId = uniqid();
+?>
+<div class="inline-flex" x-data="{showTooltip:false}">
+    <span class="cursor-pointer" @mouseover.prevent.stop="showTooltip = true" @focus.prevent.stop="showTooltip = true"
+        @blur.prevent.stop="showTooltip = false" @mouseleave.prevent.stop="showTooltip = false"
+        aria-describedby="statusTooltip_<?= $escaper->escapeHtmlAttr($uniqueId) ?>"
+        data-deque-tooltip="<?= $escaper->escapeHtml($block->getData('tooltip_text')) ?>" tabindex="0">
+        <?= $heroicons->questionMarkCircleHtml('w-5 h-5') ?>
+    </span>
+    <div class="relative" role="tooltip" x-cloak x-show="showTooltip"
+        id="statusTooltip_<?= $escaper->escapeHtmlAttr($uniqueId) ?>">
+        <div class="shadow-lg">
+            <div class="absolute top-0 left-0 z-10 w-64 -mt-6 text-sm leading-tight text-black transform
+                    -translate-x-full md:-translate-x-1/3 -translate-y-full bg-white rounded-lg shadow-xl p-4">
+                <span class="subtitle text-sm">
+                    <?= $escaper->escapeHtml($block->getData('tooltip_text')) ?>
+                </span>
+            </div>
+            <svg class="absolute z-10 w-8 h-8 text-white transform -translate-x-full
+                    -translate-y-8 fill-current stroke-current" width="12" height="12">
+                <rect x="12" y="-12" width="12" height="12" transform="rotate(45)" class="shadow-xl" />
+            </svg>
+        </div>
+    </div>
+</div>

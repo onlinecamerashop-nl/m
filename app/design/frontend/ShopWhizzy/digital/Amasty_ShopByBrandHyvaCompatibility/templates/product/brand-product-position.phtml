@@ -1,0 +1,55 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Shop By Brand Compatibility with Hyva for Magento 2
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+
+// phpcs:disable Generic.Files.LineLength.TooLong
+?>
+<script>
+    (()=> {
+        'use strict';
+        const amBrandPosition = {
+            selectors: {
+                brands: '#maincontent > .container .amshopby-option-link',
+                productInfoTitleP: '.product-info-main p.title-font'
+            },
+
+            amBrandPositionInit() {
+                const brands = document.querySelectorAll(this.selectors.brands);
+                let target;
+
+                if (!brands.length) {
+                     return;
+                }
+
+                target = document.querySelector(this.selectors.productInfoTitleP);
+
+                for (let brand of brands) {
+                    brand.classList.remove('flex');
+                    brand.classList.add('inline-flex');
+                    this.moveElement(brand, target);
+                }
+            },
+
+            moveElement(element, target) {
+                const fragment = document.createDocumentFragment();
+                fragment.appendChild(element);
+                target.append(fragment);
+                element.classList.remove('hidden');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            amBrandPosition.amBrandPositionInit();
+        })
+    })()
+</script>

@@ -1,0 +1,304 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\ProductAttributes;
+use Hyva\Theme\ViewModel\ProductCompare;
+use Hyva\Theme\ViewModel\ProductPage;
+use Hyva\Theme\ViewModel\Wishlist;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var ProductPage $productViewModel */
+$productViewModel = $viewModels->require(ProductPage::class);
+/** @var ProductAttributes $attributesViewModel */
+$attributesViewModel = $viewModels->require(ProductAttributes::class);
+/** @var Product $product */
+$product = $productViewModel->getProduct();
+$productType = $product->getTypeId();
+$productName = $product->getName();
+$productId = $product->getId();
+$productShortDescription = $product->getShortDescription();
+$hideRatingSummary = $block->getData('hide_rating_summary') ?: false;
+?>
+<div class="flex flex-col gap-y-1 w-full">
+    <?php
+    $ratingClassFull = "";
+    $ratingClassEmpty = "";
+    $ratingClassPercent = "";
+
+    $average = floatval($product->getYotpoAverageScore());
+    if ($average == 5)
+        $average = 4.999;
+    if ($average > 0)
+    {
+        $whole = floor($average);   // 4
+        $fraction = $average - $whole; // .2
+        $averagefloat = abs($average); //4.2
+        $percent = $fraction * 100;
+
+        for ($i = 1; $i < 5; $i++)
+        {
+            if ($i <= $averagefloat)
+            {
+                // full gold star
+                $ratingClassFull .= '
+<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" width="15" height="15">
+<defs>
+<linearGradient aria-hidden="true">
+<stop offset="100%" stop-color="#FFD200"></stop>
+<stop stop-opacity="1" offset="100%" stop-color="#FFFFFF"></stop>
+</linearGradient>
+</defs>
+<path aria-hidden="true" style="pointer-events: none;" d="M9 14.118L14.562 17.475L13.086 11.148L18 6.891L11.529 6.342L9 0.375L6.471 6.342L0 6.891L4.914 11.148L3.438 17.475L9 14.118Z" stroke="#FFD200" fill="#FFD200"></path>
+</svg>';
+            }
+            else
+            {
+                // empty grey star
+                $ratingClassEmpty .= '
+<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" width="15" height="15">
+<defs>
+<linearGradient aria-hidden="true">
+<stop offset="100%" stop-color="#FFD200"></stop>
+<stop stop-opacity="1" offset="100%" stop-color="#FFFFFF"></stop>
+</linearGradient>
+</defs>
+<path aria-hidden="true" style="pointer-events: none;" d="M9 14.118L14.562 17.475L13.086 11.148L18 6.891L11.529 6.342L9 0.375L6.471 6.342L0 6.891L4.914 11.148L3.438 17.475L9 14.118Z" stroke="#FFD200" fill="#FFFFFF"></path>
+</svg>';
+            }
+            // fill with the percentage of the fractions ie. 3.25 would fill 25% of the last star
+            if ($averagefloat > 0)
+            {
+                $ratingClassPercent = '
+<svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" width="15" height="15">
+<defs>
+<linearGradient x1="0" x2="100%" y1="0" y2="0" aria-hidden="true" id="yotpo_stars_gradient_' . $product->getId() . '_' . $i . '">
+<stop offset="0" stop-color="#FFD200"></stop>
+<stop offset="' . $percent . '%" stop-color="#FFD200"></stop>
+<stop offset="' . $percent . '%" stop-color="#ffffff"></stop>
+</linearGradient>
+</defs>
+<path aria-hidden="true" style="pointer-events: none;" d="M9 14.118L14.562 17.475L13.086 11.148L18 6.891L11.529 6.342L9 0.375L6.471 6.342L0 6.891L4.914 11.148L3.438 17.475L9 14.118Z" stroke="#FFD200" fill="url(\'#yotpo_stars_gradient_' . $product->getId() . '_' . $i . '\')"></path>
+</svg>';
+            }
+        }
+    }
+    ?>
+
+    <div class="flex flex-col gap-2 mb-4">
+        <div>
+            <?php if (!$hideRatingSummary): ?>
+                <?php if ($ratingClassFull != ''): ?>
+                    <div class="flex flex-col">
+                        <div class="flex gap-4">
+                            <div class="flex gap-1">
+                                <?= $ratingClassFull . $ratingClassPercent . $ratingClassEmpty ?>
+                            </div>
+                            <div class="font-medium text-sm">
+                                <?= round(floatval($product->getYotpoAverageScore()), 1) ?>
+                            </div>
+                            <div
+                                class="relative font-normal text-whizzy-graylighter text-sm before:content-[''] before:block before:h-5 before:w-0.5 before:bg-gray-200 before:absolute before:-left-2 before:top-1/2 before:-translate-y-1/2">
+                                <?= __('%1 reviews', $product->getYotpoTotalReviews()) ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+        </div>
+        <h1 class="font-bold text-3xl lg:text-4xl">
+            <?= $escaper->escapeHtmlAttr($productName) ?>
+        </h1>
+    </div>
+
+    <div class="flex flex-row justify-between items-center text-base lg:text-xl text-whizzy-body lg:mt-2 mb-4">
+        <div role="group" aria-label="<?= $escaper->escapeHtmlAttr('Price') ?>">
+            <?php if ($productType === 'grouped'): ?>
+                <?php echo $this->getProductPrice($product); ?>
+            <?php elseif ($productType === 'simple'): ?>
+                <?= $block->getChildHtml("product.info.price") ?>
+            <?php endif; ?>
+        </div>
+        <div class="flex flex-col gap-2 text-sm font-regular text-whizzy-body">
+            <?= $block->getChildHtml("product.info.stockstatus") ?>
+            <?= $block->getChildHtml("alert.urls") ?>
+            <div class="w-full">
+                <dl id="product-details">
+                    <?php foreach ($block->getAttributes() as $attributeConfig):
+                        $attribute = $attributesViewModel->getAttributeFromLayoutConfig($attributeConfig); ?>
+                        <?php if ($value = $attribute['value'] ?? null): ?>
+                            <?php if ($attribute['label'] === 'Color'): ?>
+                            <?php else: ?>
+                                <div class="flex attribute-<?=/* @noEscape */ $attribute['code'] ?: "" ?>">
+                                    <div class="w-full inline-flex items-center">
+                                        <dt class="text-left text-whizzy-body product-detail-label">
+                                            <?= $escaper->escapeHtml($attribute['label']) ?>
+                                        </dt>
+                                        <dd class="hyphens-none break-normal ml-2 text-left text-whizzy-body product-detail-value">
+                                            <?= $escaper->escapeHtml($value) ?>
+                                        </dd>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endif ?>
+                    <?php endforeach; ?>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="tex-whizzy-body mb-4 leading-6 text-sm">
+        <?= __($productShortDescription) ?>
+    </div>
+
+    <?= $block->getChildHtml('product.info.form') ?>
+
+    <?php if ($productType === 'grouped'): ?>
+    <?php elseif ($productType === 'simple'): ?>
+        <?php if ($tierPriceBlock = $block->getChildHtml("product.price.tier")): ?>
+            <div class="tier-price-container">
+                <?= /** @noEscape */ $tierPriceBlock ?>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <div class="flex flex-col gap-y-3">
+        <?php if ($product->isSaleable()): ?>
+            <?= $block->getChildHtml("product.info.quantity") ?>
+            <div class="flex flex-row gap-3">
+                <?= $block->getChildHtml("product.info.addtocart") ?>
+                <?= $block->getChildHtml('product.info.addtowishlist'); ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <?= $this->getLayout()->createBlock("Nublue\CountdownTimer\Block\Timer")->setFaqsId("product-faqs-$productId")->setTemplate("Nublue_CountdownTimer::timer.phtml")->toHtml() ?>
+
+    <div class="w-full border-b border-whizzy-separator mb-8">
+        <?= $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate("Magento_Catalog::product/view/usp-product.phtml")->toHtml() ?>
+    </div>
+
+    <div class="bg-whizzy-bluesmooth rounded-lg p-6 mb-8">
+        <?php if ($product->getData('ingredients')): ?>
+            <div class="mb-6 pb-6 border-b border-whizzy-blue">
+                <div class="text-sm text-whizzy-blue uppercase font-bold mb-4">
+                    <?= __('Ingredients') ?>
+                </div>
+                <div class="text-sm text-whizzy-blue">
+                    <?= $product->getData('ingredients') ?>
+                </div>
+            </div>
+        <?php endif ?>
+
+        <div class="text-sm text-whizzy-blue uppercase font-bold mb-4">
+            <?= __('AuthenticKratom® Certifications') ?>
+        </div>
+        <div class="flex gap-6">
+            <div class="flex gap-3 flex-col items-center justify-center">
+                <img class="w-16" src="<?= $block->getBaseUrl() . 'media/wysiwyg/aka-approved.png' ?>"
+                    alt="Aka Approved" loading="lazy" />
+                <img class="w-16" src="<?= $block->getBaseUrl() . 'media/wysiwyg/aka-gmp.png' ?>" alt="Aka GMP Approved"
+                    loading="lazy" />
+            </div>
+            <div class="text-sm text-whizzy-blue">
+                <p class="italic">
+                    <?= __('Our Kratom products are consistently mixed and thoroughly tested to align with the latest AHPA guidelines. When you buy from AuthenticKratom, you can be confident that you will never have to worry about the quality or contamination of our products. As a vendor approved by the American Kratom Association and the first to earn this certification, our customers can trust they are purchasing Kratom products that meet all compliance standards.') ?>
+                </p>
+            </div>
+        </div>
+
+        <div class="flex gap-4 flex-col mt-6 pt-6 border-t border-whizzy-blue">
+            <div class="uppercase font-bold text-sm text-whizzy-blue"><?= __('Lab Test Results') ?></div>
+
+            <div class="flex gap-0.5 flex-col text-sm">
+                <?php if ($product->getData('labtest_lot')): ?>
+                    <div class="flex gap-2">
+                        <span class="font-medium"><?= __('Lot #:') ?></span>
+                        <span class="text-whizzy-graylighter"><?= $product->getData('labtest_lot') ?></span>
+                    </div>
+                <?php endif ?>
+
+                <?php if ($product->getData('labtest_mitragynine')): ?>
+                    <div class="flex gap-2">
+                        <span class="font-medium"><?= __('Mitragynine:') ?></span>
+                        <span class="text-whizzy-graylighter"><?= $product->getData('labtest_mitragynine') ?></span>
+                    </div>
+                <?php endif ?>
+
+                <?php if ($product->getData('labtest_hydro')): ?>
+                    <div class="flex gap-2">
+                        <span class="font-medium"><?= __('7-Hydroximitragynine:') ?></span>
+                        <span class="text-whizzy-graylighter"><?= $product->getData('labtest_hydro') ?></span>
+                    </div>
+                <?php endif ?>
+
+                <?php if ($product->getData('labtest_salmonella')): ?>
+                    <div class="flex gap-2">
+                        <span class="font-medium"><?= __('Salmonella:') ?></span>
+                        <span class="text-whizzy-graylighter"><?= $product->getAttributeText('labtest_salmonella') ?></span>
+                    </div>
+                <?php endif ?>
+
+                <?php if ($product->getData('labtest_ecoli')): ?>
+                    <div class="flex gap-2">
+                        <span class="font-medium"><?= __('Ecoli:') ?></span>
+                        <span class="text-whizzy-graylighter"><?= $product->getAttributeText('labtest_ecoli') ?></span>
+                    </div>
+                <?php endif ?>
+            </div>
+
+            <?= $this->getLayout()->createBlock("Meetanshi\ProductAttachments\Block\Catalog\Product\Attachments")->setTemplate("Meetanshi_ProductAttachments::attachments.phtml")->toHtml() ?>
+        </div>
+    </div>
+
+    <div class="mb-8">
+        <?= $this->getLayout()->createBlock("MgtWizards\Faqs\Block\Faqs")->setFaqsId("product-faqs-$productId")->setTemplate("MgtWizards_Faqs::faqs-products.phtml")->toHtml() ?>
+        <?= $this->getLayout()->createBlock("MgtWizards\Faqs\Block\Faqs")->setFaqsId('product-faqs')->setTemplate("MgtWizards_Faqs::faqs-products.phtml")->toHtml() ?>
+    </div>
+
+    <?php if ($product->getData('usage')): ?>
+        <div class="relative z-10 rounded-lg bg-whizzy-greenshadow p-6 block lg:hidden">
+            <div class="text-sm uppercase font-bold mb-4">
+                <?= __('How to use kratom?') ?>
+            </div>
+            <div class="text-sm [&_a]:text-whizzy-greendarker [&_a:hover]:text-whizzy-green mb-4">
+                <p class="mb-1">
+                    <?= __('The taste of kratom is very bitter. To mask the taste of kratom, people use different methods. Some make capsules, some make tea, some mix <a href="https://www.authentickratom.com/education/can-we-mix-kratom-with-coffee" target="_black">kratom with their morning coffee or tea</a>, and some add it to their favorite juice; grape juice, orange juice, mango juice.') ?>
+                </p>
+                <p><?= __('Mixing with a morning cup of coffee seems to be one of the best methods. However, if you are not a coffee drinker, feel free to use other methods.') ?>
+                </p>
+            </div>
+            <div
+                class="text-sm [&_table]:w-full [&_table]:table-fixed	[&_thead]:font-medium [&_td]:py-1.5 [&_tbody_td]:border-t bg-white rounded-lg shadow-whizzy-header px-4 py-2">
+                <?= $product->getData('usage') ?>
+            </div>
+        </div>
+    <?php endif ?>
+
+    <?php if ($product->isSaleable(false)): ?>
+        <div class="flex mt-4 justify-end">
+            <?= $block->getChildHtml('addtocart.shortcut.buttons') ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="flex my-4 justify-end">
+        <?php /* $block->getChildHtml('product.info.addtocompare'); */ ?>
+        <?php /* $block->getChildHtml('product.info.emailtofriend'); */ ?>
+        <?php /* $block->getChildHtml('product.info.additional.actions'); */ ?>
+    </div>
+
+    <?= $block->getChildHtml("product.info.additional") ?>
+</div>

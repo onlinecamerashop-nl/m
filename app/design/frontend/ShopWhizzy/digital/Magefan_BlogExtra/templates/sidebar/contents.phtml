@@ -1,0 +1,59 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ */
+?>
+<?php
+/**
+ * Blog sidebar post contents
+ *
+ * @var $block \Magefan\BlogExtra\Block\Sidebar\Contents
+ */
+?>
+
+<style>
+    .block-contents .block-content ol {list-style: decimal;padding-left: 40px;}
+    .block-contents .block-content ol li {margin-bottom: 10px;}
+</style>
+
+<div class="block-<?= $block->escapeHtml(str_replace('_', '-', $block->getWidgetKey() ?: '')) ?> mb-2">
+    <div class="text-xl lg:text-2xl font-bold my-4">
+        <?= $block->escapeHtml(__($block->getBlockTitle() ?: 'Post Contents')) ?>
+    </div>
+    <div class="block-content">
+        <?php
+        $level = 1;
+        $first = true;
+        foreach ($this->getItems() as $item) {
+        $newLevel = $item->getLevel();
+
+        if ($level == $newLevel && !$first) {
+            echo '</li>';
+        }
+
+        if ($level < $newLevel) {
+            echo '<ol>';
+        }
+
+        if ($level > $newLevel) {
+            for ($i = $level; $i > $newLevel; $i--) {
+                echo '</ol></li>';
+            }
+        }
+
+        ?>
+        <li class="font-semibold leading-wide text-sm lg:text-base text-whizzy-body hover:text-whizzy-graylighter transition-all duration-200">
+            <a href="<?= $block->escapeUrl($item->getUrl()) ?>">
+                <?= $block->escapeHtml($item->getTitle()) ?>
+            </a>
+            <?php
+            $level = $newLevel;
+            $first = false;
+            }
+            ?>
+
+    </div>
+    <div class="mt-4 lg:mt-6 h-px bg-whizzy-separator"></div>
+</div>
+

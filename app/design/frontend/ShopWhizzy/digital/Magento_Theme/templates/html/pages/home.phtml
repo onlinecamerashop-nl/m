@@ -1,0 +1,558 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+$url = $storeManager->getStore()->getBaseUrl();
+
+/** @var ViewModelRegistry $viewModels */
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+?>
+<section class="container pb-12 lg:pb-24">
+    <div class="mb-12">
+        <h1 class="text-3xl lg:text-5xl font-semibold tracking-tight">
+            <?= __('Discover Innovative Electronics in Action') ?>
+        </h1>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-6 gap-6">
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg object-fit overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy"
+                        src="<?= $this->getBaseUrl() . 'media/home/01-promo-projectors.webp' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Projectors')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Projectors')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium">
+                        <?= $escaper->escapeHtmlAttr(__("Display content on a larger screen.")) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Projectors')) ?>"
+                href="<?= $this->getBaseUrl() . 'projectors' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Projectors')) ?></span>
+            </a>
+        </div>
+
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg object-fit overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy"
+                        src="<?= $this->getBaseUrl() . 'media/home/02-promo-speakers.webp' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Speakers')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Speakers')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium">
+                        <?= $escaper->escapeHtmlAttr(__("High-quality audio output for immersive sound.")) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Speakers')) ?>"
+                href="<?= $this->getBaseUrl() . 'speakers' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Speakers')) ?></span>
+            </a>
+        </div>
+
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg object-fit overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/03-promo-banks.webp' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Power Banks')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Power Banks')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium">
+                        <?= $escaper->escapeHtmlAttr(__("Portable battery for on-the-go charging.")) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Power Banks')) ?>"
+                href="<?= $this->getBaseUrl() . 'power-banks' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Power Banks')) ?></span>
+            </a>
+        </div>
+
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg object-fit overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/04-promo-docks.webp' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Hubs & Docks')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Hubs & Docks')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium">
+                        <?= $escaper->escapeHtmlAttr(__("Expand connectivity options for your devices.")) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Hubs & Docks')) ?>"
+                href="<?= $this->getBaseUrl() . 'hubs-docks' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Hubs & Docks')) ?></span>
+            </a>
+        </div>
+
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg object-fit overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/05-promo-harges.webp' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Chargers')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Chargers')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium">
+                        <?= $escaper->escapeHtmlAttr(__("Rapidly replenish device battery life.")) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Chargers')) ?>"
+                href="<?= $this->getBaseUrl() . 'chargers' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Chargers')) ?></span>
+            </a>
+        </div>
+
+        <div class="relative group">
+            <div class="flex flex-col gap-3">
+                <div class="size-full aspect-square rounded-lg object-fit overflow-hidden">
+                    <img class="transition-all duration-500 group-hover:scale-105 rounded-lg w-full" width="360"
+                        height="360" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/06-promo-ables.webp' ?>"
+                        alt="<?= $escaper->escapeHtmlAttr(__('Cabels & Adapters')) ?>" />
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        <?= $escaper->escapeHtmlAttr(__('Cabels & Adapters')) ?>
+                    </h2>
+                    <p class="text-whizzy-graylighter text-sm mt-1 font-medium">
+                        <?= $escaper->escapeHtmlAttr(__("Convert between different types of connectors.")) ?>
+                    </p>
+                </div>
+            </div>
+            <a class="absolute w-full h-full z-10 top-0 left-0"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Cabels & Adapters')) ?>"
+                href="<?= $this->getBaseUrl() . 'cabels-adapters' ?>">
+                <span class="invisible"><?= $escaper->escapeHtmlAttr(__('Cabels & Adapters')) ?></span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="py-8 lg:py-16">
+    <div class="container">
+        <div class="mb-12">
+            <div class="text-black text-sm font-semibold uppercase mb-3">
+                <?= $escaper->escapeHtmlAttr(__('Bestsellers')) ?>
+            </div>
+            <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight">
+                <?= $escaper->escapeHtmlAttr(__('Discover Top Picks')) ?>
+            </h2>
+            <div class="text-base font-medium mt-3">
+                <?= $escaper->escapeHtmlAttr(__('Top-selling tech essentials, trusted by customers for quality and performance.')) ?>
+            </div>
+        </div>
+        <?= $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('home_products_grid_1')->toHtml(); ?>
+    </div>
+</section>
+
+<section class="container py-12">
+    <div class="mb-12">
+        <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-3">
+            <?= $escaper->escapeHtmlAttr(__('Discover the best')) ?>
+        </div>
+        <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight">
+            <?= $escaper->escapeHtmlAttr(__('Everyday Tech Essentials')) ?>
+        </h2>
+        <div class="text-base font-medium mt-3">
+            <?= $escaper->escapeHtmlAttr(__('Power up with essential electronics.')) ?>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 grid-rows-4 lg:grid-cols-4 lg:grid-rows-2 gap-6">
+        <a class="col-span-2 row-span-2 lg:col-span-2 lg:row-span-2 relative group"
+            href="<?= $this->getBaseUrl() . '#' ?>"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Compact & Reliable Projectors for Every Need')) ?>">
+            <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                alt="<?= $escaper->escapeHtmlAttr(__('Compact & Reliable Projectors for Every Need')) ?>" width="1080"
+                height="1080" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/banner_mid_01.webp' ?>" />
+            <span
+                class="absolute z-10 opacity-50 bg-gradient-to-t from-black to-transparent h-full w-full rounded-lg bottom-0 left-0"></span>
+            <div
+                class="absolute bottom-0 left-0 p-6 lg:p-12 transition-all duration-300 group-hover:-translate-y-8 transform-gpu w-full z-10">
+                <div class="text-lg lg:text-3xl font-semibold tracking-normal text-white">
+                    <?= $escaper->escapeHtmlAttr(__('Compact & Reliable Projectors for Every Need')) ?>
+                </div>
+            </div>
+            <div
+                class="absolute bottom-0 left-6 lg:left-12 transition-all duration-300 font-medium hover:text-black opacity-0 group-hover:opacity-100 group-hover:bottom-8 lg:group-hover:bottom-10 flex items-center gap-1 text-white z-10">
+                <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                <?= $themeIcons->renderHtml('arrow-up-right', 'text-white', 18, 18, ['aria-hidden' => 'true']) ?>
+            </div>
+        </a>
+
+        <a class="col-span-2 row-start-3 lg:col-span-2 lg:col-start-3 lg:row-start-1 relative group"
+            href="<?= $this->getBaseUrl() . '#' ?>"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Portable Charging Solutions for Everyday Use')) ?>">
+            <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                alt="<?= $escaper->escapeHtmlAttr(__('Portable Charging Solutions for Everyday Use')) ?>" width="1080"
+                height="540" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/banner_mid_02.webp' ?>" />
+            <span
+                class="absolute z-10 opacity-50 bg-gradient-to-t from-black to-transparent h-full w-full rounded-lg bottom-0 left-0"></span>
+            <div
+                class="absolute bottom-0 left-0 p-6 lg:p-9 transition-all duration-300 group-hover:-translate-y-8 transform-gpu z-10">
+                <div class="text-lg lg:text-3xl font-semibold tracking-normal text-white">
+                    <?= $escaper->escapeHtmlAttr(__('Portable Charging Solutions for Everyday Use')) ?>
+                </div>
+            </div>
+            <div
+                class="absolute bottom-0 left-6 lg:left-10 transition-all duration-300 font-medium hover:text-black opacity-0 group-hover:opacity-100 group-hover:bottom-8 flex items-center gap-1 text-white z-10">
+                <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                <?= $themeIcons->renderHtml('arrow-up-right', 'text-white', 18, 18, ['aria-hidden' => 'true']) ?>
+            </div>
+        </a>
+
+        <a class="row-start-4 lg:col-start-3 lg:row-start-2 relative group" href="<?= $this->getBaseUrl() . '#' ?>"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Quality Portable Speakers for Music and More')) ?>">
+            <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                alt="<?= $escaper->escapeHtmlAttr(__('Quality Portable Speakers for Music and More')) ?>" width="540"
+                height="540" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/banner_mid_03.webp' ?>" />
+            <span
+                class="absolute z-10 opacity-50 bg-gradient-to-t from-black to-transparent h-full w-full rounded-lg bottom-0 left-0"></span>
+            <div
+                class="absolute bottom-0 left-0 p-6 lg:p-9 transition-all duration-300 group-hover:-translate-y-8 transform-gpu z-10">
+                <div class="text-lg lg:text-2xl font-semibold tracking-normal text-white">
+                    <?= $escaper->escapeHtmlAttr(__('Quality Portable Speakers for Music and More')) ?>
+                </div>
+            </div>
+            <div
+                class="absolute bottom-0 left-6 lg:left-10 transition-all duration-300 font-medium hover:text-black opacity-0 group-hover:opacity-100 group-hover:bottom-8 flex items-center gap-1 text-white z-10">
+                <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                <?= $themeIcons->renderHtml('arrow-up-right', 'text-white', 18, 18, ['aria-hidden' => 'true']) ?>
+            </div>
+        </a>
+
+        <a class="row-start-4 lg:col-start-4 lg:row-start-2 relative group" href="<?= $this->getBaseUrl() . '#' ?>"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Durable Cables and Adapters for Every Device')) ?>">
+            <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                alt="<?= $escaper->escapeHtmlAttr(__('Durable Cables and Adapters for Every Device')) ?>" width="540"
+                height="540" loading="lazy" src="<?= $this->getBaseUrl() . 'media/home/banner_mid_04.webp' ?>" />
+            <span
+                class="absolute z-10 opacity-50 bg-gradient-to-t from-black to-transparent h-full w-full rounded-lg bottom-0 left-0"></span>
+            <div
+                class="absolute bottom-0 left-0 p-6 lg:p-9 transition-all duration-300 group-hover:-translate-y-8 transform-gpu z-10">
+                <div class="text-lg lg:text-2xl font-semibold tracking-normal text-white">
+                    <?= $escaper->escapeHtmlAttr(__('Durable Cables and Adapters for Every Device')) ?>
+                </div>
+            </div>
+            <div
+                class="absolute bottom-0 left-6 lg:left-10 transition-all duration-300 font-medium hover:text-black opacity-0 group-hover:opacity-100 group-hover:bottom-8 flex items-center gap-1 text-white z-10">
+                <?= $escaper->escapeHtmlAttr(__('Shop Now')) ?>
+                <?= $themeIcons->renderHtml('arrow-up-right', 'text-white', 18, 18, ['aria-hidden' => 'true']) ?>
+            </div>
+        </a>
+    </div>
+</section>
+
+<section class="bg-whizzy-artic py-20">
+    <div class="container">
+        <div class="flex flex-wrap gap-6 lg:gap-20 items-center">
+            <div class="w-full lg:w-1/3 flex-auto flex flex-col gap-6">
+                <div class="bg-white rounded-lg w-16 h-16 flex items-center justify-center shadow-whizzy-header mb-3">
+                    <?= $themeIcons->renderHtml('bolt', 'text-primary', 36, 36, ['aria-hidden' => 'true']) ?>
+                </div>
+                <h2 class="text-2xl lg:text-4xl font-semibold tracking-tight text-balance">
+                    <?= $escaper->escapeHtmlAttr(__('Powerful Hubs for Simplified Charging, All at Once')) ?>
+                </h2>
+                <div class="text-base">
+                    <p><?= $escaper->escapeHtmlAttr(__('Keep all your devices powered with a single, efficient charger.')) ?>
+                    </p>
+                </div>
+                <div class="flex">
+                    <a href="<?= $block->getBaseUrl() . '#' ?>" class="btn w-full lg:w-auto"><?= __('Shop Now') ?></a>
+                </div>
+            </div>
+            <div class="w-full lg:w-1/3 flex-auto relative">
+                <img class="block h-full w-full object-cover object-center transition duration-300 ease-in-out hover:opacity-90 rounded-lg"
+                    alt="<?= $escaper->escapeHtmlAttr(__('Powerful Hubs')) ?>" width="1080" height="540"
+                    src="<?= $this->getBaseUrl() . 'media/home/banner_mid_05.webp' ?>" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-8 lg:py-16">
+    <div class="container mb-12">
+        <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-3">
+            <?= $escaper->escapeHtmlAttr(__('Explore')) ?>
+        </div>
+        <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight">
+            <?= __('Our Stores') ?>
+        </h2>
+        <div class="text-base font-medium mt-3">
+            <?= $escaper->escapeHtmlAttr(__("Find the best digital products in our expertly shops!")) ?>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+            <div class="w-full lg:w-2/3 h-full">
+                <iframe title="<?= __('Shops Map') ?>" width="100%"
+                    class="h-[420px] lg:h-[620px] min-h-80 rounded-lg shadow-whizzy-header border" frameborder="0"
+                    loading="lazy" allowfullscreen allow="geolocation" src=""
+                    data-src="//umap.openstreetmap.fr/en/map/atomik-company-map_1116764?scaleControl=false&miniMap=false&scrollWheelZoom=false&zoomControl=true&editMode=disabled&moreControl=null&searchControl=null&tilelayersControl=null&embedControl=null&datalayersControl=null&onLoadPanel=none&captionBar=false&captionMenus=true"></iframe>
+                <script>
+                    function initFrame() {
+                        setTimeout(function () {
+                            var vidDefer = document.getElementsByTagName('iframe');
+                            for (var i = 0; i < vidDefer.length; i++) {
+                                if (vidDefer[i].getAttribute('data-src')) {
+                                    vidDefer[i].setAttribute('src', vidDefer[i].getAttribute('data-src'));
+                                }
+                            }
+                        }, 3000);
+                    }
+                    window.onload = initFrame;
+                </script>
+            </div>
+            <div class="w-full lg:w-1/3">
+                <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-6">
+                    <?= $escaper->escapeHtmlAttr(__('Shop Locations')) ?>
+                </div>
+                <div class="flex flex-col w-full gap-8">
+                    <div class="flex flex-col gap-4 flex-1 w-full">
+                        <div class="flex flex-col gap-2">
+                            <div class="font-semibold text-heading text-lg lg:text-xl flex gap-3">
+                                <?= $themeIcons->renderHtml('store', '', 24, 24) ?>
+                                <span><?= __('Shop Paris') ?></span>
+                                <a title="<?= __('Shop Paris Map') ?>" target="_blank" class="ml-auto"
+                                    href="https://maps.app.goo.gl/kBvTNEmFpVauaaYu8"><?= $themeIcons->renderHtml('maps-global', '', 24, 24) ?></a>
+                            </div>
+                            <div class="text-base">
+                                <p><?= __('Paris shop street') ?></p>
+                                <p><?= __('77777 Paris') ?></p>
+                                <p><?= __('Metro Gambetta') ?></p>
+                                <p><?= __('Tel: ') ?><a title="<?= __('Shop Paris') ?>"
+                                        href="tel:01 02 03 04"><?= __('01 02 03 04') ?></a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4 flex-1 w-full border-t pt-8">
+                        <div class="flex flex-col gap-2">
+                            <div class="font-semibold text-heading text-lg lg:text-xl flex gap-3">
+                                <?= $themeIcons->renderHtml('store', '', 24, 24) ?>
+                                <span><?= __('Shop Cergy') ?></span>
+                                <a title="<?= __('Shop Cergy Map') ?>" target="_blank" class="ml-auto"
+                                    href="https://maps.app.goo.gl/9jLR2tNpJ33vaeXR7"><?= $themeIcons->renderHtml('maps-global', '', 24, 24) ?></a>
+                            </div>
+                            <div class="text-base">
+                                <p><?= __('Cergy shop street') ?></p>
+                                <p><?= __('11111 Cergy') ?></p>
+                                <p><?= __('Acces A15 Sortie 11') ?></p>
+                                <p><?= __('Tel: ') ?><a title="<?= __('Shop Cergy') ?>"
+                                        href="tel:01 02 03 04"><?= __('01 02 03 04') ?></a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4 flex-1 w-full border-t pt-8">
+                        <div class="flex flex-col gap-2">
+                            <div class="font-semibold text-heading text-lg lg:text-xl flex gap-3">
+                                <?= $themeIcons->renderHtml('tree', '', 24, 24) ?>
+                                <span><?= __('Paintball/Airsoft Field') ?></span>
+                                <a title="<?= __('Paintball/Airsoft Field Map') ?>" target="_blank" class="ml-auto"
+                                    href="https://maps.app.goo.gl/AveN8cBX3kh6KTRu6"><?= $themeIcons->renderHtml('maps-global', '', 24, 24) ?></a>
+                            </div>
+                            <div class="text-base">
+                                <p><?= __('Groups, Bachelor Party, and more') ?></p>
+                                <p><?= __('99999 Valmondois') ?></p>
+                                <p><?= __('Tel: ') ?><a title="<?= __('Paintball/Airsoft Field') ?>"
+                                        href="tel:01 02 03 04"><?= __('01 02 03 04') ?></a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="container my-8 lg:my-12 border-t">
+</hr>
+
+<section class="container">
+
+    <div class="mb-12">
+        <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-3">
+            <?= $escaper->escapeHtmlAttr(__('Our partners')) ?>
+        </div>
+    </div>
+
+    <div class="w-full max-w-none mx-auto">
+        <div class="text-center">
+            <div x-data="{}" x-init="$nextTick(() => {
+   let ul = $refs.brandsslider;
+   ul.insertAdjacentHTML('afterend', ul.outerHTML);
+   ul.nextSibling.setAttribute('aria-hidden', 'true');
+   ul.insertAdjacentHTML('afterend', ul.outerHTML);
+   ul.nextSibling.setAttribute('aria-hidden', 'true');
+   function brandssliderrun() {
+       var brandsslider = document.getElementsByClassName('brandsslider'),
+           len = brandsslider !== null ? brandsslider.length : 0,
+           i = 0;
+       for(i; i < len; i++) {
+           brandsslider[i].className += ' animate-infinite-scroll-brands'; 
+       }
+   };
+   brandssliderrun();
+})" class="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_rgba(48,36,34,1.0)_64px,_rgba(48,36,34,1.0)_calc(100%-64px),transparent_100%)] md:[mask-image:_linear-gradient(to_right,transparent_0,_rgba(48,36,34,1.0)_128px,_rgba(48,36,34,1.0)_calc(100%-128px),transparent_100%)]">
+                <ul x-ref="brandsslider"
+                    class="brandsslider flex flex-nowrap items-center justify-start gap-8 lg:gap-12 mr-8 lg:mr-12">
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/home/brand-01.svg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/home/brand-02.svg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/home/brand-03.svg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/home/brand-04.svg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/home/brand-05.svg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/home/brand-06.svg' ?>" alt="brand" />
+                    </li>
+                    <li class="w-24 lg:w-32">
+                        <img loading="lazy" class="max-w-32 max-h-16 mx-auto"
+                            src="<?= $this->getBaseUrl() . 'media/home/brand-07.svg' ?>" alt="brand" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="container mb-8 lg:mb-12 border-0">
+</hr>
+
+<section class="py-8 lg:py-16">
+    <div class="container">
+        <div class="mb-12">
+            <div class="text-black text-sm font-semibold uppercase mb-3">
+                <?= $escaper->escapeHtmlAttr(__('Produts on Sale')) ?>
+            </div>
+            <h2 class="text-3xl lg:text-5xl font-semibold tracking-tight">
+                <?= $escaper->escapeHtmlAttr(__("Trending Now")) ?>
+            </h2>
+            <div class="text-base font-medium mt-3">
+                <?= $escaper->escapeHtmlAttr(__("Most popular accessories, handpicked for style, function, and everyday convenience.")) ?>
+            </div>
+        </div>
+        <?= $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('home_products_grid_2')->toHtml(); ?>
+        <div class="flex justify-center">
+            <a href="<?= $block->getBaseUrl() . 'sale' ?>" class="btn w-full lg:w-auto"><?= __('Shop Now') ?></a>
+        </div>
+    </div>
+</section>
+
+<section class="container py-8 lg:py-16">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <div class="flex-1 flex flex-row lg:flex-col gap-4 lg:gap-6">
+            <div class="w-9">
+                <?= $themeIcons->renderHtml('france', 'text-black', 38, 38, ['aria-hidden' => 'true']) ?>
+            </div>
+            <div class="flex flex-col gap-y-2">
+                <div class="text-xl lg:text-2xl font-semibold tracking-tight">
+                    <?= $escaper->escapeHtmlAttr(__("25 years experience")) ?>
+                </div>
+                <div class="text-xs lg:text-sm text-whizzy-graylighter">
+                    <?= $escaper->escapeHtmlAttr(__("We are all enthusiasts from the start, and we always like to share our passions.")) ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-row lg:flex-col gap-4 lg:gap-6">
+            <div class="w-9">
+                <?= $themeIcons->renderHtml('truck-delivery', 'text-black', 38, 38, ['aria-hidden' => 'true']) ?>
+            </div>
+            <div class="flex flex-col gap-y-2">
+                <div class="text-xl lg:text-2xl font-semibold tracking-tight">
+                    <?= $escaper->escapeHtmlAttr(__('Free Shipping')) ?>
+                </div>
+                <div class="text-xs lg:text-sm text-whizzy-graylighter">
+                    <?= $escaper->escapeHtmlAttr(__('Receive your order within 24/48 hours anywhere in Europe.')) ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-row lg:flex-col gap-4 lg:gap-6">
+            <div class="w-9">
+                <?= $themeIcons->renderHtml('shopping-basket-secure', 'text-black', 38, 38, ['aria-hidden' => 'true']) ?>
+            </div>
+            <div class="flex flex-col gap-y-2">
+                <div class="text-xl lg:text-2xl font-semibold tracking-tight">
+                    <?= $escaper->escapeHtmlAttr(__('Secure Payment')) ?>
+                </div>
+                <div class="text-xs lg:text-sm text-whizzy-graylighter">
+                    <?= $escaper->escapeHtmlAttr(__("Top-rated payment providers to ensure the highest security standards.")) ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-row lg:flex-col gap-4 lg:gap-6">
+            <div class="w-9">
+                <?= $themeIcons->renderHtml('customer-service', 'text-black', 38, 38, ['aria-hidden' => 'true']) ?>
+            </div>
+            <div class="flex flex-col gap-y-2">
+                <div class="text-xl lg:text-2xl font-semibold tracking-tight">
+                    <?= $escaper->escapeHtmlAttr(__('Specialized Support')) ?>
+                </div>
+                <div class="text-xs lg:text-sm text-whizzy-graylighter">
+                    <?= $escaper->escapeHtmlAttr(__("More than 25 years of accumulated experience.")) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

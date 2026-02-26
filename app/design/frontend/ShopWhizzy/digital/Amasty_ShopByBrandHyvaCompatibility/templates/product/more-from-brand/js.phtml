@@ -1,0 +1,266 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Shop By Brand Compatibility with Hyva for Magento 2
+ */
+
+use Amasty\ShopbyBrand\Block\BrandsPopup as BrandsPopupBlock;
+use Amasty\ShopByBrandHyvaCompatibility\ViewModel\BrandsMoreFromBrandGraphQlQuery;
+use Amasty\ShopByBrandHyvaCompatibility\ViewModel\BrandsPopup;
+use Hyva\Theme\ViewModel\Store as StoreViewModel;
+use Hyva\GraphqlViewModel\ViewModel\GraphqlViewModel;
+use Amasty\ShopByBrandHyvaCompatibility\ViewModel\BrandsPopupGraphQlQuery;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\CurrentProduct;
+use Magento\Framework\Escaper;
+
+/**
+ * @var BrandsPopupBlock $block
+ * @var Escaper $escaper
+ * @var ViewModelRegistry $viewModels
+ */
+
+/** @var BrandsPopupGraphQlQuery $popupGraphQLQueryViewModel */
+$moreFromBrandsGraphQLQueryViewModel = $viewModels->require(BrandsMoreFromBrandGraphQlQuery::class);
+/** @var GraphqlViewModel $viewModelGraphQl */
+$viewModelGraphQl = $viewModels->require(GraphqlViewModel::class);
+/** @var StoreViewModel $viewModelStore */
+$viewModelStore = $viewModels->require(StoreViewModel::class);
+/** @var BrandsPopup $brandsPopupViewModel */
+$brandsPopupViewModel = $viewModels->require(BrandsPopup::class);
+/** @var CurrentProduct $currentProductViewModel */
+$currentProductViewModel = $viewModels->require(CurrentProduct::class);
+// phpcs:disable Generic.Files.LineLength.TooLong
+?>
+<script>
+    'use strict';
+
+    function amMoreFromBrandSlider() {
+        return {
+            active: 0,
+            itemCount: 0,
+            pageSize: 4,
+            pageFillers: 0,
+            slideRenderedCount: 0,
+            getSlider() {
+                return (this.$root) ? this.$root.querySelector('.js_slides') : this.$el.querySelector('.js_slides');
+            },
+            calcPageSize() {
+                const slider = this.getSlider();
+                if (slider) {
+                    this.itemCount = slider.querySelectorAll('.js_slide').length;
+                    this.pageSize = Math.round(slider.clientWidth / slider.querySelector('.js_slide').clientWidth);
+                    this.pageFillers = (
+                        this.pageSize * Math.ceil(this.itemCount / this.pageSize)
+                    ) - this.itemCount;
+                }
+            },
+            calcActive() {
+                const slider = this.getSlider();
+                if (slider) {
+                    const sliderItems = this.itemCount + this.pageFillers;
+                    const calculatedActiveSlide = slider.scrollLeft / (slider.scrollWidth / sliderItems);
+                    this.active = Math.round(calculatedActiveSlide / this.pageSize) * this.pageSize;
+                }
+            },
+            scrollPrevious() {
+                this.scrollTo(this.active - this.pageSize);
+            },
+            scrollNext() {
+                this.scrollTo(this.active + this.pageSize);
+            },
+            scrollTo(idx) {
+                const slider = this.getSlider();
+                if (slider) {
+                    const slideWidth = slider.scrollWidth / (this.itemCount + this.pageFillers);
+                    slider.scrollLeft = Math.floor(slideWidth) * idx;
+                    this.active = idx;
+                }
+            },
+            slideRendered() {
+                this.slideRenderedCount++;
+
+                if (this.slideRendered === this.itemCount) {
+                    this.calcPageSize();
+                    this.calcActive();
+                }
+            }
+        }
+    }
+
+    function amMoreFromBrand() {
+        let cached = false;
+
+        const displayError = (error) => {
+            console.error(error);
+            typeof window.dispatchMessages !== "undefined" && window.dispatchMessages(
+                [{
+                    type: "error",
+                    text: "<?= $escaper->escapeJs(__("Something went wrong. Please try again.")) ?>"
+                }], 10000
+            );
+        };
+
+        return {
+            products: [],
+            loading: false,
+            title: "<?= $escaper->escapeJs(__("More from this brand")) ?>",
+            initErrorMessages(errors) {
+                const messages = [];
+                for (let error in Object.keys(errors)) {
+                    messages.push({type: 'error', text: errors[error].message});
+                }
+                typeof window.dispatchMessages !== "undefined" && window.dispatchMessages(messages, 10000);
+            },
+
+            getQuery() {
+                <?php $productId = $currentProductViewModel->get()->getId(); ?>
+                return <?= /** @noEscape */ json_encode($viewModelGraphQl->query(
+                    'brands_more_from_brand',
+                    "query BrandsMoreFromBrand { {$moreFromBrandsGraphQLQueryViewModel->queryString((int)$productId)} }",
+                    ['productId' => $productId]
+                )); ?>
+            },
+
+            addToWishlist(productId) {
+                const formKey = hyva.getFormKey();
+                const postUrl = BASE_URL + 'wishlist/index/add/';
+
+                fetch(postUrl, {
+                    "headers": {
+                        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+                    },
+                    "body": "form_key=" + formKey + "&product=" + productId + "&uenc=" + hyva.getUenc(),
+                    "method": "POST",
+                    "mode": "cors",
+                    "credentials": "include"
+                }).then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else if (response.ok) {
+                        return response.json();
+                    } else {
+                        typeof window.dispatchMessages !== "undefined" && window.dispatchMessages(
+                            [{
+                                type: "warning",
+                                text: "<?= $escaper->escapeHtml(__('Could not add item to wishlist.')) ?>"
+                            }], 5000
+                        );
+                    }
+                }).then(response => {
+                    if (!response) { return }
+                    typeof window.dispatchMessages !== "undefined" && window.dispatchMessages(
+                        [{
+                            type: (response.success) ? "success" : "error",
+                            text: (response.success)
+                                ? "<?= $escaper->escapeHtml(
+                                    __("%1 has been added to your Wish List.", __("Product"))
+                                ) ?>" : response.error_message
+                        }], 5000
+                    );
+                    window.dispatchEvent(new CustomEvent("reload-customer-section-data"));
+                }).catch(function (error) {
+                    typeof window.dispatchMessages !== "undefined" && window.dispatchMessages(
+                        [{
+                            type: "error",
+                            text: error
+                        }], 5000
+                    );
+                });
+            }, // end addToWishlist()
+
+            addToCompare(productId) {
+                const formKey = hyva.getFormKey();
+                const postUrl = BASE_URL + 'catalog/product_compare/add/';
+
+                fetch(postUrl, {
+                    "headers": {
+                        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+                    },
+                    "body": "form_key=" + formKey + "&product=" + productId + "&uenc=" + hyva.getUenc(),
+                    "method": "POST",
+                    "mode": "cors",
+                    "credentials": "include"
+                }).then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                }).catch(error => {
+                    typeof window.dispatchMessages !== "undefined" && window.dispatchMessages(
+                        [{
+                            type: "error",
+                            text: error
+                        }], 5000
+                    );
+                });
+            },
+
+            /**
+             * Retrieve media url for given path
+             *
+             * @param path
+             * @returns {string}
+             */
+            getMediaUrl(path) {
+                return `${path}`;
+            },
+
+            moreFromBrandsInit() {
+                this.loading = true;
+
+                if (cached) {
+                    this.loading = false;
+                    return;
+                }
+
+                const req = this.sendRequest();
+                req.then(result => {
+                    if (result && result.errors) {
+                        this.initErrorMessages(result.errors);
+                        return;
+                    }
+
+                    this.products = result.data.amBrandGetMoreFromThisBrandBlock.items;
+                    this.title = result.data.amBrandGetMoreFromThisBrandBlock.title;
+
+                    this.$nextTick(() => this.calcPageSize());
+
+                    cached = true;
+                }).catch(displayError).finally(() => {
+                    this.loading = false;
+                });
+            },
+
+            getProductUrl(product) {
+                if (!product.url_rewrites[0]) {
+                    return '';
+                }
+
+                return '<?= $escaper->escapeUrl($block->getBaseUrl()) ?>' + product.url_rewrites[0]?.url;
+            },
+
+            /**
+             * Send request to graphql
+             *
+             * @returns {Promise<any>}
+             */
+            sendRequest() {
+                return fetch('<?= $escaper->escapeUrl($block->getBaseUrl()) ?>graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Store': '<?= /* @noEscape */ $viewModelStore->getStoreCode() ?>'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({query: this.getQuery(), variables: {productId: '<?= $escaper->escapeJs($productId) ?>'}})
+                }).then(
+                    response => response.json()
+                );
+            }
+        }
+    }
+
+</script>

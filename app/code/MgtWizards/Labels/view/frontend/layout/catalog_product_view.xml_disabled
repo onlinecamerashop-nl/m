@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author MgtWizards Team
+ * @copyright Copyright (c) MgtWizards (https://shopwhizzy.com/)
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="product.info.media">
+            <block class="MgtWizards\Labels\Block\Product\Label" name="mgtwizards.label" template="MgtWizards_Labels::product/label.phtml" before="-">
+                <action method="setProduct">
+                    <argument name="product" xsi:type="helper" helper="Magento\Framework\Registry::registry">
+                        <param name="key">product</param>
+                    </argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

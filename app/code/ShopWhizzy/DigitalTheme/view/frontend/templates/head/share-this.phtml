@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$show_share_this = $whizzyHelper->getConfigValue('product/show_share_this');
+$share_this_code = $whizzyHelper->getConfigValue('product/share_this_code');
+
+?>
+<?php if ($show_share_this && $share_this_code): ?>
+    <?= $share_this_code ?>
+<?php endif; ?>

@@ -1,0 +1,202 @@
+<?php
+
+namespace MgtWizards\Bestsellers\Cron;
+
+use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\CategoryFactory;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Sales\Model\ResourceModel\Report\Bestsellers\CollectionFactory as BestSellersCollectionFactory;
+
+class UpdateBestsellersCategory
+{
+    protected $_categoryFactory;
+    protected $_productCollectionFactory;
+    protected $_catalogLayer;
+    protected $_configHelper;
+    protected $_localeDate;
+    protected $_storeManager;
+    protected $_processedCategories = [];
+    protected $_registry;
+    protected $ruleResource;
+    protected $_resource;
+    protected $eavConfig;
+    protected $_bestSellersCollectionFactory;
+
+    public function __construct(
+        CategoryFactory $categoryFactory,
+        CollectionFactory $productCollectionFactory,
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+        \MgtWizards\Bestsellers\Helper\Config $configHelper,
+        \Magento\Catalog\Model\Layer\Resolver $layerResolver,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\Registry $registry,
+        \Magento\CatalogRule\Model\ResourceModel\Rule $ruleResource,
+        ResourceConnection $resource,
+        \Magento\Eav\Model\Config $eavConfig,
+        BestSellersCollectionFactory $bestSellersCollectionFactory
+    ) {
+        $this->_configHelper = $configHelper;
+        $this->_categoryFactory = $categoryFactory;
+        $this->_productCollectionFactory = $productCollectionFactory;
+        $this->_catalogLayer = $layerResolver->get();
+        $this->_localeDate = $localeDate;
+        $this->_storeManager = $storeManager;
+        $this->_registry = $registry;
+        $this->ruleResource = $ruleResource;
+        $this->_resource = $resource;
+        $this->eavConfig = $eavConfig;
+        $this->_bestSellersCollectionFactory = $bestSellersCollectionFactory;
+    }
+
+    public function execute()
+    {
+        $stores = $this->_storeManager->getStores();
+        foreach ($stores as $store) {
+            if ($this->_configHelper->getConfigModule('enabled', $store->getId())) {
+                $this->_storeManager->setCurrentStore($store->getId());
+
+                $category_id = $this->_configHelper->getConfigModule('category_id', $store->getId());
+                $category = $this->_categoryFactory->create()->load($category_id);
+                $this->setCategoryToRegistry($category);
+
+                //reset category products
+                //$this->resetCategoryProducts($category);
+
+                $bestProductsIds = $this->getBestsellersProductsIds();
+                //$postedProducts = $this->preparePostedProducts($bestProductsIds, [], 2);
+
+                //add products with complex product type
+                $complexProductsIds = $this->getParentProductsIds($bestProductsIds, $store->getId());
+                //$postedProducts = $this->preparePostedProducts($complexProductsIds, $postedProducts, 2);
+
+                $finalproducts = $this->removeFaultyProducts($complexProductsIds);
+
+                $this->assignProducts($category, $finalproducts);
+            }
+        }
+    }
+
+    public function getParentProductsIds($childIds, $storeId)
+    {
+        $connection = $this->_resource->getConnection();
+        $select = $connection->select()->from(
+            ['cpe' => $this->_resource->getTableName('catalog_product_entity')],
+            'entity_id'
+        )->join(
+            ['relation' => $this->_resource->getTableName('catalog_product_relation')],
+            'relation.parent_id = cpe.entity_id'
+        )->where('relation.child_id IN (?)', $childIds);
+
+        if ($this->_configHelper->getConfigModule('show_with_images', $storeId)) {
+            $imageAttribute = $this->eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, 'small_image');
+            $linkFieldName = $imageAttribute->getEntity()->getLinkField();
+            $select->joinLeft(
+                ['at_small_image_default' => $imageAttribute->getBackendTable()],
+                "at_small_image_default.{$linkFieldName} = cpe.{$linkFieldName} 
+                AND at_small_image_default.attribute_id = {$imageAttribute->getId()}
+                AND at_small_image_default.store_id = 0"
+            )
+                ->where('at_small_image_default.value <> ?', 'no_selection')
+                ->where('at_small_image_default.value IS NOT NULL');
+        }
+
+        $parentIds = $connection->fetchCol($select);
+        $productIds = $parentIds ? array_unique(array_merge($parentIds, $childIds)) : $childIds;
+        return $productIds;
+    }
+
+    protected function getBestsellersProductsIds()
+    {
+        $productIds = [];
+        $bestSellers = $this->_bestSellersCollectionFactory->create()->setPeriod('month');
+        foreach ($bestSellers as $product) {
+            $productIds[] = $product->getProductId();
+        }
+
+        return $productIds;
+    }
+
+    protected function preparePostedProducts($productIds, $products = [], $sort = 1)
+    {
+        $x = 1;
+        foreach ($productIds as $productId) {
+            $products[$productId] = $x;
+            $x++;
+        }
+
+        return $products;
+    }
+
+    protected function setCategoryToRegistry($category)
+    {
+        if ($this->_registry->registry('current_category')) {
+            $this->_registry->unregister('current_category');
+        }
+        $this->_registry->register('current_category', $category);
+    }
+
+    protected function isCategoryProcessed($categoryId)
+    {
+        if (array_key_exists($categoryId, $this->_processedCategories)) {
+            return true;
+        }
+        $this->_processedCategories[$categoryId] = $categoryId;
+
+        return false;
+    }
+
+    protected function removeFaultyProducts($ids)
+    {
+        $x = 1;
+        $products = [];
+        $connection = $this->_resource->getConnection();
+        $select = $connection->select()->from(
+            ['cpi' => $this->_resource->getTableName('catalog_product_entity')],
+            'entity_id'
+        );
+        $allids = $connection->fetchCol($select);
+        foreach ($ids as $id) {
+            if (in_array($id, $allids)) {
+                $products[$x] = $id;
+                $x++;
+            }
+        }
+
+        return $products;
+    }
+
+    protected function assignProducts(Category $category, array $productIds = [])
+    {
+        if ($this->isCategoryProcessed($category->getId())) {
+            $assignedProducts = $category->getProductsPosition();
+            $productIds = $this->mergeProductsArray($productIds, $assignedProducts);
+        }
+        $category->setPostedProducts($productIds);
+        $category->save();
+
+        return $this;
+    }
+
+    protected function resetCategoryProducts(Category $category)
+    {
+        $category->setPostedProducts([]);
+        $category->save();
+
+        return $this;
+    }
+
+    protected function mergeProductsArray($productIds, $assignedProducts)
+    {
+        foreach ($productIds as $productId => $value) {
+            if (
+                !array_key_exists($productId, $assignedProducts)
+                || $assignedProducts[$productId] > $value
+            ) {
+                $assignedProducts[$productId] = $value;
+            }
+        }
+
+        return $assignedProducts;
+    }
+}

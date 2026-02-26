@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @author MgtWizards Team
+ * @copyright Copyright (c) MgtWizards (https://shopwhizzy.com/)
+ */
+
+/** @var \MgtWizards\Labels\Block\Product\Label $block */
+$labels = $block->getLabels();
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+<?php if ($labels): ?>
+    <div class="absolute right-3 top-3 flex flex-col flex-wrap gap-2 items-end">
+        <?php foreach ($labels as $label): ?>
+            <?php if ($label->labelImage): ?>
+                <img src="<?= $block->escapeUrl($block->getImageUrl($label->labelImage)) ?>" alt="<?= $label->title ?>" />
+            <?php else: ?>
+                <?php if ($label->showLabel): ?>
+                    <?php
+                    $withIconClasses = 'bg-whizzy-primary-darker text-white';
+                    if ($label->iconName)
+                    {
+                        $withIconClasses = 'bg-white text-whizzy-primary-darker';
+                    }
+                    ?>
+                    <div
+                        class="flex gap-1 items-center rounded-full px-3 py-1 text-sm font-semibold <?= $withIconClasses . ' ' . $block->escapeHtmlAttr($label->cssClass) ?>">
+                        <?php if ($label->iconName): ?>
+                            <?= $themeIcons->renderHtml($block->escapeHtmlAttr($label->iconName), 'text-whizzy-primary', 14, 14, ['aria-hidden' => 'true']) ?>
+                        <?php endif; ?>
+                        <span><?= $label->title ?></span>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>

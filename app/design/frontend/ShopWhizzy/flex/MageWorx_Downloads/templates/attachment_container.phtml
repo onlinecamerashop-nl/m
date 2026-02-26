@@ -1,0 +1,41 @@
+<?php
+/**
+ * Copyright © MageWorx. All rights reserved.
+ * See https://www.mageworx.com/terms-and-conditions for license details.
+ */
+
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \MageWorx\Downloads\Block\Catalog\Product\Attachments $block */
+
+$attachments = $block->getAttachments();
+?>
+
+<?php if ($attachments): ?>
+    <div class="rounded-lg bg-whizzy-primary-lighter p-6 mt-6">
+
+        <div class="font-bold text-sm uppercase text-whizzy-graylighter mb-3">
+            <?= $escaper->escapeHtml(__('File Downloads')) ?>
+        </div>
+
+        <?php if (!$block->isGroupBySection()): ?>
+            <?php foreach ($attachments as $attachment): ?>
+                <?= $block->getAttachmentHtml($attachment); ?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <?php $pseudoSections = $block->getGroupAttachments(); ?>
+            <?php foreach ($pseudoSections as $pseudoSection): ?>
+                <div class="font-semibold"><?= $escaper->escapeHtml($pseudoSection['title']); ?></div>
+                <div class="pl-2 pb-2">
+                    <?php foreach ($pseudoSection['attachments'] as $item): ?>
+                        <?= /* @noEscape */ $block->getAttachmentHtml($item); ?>
+                    <?php endforeach; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        <?php if ($block->isShowHowToDownloadMessage()): ?>
+            <div class="text-orange-600 pl-2 mt-4 italic">
+                <span>* <?= $escaper->escapeHtml($block->getHowToDownloadMessage(), ['a']) ?></span>
+            </div>
+        <?php endif; ?>
+    </div>
+<?php endif;

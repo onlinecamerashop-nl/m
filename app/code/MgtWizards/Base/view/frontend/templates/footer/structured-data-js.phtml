@@ -1,0 +1,171 @@
+<script>
+    var structuredDatarun = true;
+    function generateBreadcrumbData() {
+        var url = window.location.href;
+        var domain = window.location.origin;
+        var path = url.replace(domain, ''); // Remove the domain part from the URL
+        var slugs = path.split('/').filter(function (slug) {
+            return slug !== '';
+        });
+
+        var breadcrumbList = [];
+        var breadcrumbData = {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": []
+        };
+
+        var homeItem = {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": domain
+        };
+
+        breadcrumbList.push(homeItem);
+        for (var i = 0; i < slugs.length; i++) {
+            var slug = slugs[i];
+            var position = i + 2;
+            var itemUrl = domain;
+
+            for (var j = 0; j <= i; j++) {
+                itemUrl += '/' + slugs[j];
+            }
+
+            var breadcrumbItem = {
+                "@type": "ListItem",
+                "position": position,
+                "name": capitalize(slug.replace(/-/g, ' ')),
+                "item": itemUrl + '/'
+            };
+
+            breadcrumbList.push(breadcrumbItem);
+        }
+
+        breadcrumbData.itemListElement = breadcrumbList;
+        return breadcrumbData;
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function hasEmailAddress() {
+        var mailtoLinks = document.querySelectorAll('a[href^="mailto:"]');
+        return mailtoLinks.length > 0;
+    }
+
+    var jsonLdData = generateBreadcrumbData();
+
+    var mainSchema = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "webpage",
+                "@id": window.location.href + '#webpage',
+                "url": window.location.href,
+                "breadcrumb": jsonLdData,
+                "isPartOf": {
+                    "@type": "website",
+                    "@id": window.location.origin,
+                    "url": window.location.origin,
+                    "about": {
+                        "@id": "#organization"
+                    },
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": {
+                            "@type": "EntryPoint",
+                            "urlTemplate": ["https://appoteket.no/catalogsearch/result/index/?q={search_term_string}"]
+                        },
+                        "query-input": "required name=search_term_string",
+                        "query": "search_term_string"
+                    },
+                    "publisher": {
+                        "@id": "#organization"
+                    }
+
+                }
+            },
+            {
+                "@type": "Pharmacy",
+                "name": "Appoteket",
+                "url": window.location.origin,
+                "logo": "https://appoteket.no/static/frontend/appoteket/theme/nb_NO/images/logo.svg",
+                "@id": "#organization",
+                "openinghours": "Mo-Su 00:00-23:59",
+                "telephone": "+4766810000",
+                "vatID": "NO932059150",
+                "image": "https://appoteket.no/static/frontend/appoteket/theme/nb_NO/images/logo.svg",
+                "priceRange": "$$",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressCountry": "NO",
+                    "addressLocality": "Skedsmokorset",
+                    "addressRegion": "Skedsmokorset",
+                    "postalCode": "2020",
+                    "streetAddress": "Gneisveien 18"
+                },
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "customer service",
+                    "url": "https://appoteket.no/kundeservice/kontakt-oss",
+                    "telephone": "4766810000",
+                    "email": "kundeservice@appoteket.no",
+                    "hoursAvailable": [
+                        "Mo-Fr 09:00-16:00"
+                    ]
+                },
+                "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": "60.01244901138148",
+                    "longitude": "11.05906047330077"
+                },
+                "areaServed": "NO",
+                "review": [
+                    {
+                        "@type": "Review",
+                        "author": {
+                            "@type": "person",
+                            "name": "Martin Kalmen"
+                        },
+                        "datePublished": "2022-07-11",
+                        "name": "Veldig fornøyd med min opplevelse hos dere",
+                        "reviewBody": "Veldig fornøyd med min opplevelse hos dere. Rask levering og rimelige priser😊",
+                        "reviewRating": {
+                            "@type": "Rating",
+                            "ratingValue": "5"
+                        }
+                    },
+                    {
+                        "@type": "Review",
+                        "author": {
+                            "@type": "person",
+                            "name": "Paul Arne Sørum"
+                        },
+                        "datePublished": "2022-08-01",
+                        "name": "Det var bra og oversiktlig hjemmeside",
+                        "reviewBody": "Det var bra og oversiktlig hjemmeside som gjorde at det var lett og finne det jeg trengte og enkel og lett måte og betale på. rask levering var det også. Kjempefornøyd",
+                        "reviewRating": {
+                            "@type": "Rating",
+                            "ratingValue": "5"
+                        },
+                    },
+
+                ],
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "3.1",
+                    "reviewCount": "54"
+                },
+                "sameAs": ["https://www.facebook.com/appoteket.no/", "https://www.instagram.com/appoteket.no/"],
+                "hasMap": "https://maps.app.goo.gl/wwp41uoKb3jQdeWv7"
+            }
+        ]
+    };
+
+    var script = document.createElement('script');
+    script.type = "application/ld+json";
+    script.innerHTML = JSON.stringify(mainSchema);
+    document.getElementsByTagName('head')[0].appendChild(script);
+</script>

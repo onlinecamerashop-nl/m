@@ -1,0 +1,75 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HyvaCsp;
+use Hyva\Theme\ViewModel\Store;
+use Hyva\Theme\ViewModel\StoreSwitcher;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magento\Store\ViewModel\SwitcherUrlProvider;
+
+// phpcs:disable Generic.Files.LineLength.TooLong
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var HyvaCsp $hyvaCsp */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var SwitcherUrlProvider $switcherUrlProvider */
+$switcherUrlProvider = $viewModels->require(SwitcherUrlProvider::class);
+
+/** @var Store $storeViewModel */
+$storeViewModel = $viewModels->require(Store::class);
+
+/** @var StoreSwitcher $storeSwitcherViewModel */
+$storeSwitcherViewModel = $viewModels->require(StoreSwitcher::class);
+
+$currentStore = $storeSwitcherViewModel->getStore();
+?>
+<?php if (count($storeSwitcherViewModel->getGroups()) > 1): ?>
+    <div x-data="initStoreSwitcher" class="w-full">
+        <div class="mb-4 font-semibold uppercase">
+            <?= $escaper->escapeHtml(__('Select Store')) ?>
+        </div>
+        <div class="relative inline-block text-left">
+            <div>
+                <?php foreach ($storeSwitcherViewModel->getGroups() as $group): ?>
+                    <?php if ($group->getId() == $storeSwitcherViewModel->getCurrentGroupId()): ?>
+                        <button @click.prevent="toggleOpen" @click.outside="setOpenFalse" @keydown.window.escape="setOpenFalse"
+                            type="button" class="form-select w-full pl-4" aria-haspopup="true" aria-expanded="true">
+                            <?= $escaper->escapeHtml($group->getName()) ?>
+                        </button>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+            <nav x-cloak x-show="open"
+                class="absolute left-0 z-10 w-56 overflow-auto origin-top-left shadow-whizzy-header lg:mt-3 p-4 lg:py-4 lg:px-4 card rounded-md text-whizzy-body z-20">
+                <div class="my-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                    <?php foreach ($storeSwitcherViewModel->getGroups() as $group): ?>
+                        <?php if (!($group->getId() == $storeSwitcherViewModel->getCurrentGroupId())): ?>
+                            <a href="<?= $escaper->escapeUrl($switcherUrlProvider->getTargetStoreRedirectUrl($group->getDefaultStore())) ?>"
+                                class="block px-4 py-2 lg:px-5 lg:py-2 hover:bg-whizzy-primary-lighter rounded-md">
+                                <?= $escaper->escapeHtml($group->getName()) ?>
+                            </a>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <script>
+        function initStoreSwitcher() {
+            return hyva.createBooleanObject('open')
+        }
+        window.addEventListener('alpine:init', () => Alpine.data('initStoreSwitcher', initStoreSwitcher), { once: true })
+    </script>
+    <?php $hyvaCsp->registerInlineScript() ?>
+<?php endif; ?>

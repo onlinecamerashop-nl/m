@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author MgtWizards Team
+ * @copyright Copyright (c) MgtWizards (https://shopwhizzy.com/)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <mgtwizards_labels>
+            <general>
+                <enabled>1</enabled>
+            </general>
+        </mgtwizards_labels>
+    </default>
+</config>

@@ -1,0 +1,102 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$header_layout = $whizzyHelper->getConfigValue('header/header_layout');
+$menu_header_usps = (($whizzyHelper->getConfigValue('header/menu_header_usps')) ?: '');
+$menu_header_usps_decoded = json_decode($menu_header_usps, true);
+?>
+
+<?php if (is_array($menu_header_usps_decoded) && count($menu_header_usps_decoded) > 2): ?>
+
+    <div x-data="upsSlider()" x-init="init()" class="border-0 lg:border-b-2">
+        <div class="container relative">
+            <div
+                class="px-4 py-2 lg:py-3 text-black text-sm text-center font-medium bg-whizzy-artic lg:bg-white rounded-lg lg:rounded-none overflow-hidden">
+
+                <!-- MOBILE SLIDER -->
+                <ul class="flex transition-transform duration-500 ease-out lg:!transform-none lg:flex lg:justify-between lg:gap-11"
+                    :style="isMobile ? `transform: translateX(-${current * 100}%)` : ''">
+                    <?php foreach ($menu_header_usps_decoded as $usps): ?>
+                        <li class="flex-shrink-0 w-full flex justify-center items-center gap-3 lg:w-auto">
+                            <?php if ($usps['icon']): ?>
+                                <?= $themeIcons->renderHtml($usps['icon'], 'text-green-700', 24, 24, ['aria-hidden' => 'true']) ?>
+                            <?php endif; ?>
+                            <span><?= $usps['title'] ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function upsSlider() {
+            return {
+                current: 0,
+                total: <?= count($menu_header_usps_decoded) ?>,
+                interval: null,
+                isMobile: window.innerWidth < 1024,
+
+                init() {
+                    this.handleResize()
+                    window.addEventListener('resize', () => this.handleResize())
+                    this.start()
+                },
+
+                handleResize() {
+                    this.isMobile = window.innerWidth < 1024
+
+                    if (!this.isMobile) {
+                        this.stop()
+                        this.current = 0
+                    } else {
+                        this.start()
+                    }
+                },
+
+                start() {
+                    if (this.interval || !this.isMobile) return
+
+                    this.interval = setInterval(() => {
+                        this.next()
+                    }, 3000)
+                },
+
+                stop() {
+                    if (this.interval) {
+                        clearInterval(this.interval)
+                        this.interval = null
+                    }
+                },
+
+                next() {
+                    this.current = (this.current + 1) % this.total
+                }
+            }
+        }
+    </script>
+
+<?php endif; ?>

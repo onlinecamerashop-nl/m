@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @var $block \Mirasvit\LayeredNavigation\Block\ApplyButton
+ */
+?>
+<?php if ($block->isApplyingMode()): ?>
+    <div class="mst-nav__apply-button-wrapper hidden absolute items-center z-50 transition-all duration-300 ease-in-out ml-5 shadow-xl bg-container-lighter border border-container rounded
+    before:block before:bg-container-lighter before:w-4 before:h-4 before:shadow-xl before:-left-2 before:rotate-45 before:-translate-y-1/2 before:absolute before:top-1/2 before:border before:border-container"
+        data-element="mst-nav__applyButton">
+        <div class="mst-nav__apply-button flex p-3 items-center bg-container-lighter relative">
+            <div class="loader flex min-w-20 hidden justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .spinner_GuJz {
+                            transform-origin: center;
+                            animation: spinner_STY6 1.5s linear infinite
+                        }
+
+                        @keyframes spinner_STY6 {
+                            100% {
+                                transform: rotate(360deg)
+                            }
+                        }
+                    </style>
+                    <g class="spinner_GuJz">
+                        <circle cx="3" cy="12" r="2" />
+                        <circle cx="21" cy="12" r="2" />
+                        <circle cx="12" cy="21" r="2" />
+                        <circle cx="12" cy="3" r="2" />
+                        <circle cx="5.64" cy="5.64" r="2" />
+                        <circle cx="18.36" cy="18.36" r="2" />
+                        <circle cx="5.64" cy="18.36" r="2" />
+                        <circle cx="18.36" cy="5.64" r="2" />
+                    </g>
+                </svg>
+            </div>
+
+            <div class="items flex justify-center items-center min-w-20">
+                <strong class="block text-base font-semibold mr-1" data-count></strong>
+                <span data-label-1 class="hidden"><?= __('items') ?></span>
+                <span data-label-n class="hidden"><?= __('item') ?></span>
+            </div>
+
+            <button class="w-auto btn btn-primary justify-center text-sm mr-auto" data-apply><?= __('Show') ?></button>
+        </div>
+    </div>
+
+    <style>
+        .mst-nav__apply-button-wrapper._loading .mst-nav__apply-button .loader {
+            display: flex;
+        }
+
+        .mst-nav__apply-button-wrapper._loading .mst-nav__apply-button .items {
+            display: none;
+        }
+
+        .mst-nav__apply-button-wrapper._loading .mst-nav__apply-button button {
+            opacity: .5;
+        }
+    </style>
+<?php endif ?>

@@ -1,0 +1,53 @@
+<?php
+/**
+ * Copyright © MageWorx. All rights reserved.
+ * See https://www.mageworx.com/terms-and-conditions for license details.
+ */
+
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \MageWorx\Downloads\Block\Catalog\Product\Link $block */
+
+$item = $block->getItem();
+$fileName = $item->getName();
+$itemUrl = $block->getAttachmentLink($item->getId());
+?>
+
+<div>
+    <div class="flex flex-wrap gap-2 items-center">
+        <div class="h-4 w-auto mt-0.5">
+            <?= /* @noEscape */ $block->getIconImgTag($item) ?>
+        </div>
+        <div class="font-bold">
+            <?php if ($item->getIsInGroup())
+            { ?>
+                <a class="block" href="<?= $escaper->escapeHtmlAttr($escaper->escapeUrl($itemUrl)) ?>"
+                    rel="<?= $escaper->escapeHtmlAttr($item->getId()) ?>" target="_blank"
+                    title="<?= $escaper->escapeHtmlAttr($item->getName()) ?>">
+                    <span><?= $escaper->escapeHtml($item->getName()) ?></span>
+                </a>
+            <?php }
+            else
+            { ?>
+                <?= $escaper->escapeHtml($fileName) ?><span class="text-orange-600 pl-1">*</span>
+            <?php } ?>
+        </div>
+
+        <div class="text-sm text-gray-500">
+            <?php if ($block->isDisplaySize() && $item->isFileContent()): ?>
+                (<?= $escaper->escapeHtml(__('Size')) ?>: <?= $escaper->escapeHtml(
+                  $block->getPrepareFileSize($item->getSize())
+                  ) ?>)
+            <?php endif; ?>
+            <?php if ($block->isDisplayDownloads() && $item->isFileContent()): ?>
+                <?= $escaper->escapeHtml(__('Downloads')) ?>: <?= $escaper->escapeHtml($item->getDownloads()) ?>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <?php if ($item->getDescription()): ?>
+        <div class="text-sm pl-6 mt-4">
+            <?= /* @noEscape */ $item->getDescription(); ?>
+        </div>
+    <?php endif; ?>
+
+</div>

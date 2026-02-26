@@ -1,0 +1,124 @@
+<?php
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+use Mirasvit\ProductKit\Block\KitList;
+
+/**
+ * @var KitList           $block
+ * @var ViewModelRegistry $viewModels
+ * @var Escaper           $escaper
+ */
+
+$offerKits = $block->getOfferKits();
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+if (count($offerKits) == 0)
+{
+    return;
+}
+?>
+
+<div class="mst-product_kit__kitList bg-whizzy-primary-lighter mb-8 lg:mb-12 relative" data-element="kitList"
+    x-data="initKitListWidget($el)" x-init="init">
+    <div class="container py-8 lg:py-12">
+        <?php if (count($offerKits) > 1): ?>
+            <div type="button"
+                class="kitList-prev absolute flex items-center justify-center top-1/2 -left-3 -mt-16 cursor-pointer"
+                data-element="prev" aria-label="<?= $escaper->escapeHtml(__('Previous kit')) ?>" @click="onPrev">
+                <?= $heroicons->chevronLeftHtml('text-blue-600', 46, 48) ?>
+            </div>
+        <?php endif ?>
+
+        <div class="kitList-list">
+            <?php foreach ($offerKits as $idx => $kit): ?>
+                <div class="kitList-list-item <?= $idx === 0 ? '_active' : 'hidden' ?>"
+                    data-index="<?= $escaper->escapeHtml($idx) ?>" data-element="item">
+                    <?= /* @noEscape */ $block->getKitHtml($kit) ?>
+                </div>
+            <?php endforeach ?>
+        </div>
+
+        <?php if (count($offerKits) > 1): ?>
+            <div type="button"
+                class="kitList-next absolute flex items-center justify-center top-1/2 -right-3 -mt-16 cursor-pointer"
+                data-element="next" aria-label="<?= $escaper->escapeHtml(__('Next kit')) ?>" @click="onNext">
+                <?= $heroicons->chevronRightHtml('text-blue-600', 48, 48) ?>
+            </div>
+        <?php endif ?>
+
+        <?php if (count($offerKits) > 1): ?>
+            <div class="kitList-paging flex items-center justify-center mt-4">
+                <?php foreach ($offerKits as $idx => $kit): ?>
+                    <?php $idx = $escaper->escapeHtml($idx); ?>
+                    <div type="button"
+                        class="kitList-page <?= $idx === 0 ? '_active bg-orange-500' : 'bg-gray-300' ?> select-none m-2 w-4 h-4 rounded-full cursor-pointer"
+                        data-index="<?= /* @noEscape */ $idx ?>" data-element="page"
+                        aria-label="<?= $escaper->escapeHtml(__('Go to kit %1', $idx + 1)) ?>"
+                        @click="onPageClick(<?= /* @noEscape */ $idx ?>)">
+                    </div>
+                <?php endforeach ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+
+<script>
+    function initKitListWidget(el) {
+        return {
+            el,
+
+            page: 0,
+            pages: 0,
+
+            itemSelector: '[data-element=item]',
+            pageSelector: '[data-element=page]',
+
+            init: function () {
+                this.pages = this.el.querySelectorAll(this.pageSelector).length;
+                if (this.pages > 0) {
+                    this.goTo(0);
+                }
+            },
+
+            onPageClick: function (idx) {
+                const page = parseInt(idx, 10);
+                this.goTo(page);
+            },
+
+            onPrev: function () {
+                this.page--;
+                if (this.page < 0) {
+                    this.page = this.pages - 1;
+                }
+                this.goTo(this.page);
+            },
+
+            onNext: function () {
+                this.page++;
+                if (this.page >= this.pages) {
+                    this.page = 0;
+                }
+                this.goTo(this.page);
+            },
+
+            goTo: function (page) {
+                this.el.querySelectorAll(this.pageSelector).forEach(pageEl => {
+                    pageEl.classList.remove('_active', 'bg-orange-500');
+                    pageEl.classList.add('bg-gray-300');
+                });
+                this.el.querySelector(`${this.pageSelector}[data-index="${page}"]`).classList.remove('bg-gray-300');
+                this.el.querySelector(`${this.pageSelector}[data-index="${page}"]`).classList.add('_active', 'bg-orange-500');
+
+                this.el.querySelectorAll(this.itemSelector).forEach(itemEl => {
+                    itemEl.classList.remove('_active');
+                    itemEl.classList.add('hidden');
+                });
+                this.el.querySelector(`${this.itemSelector}[data-index="${page}"]`).classList.remove('hidden');
+                this.el.querySelector(`${this.itemSelector}[data-index="${page}"]`).classList.add('_active');
+            }
+        }
+    }
+</script>

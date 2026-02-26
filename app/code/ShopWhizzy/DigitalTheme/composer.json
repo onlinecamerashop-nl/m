@@ -1,0 +1,23 @@
+{
+    "name": "shopwhizzy/theme-digitaltheme",
+    "description": "ShopWhizzy_DigitalTheme",
+    "type": "magento2-theme",
+    "version": "1.0.6",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "ShopWhizzy",
+            "email": "info@shopwhizzy.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "ShopWhizzy\\DigitalTheme\\": ""
+        }
+    }
+}

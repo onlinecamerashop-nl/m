@@ -1,0 +1,83 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+//$header_classes = "border-b border-black";
+$header_classes = "shadow-whizzy-header";
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$header_layout = $whizzyHelper->getConfigValue('header/header_layout');
+if ($header_layout === 'header_3')
+{
+    $header_classes = '';
+}
+$top_header_usps = (($whizzyHelper->getConfigValue('header/top_header_usps')) ?: '');
+$top_header_usps_decoded = json_decode($top_header_usps, true);
+
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$usps_background_color = (($menu_background_color_value = $whizzyHelper->getConfigValue('header/usps_background_color')) ? 'bg-[' . $menu_background_color_value . ']' : 'bg-white');
+$usps_text_color = (($menu_text_color_value = $whizzyHelper->getConfigValue('header/usps_text_color')) ? 'text-[' . $menu_text_color_value . ']' : 'text-whizzy-body');
+?>
+<?php if (is_array($top_header_usps_decoded) && count($top_header_usps_decoded) > 2): ?>
+
+    <div
+        class="px-6 py-3 <?= $usps_background_color ?> <?= $usps_text_color ?> text-xs uppercase text-center <?= $header_classes ?>">
+        <div class="w-full max-w-none mx-auto">
+            <div class="text-center">
+                <div x-data="{}" x-init="$nextTick(() => {
+        let ul = $refs.usps;
+        ul.insertAdjacentHTML('afterend', ul.outerHTML);
+        ul.nextSibling.setAttribute('aria-hidden', 'true');
+        ul.insertAdjacentHTML('afterend', ul.outerHTML);
+        ul.nextSibling.setAttribute('aria-hidden', 'true');
+        function uspsrun() {
+            var usps = document.getElementsByClassName('usps'),
+                len = usps !== null ? usps.length : 0,
+                i = 0;
+            for(i; i < len; i++) {
+                usps[i].className += ' animate-infinite-scroll'; 
+            }
+        };
+        uspsrun();
+    })" class="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_rgba(48,36,34,1.0)_64px,_rgba(48,36,34,1.0)_calc(100%-64px),transparent_100%)] md:[mask-image:_linear-gradient(to_right,transparent_0,_rgba(48,36,34,1.0)_128px,_rgba(48,36,34,1.0)_calc(100%-128px),transparent_100%)]">
+                    <ul x-ref="usps" class="usps flex flex-nowrap items-center justify-start">
+                        <?php foreach ($top_header_usps_decoded as $usps): ?>
+                            <li class="w-6 whitespace-nowrap">
+                                <span><?= $themeIcons->renderHtml('circle-solid-rounded', 'text-black fill-whizzy-black mx-auto', 6, 6) ?></span>
+                            </li>
+                            <li class="mx-8 lg:mx-12 whitespace-nowrap">
+                                <span class="flex items-center space-x-2">
+                                    <?php if ($usps['icon']): ?>
+                                        <?= $themeIcons->renderHtml($usps['icon'], '', 24, 24, ['aria-hidden' => 'true']) ?>
+                                    <?php endif; ?>
+                                    <span class="relative top-px"><?= $usps['title'] ?></span>
+                                </span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<?php endif; ?>

@@ -1,0 +1,23 @@
+<?php
+namespace ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field;
+
+use Magento\Config\Block\Adminhtml\Form\Field;
+use Magento\Framework\Data\Form\Element\AbstractElement;
+
+class SliderImages extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray
+{
+
+    /**
+     * Prepare to render
+     *
+     * @return void
+     */
+    protected function _prepareToRender()
+    {
+        $this->addColumn('name', ['label' => __('Name')]);
+        $this->addColumn('file', ['label' => __('File')]);
+        $this->_addAfter = false;
+        $this->_addButtonLabel = __('Add');
+    }
+
+}

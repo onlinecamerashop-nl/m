@@ -1,0 +1,72 @@
+<?php
+/** @var \Mirasvit\Helpdesk\Block\Widget\SatisfactionList $block */
+$collection = $block->getCollection();
+$rate = $block->getAggregatedRate();
+?>
+<div class="helpdesk_satisfaction-list">
+    <div class="helpdesk_satisfaction-row grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="helpdesk_satisfaction-col">
+            <div class="helpdesk_satisfaction-rate rate-great flex items-center space-x-4">
+                <img src="<?= $block->escapeUrl($block->getViewFileUrl('Mirasvit_Helpdesk::images/smile/3.png')) ?>"
+                    alt="Great Rating" class="w-12 h-12 min-w-12">
+                <div class="helpdesk_satisfaction-bar w-full bg-gray-200 rounded-full h-4">
+                    <div class="inner bg-green-500 h-4 rounded-full text-xs text-white text-center"
+                        style="width: <?= $block->escapeHtml($rate['great']) ?>%">
+                        <?= $block->escapeHtml($rate['great']) ?>%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="helpdesk_satisfaction-col">
+            <div class="helpdesk_satisfaction-rate rate-ok flex items-center space-x-4">
+                <img src="<?= $block->escapeUrl($block->getViewFileUrl('Mirasvit_Helpdesk::images/smile/2.png')) ?>"
+                    alt="OK Rating" class="w-12 h-12 min-w-12">
+                <div class="helpdesk_satisfaction-bar w-full bg-gray-200 rounded-full h-4">
+                    <div class="inner bg-yellow-500 h-4 rounded-full text-xs text-white text-center"
+                        style="width: <?= $block->escapeHtml($rate['ok']) ?>%">
+                        <?= $block->escapeHtml($rate['ok']) ?>%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="helpdesk_satisfaction-col">
+            <div class="helpdesk_satisfaction-rate rate-bad flex items-center space-x-4">
+                <img src="<?= $block->escapeUrl($block->getViewFileUrl('Mirasvit_Helpdesk::images/smile/1.png')) ?>"
+                    alt="Bad Rating" class="w-12 h-12 min-w-12">
+                <div class="helpdesk_satisfaction-bar w-full bg-gray-200 rounded-full h-4">
+                    <div class="inner bg-red-500 h-4 rounded-full text-xs text-white text-center"
+                        style="width: <?= $block->escapeHtml($rate['bad']) ?>%">
+                        <?= $block->escapeHtml($rate['bad']) ?>%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="helpdesk_satisfaction-smiles mt-6 flex flex-wrap gap-4">
+        <?php foreach ($collection as $item): ?>
+            <figure class="flex flex-col items-center space-y-2">
+                <?php
+                $comment = $block->parseComment((string)$item->getComment());
+                ?>
+                <img src="<?= $block->escapeUrl($block->getViewFileUrl('Mirasvit_Helpdesk::images/smile/' . $item->getRate() . '.png')) ?>"
+                    alt="Smiley" class="w-10 h-10">
+                <?php if ($comment['mark']): ?>
+                    <div class="mark text-sm font-medium text-gray-700"><?= $block->escapeHtml($comment['mark']) ?></div>
+                <?php endif ?>
+                <?php if ($comment['note']): ?>
+                    <div class="note relative bg-gray-100 p-3 rounded-lg text-sm text-gray-600 max-w-xs">
+                        <svg class="absolute -top-2 left-4 w-4 h-4 text-gray-100 fill-current" viewBox="0 0 20 20">
+                            <path d="M10 0L0 10h20L10 0z" />
+                        </svg>
+                        <div class="note-body">
+                            <?= $block->escapeHtml($comment['note']) ?>
+                        </div>
+                    </div>
+                <?php endif ?>
+            </figure>
+        <?php endforeach ?>
+    </div>
+</div>

@@ -1,0 +1,63 @@
+<?php
+
+// @codingStandardsIgnoreFile
+if ($faqscollection = $block->getFaqsCollection()):
+    $themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+    $faqs = $block->getFaqs();
+    $faqsId = $block->getFaqsId();
+    $faqssettings = $faqs->getFaqsSetting();
+    ?>
+
+    <div>
+        <ul class="list-none">
+            <?php $y = 1; ?>
+            <div class="grid grid-cols-2 grid-rows-3 auto-rows-auto gap-4">
+                <?php foreach ($faqscollection as $faq): ?>
+                    <?php if ($text = $faq->getFaqAnswer())
+                    { ?>
+                        <li class="faq relative" x-data="{selected:null}">
+                            <div class="w-full text-left">
+                                <div
+                                    class="inline-flex justify-between items-center gap-4 w-full text-base lg:text-xl font-semibold transition-all">
+                                    <span
+                                        class="flex items-center justify-center w-10 h-10 bg-white rounded-md shadow-whizzy-header">
+                                        <?= $themeIcons->renderHtml('medal-first-place-twotone', 'text-whizzy-primary', 24, 24, ['aria-hidden' => 'true']) ?>
+                                    </span>
+                                    <span><?= $faq->getFaqQuestion() ?></span>
+                                </div>
+                            </div>
+                            <div class="relative overflow-hidden transition-all max-h-0 duration-700" x-ref="container1"
+                                x-bind:style="selected == 1 ? 'max-height: ' + $refs.container1.scrollHeight + 'px' : ''">
+                                <div
+                                    class="pb-3 lg:pb-4 px-4 lg:px-5 text-base [&_a]:text-whizzy-primary [&_a:hover]:text-whizzy-primary">
+                                    <?= $block->getContentText($text); ?>
+                                </div>
+                            </div>
+                        </li>
+                        <?php $y++; ?>
+                    <?php } ?>
+                <?php endforeach; ?>
+            </div>
+        </ul>
+    </div>
+
+    <?php if ($faqssettings['schema'] == '1'): ?>
+        <?php $schema = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[' ?>
+        <?php $sh = 1 ?>
+        <?php foreach ($faqscollection as $faq): ?>
+            <?php if ($sh > 1)
+            {
+                $schema .= ',';
+            } ?>
+            <?php $schema .= '{"@type":"Question","name":' ?>
+            <?php $schema .= json_encode($faq->getFaqQuestion()) ?>
+            <?php $schema .= ',"acceptedAnswer":{"@type":"Answer","text":"' ?>
+            <?php $schema .= preg_replace("/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags($faq->getFaqAnswer())))) ?>
+            <?php $schema .= '"}}' ?>
+            <?php $sh++ ?>
+        <?php endforeach; ?>
+        <?php $schema .= ']}</script>' ?>
+        <?= $schema ?>
+    <?php endif; ?>
+
+<?php endif; ?>

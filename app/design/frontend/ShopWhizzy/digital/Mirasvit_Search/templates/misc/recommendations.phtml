@@ -1,0 +1,34 @@
+<?php
+/**
+ * @var \Magento\AdvancedSearch\Block\SearchData $block
+ */
+?>
+<?php
+/** @var \Magento\Search\Model\QueryResult[] $data */
+$data = $block->getItems();
+if (!$data)
+{
+    return;
+}
+?>
+<div class="mst-search__misc-recommendations">
+    <div class="font-semibold mb-2"><?= $block->escapeHtml(__($block->getTitle())) ?></div>
+    <div class="flex flex-wrap gap-x-4">
+        <?php foreach ($data as $additionalInfo):
+            $url = $block->escapeUrl($block->getLink($additionalInfo->getQueryText()));
+            if (strripos($url, 'search_landing') !== false)
+            {
+                $url = str_replace('search_landing/page', 'catalogsearch/result', $url);
+            }
+            ?>
+            <div class="text-sm hover:underline">
+                <a href="<?= $block->escapeUrl($url) ?>">
+                    <?= $block->escapeHtml($additionalInfo->getQueryText()) ?>
+                </a>
+                <?php if ($block->isShowResultsCount()): ?>
+                    <span class="count"><?= (int)$additionalInfo->getResultsCount() ?></span>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

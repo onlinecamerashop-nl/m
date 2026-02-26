@@ -1,0 +1,65 @@
+<?php
+/**
+ * @var $block \ShopWhizzy\DigitalTheme\Block\SubCategories
+ */
+use Magento\Framework\Escaper;
+use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+
+/** @var Escaper $escaper */
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$mediaUrl = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+$category = $objectManager->get('Magento\Framework\Registry')->registry('current_category');
+$productCollectionFactory = $objectManager->get(CollectionFactory::class);
+?>
+
+<?php if ($category->getShowSubcats()): ?>
+    <?php $subcategories = $category->getChildrenCategories(); ?>
+    <?php $_helper = $this->helper('Magento\Catalog\Helper\Output'); ?>
+    <?php if (count($subcategories) > 0): ?>
+        <section class="block w-full mb-2 px-6">
+            <div class="flex flex-col gap-2">
+                <div class="flex flex-col">
+                    <div class="text-whizzy-graylighter text-sm font-semibold uppercase">
+                        <?= __("Subcategories") ?>
+                    </div>
+                </div>
+                <div class="overflow-x-auto md:overflow-hidden pb-2 lg:pb-0">
+                    <ol class="flex flex-nowrap md:flex-wrap gap-2 lg:gap-x-4 snap-proximity snap-x">
+                        <?php foreach ($subcategories as $subcategory): ?>
+                            <?php
+                            // Load subcategory
+                            $subcategory = $objectManager->create(Category::class)->load($subcategory->getId());
+
+                            // Get product collection for the subcategory and its descendants
+                            $productCollection = $productCollectionFactory->create();
+                            $productCollection->addCategoryFilter($subcategory)
+                                ->addAttributeToFilter('status', \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
+                                ->addAttributeToFilter('visibility', [
+                                    'in' => [
+                                        \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH,
+                                        \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_CATALOG,
+                                        \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_SEARCH
+                                    ]
+                                ]);
+                            $total_count = $productCollection->getSize(); // Get total product count
+                            ?>
+                            <li class="item flex items-center">
+                                <a class="block relative px-3 py-2 whitespace-nowrap hover:text-white flex items-center gap-2 bg-whizzy-primary-lighter hover:bg-whizzy-primary rounded transition duration-200"
+                                    href="<?= $escaper->escapeHtml($subcategory->getUrl()) ?>">
+                                    <span class="font-semibold text-sm"><?= $escaper->escapeHtml($subcategory->getName()) ?></span>
+                                    <span
+                                        class="bg-white text-whizzy-body p-1 text-xs rounded-md"><?= $escaper->escapeHtml($total_count) ?></span>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ol>
+                </div>
+            </div>
+        </section>
+    <?php endif; ?>
+<?php endif; ?>

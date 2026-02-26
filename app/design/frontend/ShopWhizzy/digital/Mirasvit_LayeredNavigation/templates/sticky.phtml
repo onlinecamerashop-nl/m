@@ -1,0 +1,47 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * @var $block \Mirasvit\LayeredNavigation\Block\StickySidebar
+ */
+?>
+
+<?php if ($block->isStickySidebar()): ?>
+
+    <script>
+        function initStickySidebar() {
+            if (window.innerWidth < 748) {
+                return;
+            }
+
+            const filtersOverflowOffset = 80;
+            const sidebarMain = document.querySelector('.sidebar.sidebar-main');
+            if (!sidebarMain) {
+                return;
+            }
+
+            const innerSticky = sidebarMain.querySelector(':scope > div');
+            if (innerSticky) {
+                innerSticky.classList.add("sticky", "top-3", "z-10", "bg-white");
+            }
+
+            const filterContent = sidebarMain.getElementsByClassName('filter-content')[0];
+            if (!filterContent) {
+                return;
+            }
+
+            // filterContent.style.maxHeight = 'calc(100vh - 80px)';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initStickySidebar();
+        });
+    </script>
+
+    <style>
+        .sidebar-main::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+
+<?php endif ?>

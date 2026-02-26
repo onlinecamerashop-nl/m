@@ -1,0 +1,59 @@
+<?php
+/** @var \ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\SliderImages $block */
+$element = $block->getElement();
+?>
+
+<div class="admin__field">
+    <div class="admin__field-control">
+        <div data-bind="scope: '<?= $element->getHtmlId() ?>'">
+            <!-- ko template: getTemplate() --><!-- /ko -->
+        </div>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+{
+    "#<?= $element->getHtmlId() ?>": {
+        "Magento_Ui/js/core/app": {
+            "components": {
+                "<?= $element->getHtmlId() ?>": {
+                    "component": "Magento_Ui/js/dynamic-rows/dynamic-rows",
+                    "template": "ui/dynamic-rows/templates/default",
+                    "recordTemplate": "record",
+                    "addButtonLabel": "Add Slider Image",
+                    "deleteConfirmMessage": "Are you sure you want to delete this slider image?",
+                    "children": {
+                        "record": {
+                            "component": "Magento_Ui/js/dynamic-rows/record",
+                            "isTemplate": true,
+                            "is_collection": true,
+                            "children": {
+                                "name": {
+                                    "component": "Magento_Ui/js/form/element/abstract",
+                                    "dataType": "text",
+                                    "formElement": "input",
+                                    "label": "Name",
+                                    "sortOrder": 10,
+                                    "validation": {
+                                        "required-entry": true
+                                    }
+                                },
+                                "path": {
+                                    "component": "Magento_Ui/js/form/element/abstract",
+                                    "dataType": "text",
+                                    "formElement": "input",
+                                    "label": "Path",
+                                    "sortOrder": 20,
+                                    "validation": {
+                                        "required-entry": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+</script>

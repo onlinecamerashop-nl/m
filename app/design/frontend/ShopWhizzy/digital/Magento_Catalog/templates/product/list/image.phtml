@@ -1,0 +1,156 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Catalog\Block\Product\Image;
+use Magento\Framework\Escaper;
+
+/** @var Image $block */
+/** @var Escaper $escaper */
+
+$hasLoadingAttribute = ($block->getCustomAttributes() ?: [])['loading'] ?? false;
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$product_image_background_mixblend = ($whizzyHelper->getConfigValue('general/product_image_background_mixblend') ? 'mix-blend-multiply' : '');
+$product_image_square = ($whizzyHelper->getConfigValue('general/product_image_square') ? 'aspect-square object-center object-contain' : 'object-cover');
+$product_image_gallery = $whizzyHelper->getConfigValue('products_listing/product_image_gallery');
+$product_image_background_custom = (($product_image_background_custom_value = $whizzyHelper->getConfigValue('general/product_image_background_custom')) ? "style=\"background-color:{$product_image_background_custom_value}\";" : '');
+$product_image_rounded = ($whizzyHelper->getConfigValue('products_listing/product_card_layout') != 'item_3' ? 'rounded-lg' : '');
+
+$product = $block->getProduct();
+if ($product === null)
+{
+    return;
+}
+$images = [];
+$rdn = $product->getId();
+
+if ($product_image_gallery && $product)
+{
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $productRepository = $objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+    $loadedProduct = $productRepository->getById($product->getId());
+    $galleryImages = $loadedProduct->getMediaGalleryImages();
+
+    if ($galleryImages)
+    {
+        foreach (array_slice($galleryImages->getItems(), 0, 3) as $image)
+        {
+            $images[] = [
+                'src' => $image->getUrl() ?: $block->getImageUrl(),
+                'srcset' => $image->getUrl() ?: $block->getImageUrl(),
+                'alt' => $block->getLabel(),
+            ];
+        }
+    }
+}
+?>
+
+<div class="relative w-full h-full" 
+     x-data="<?= $product_image_gallery && count($images) > 1 ? '{ isVisible: false, ...initGalleryCarousel' . $rdn . '() }' : '{ isVisible: false }' ?>" x-intersect="isVisible = true">
+     
+    <a href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>"
+        title="<?= $escaper->escapeHtmlAttr($product->getName()) ?>">
+        <img class="<?= $product_image_rounded ?> <?= $product_image_background_mixblend ?> <?= $product_image_square ?> <?= $escaper->escapeHtmlAttr($block->getClass()) ?> mx-auto" x-data="" @update-gallery-<?= (int)$block->getProductId() ?>.window="
+           $root.src = $event.detail.src;
+           let picture = $root.closest('picture');
+           if (picture) {
+             let source = picture.querySelector('source[type=\'image/webp\']');
+             if (source) source.srcset = $event.detail.srcset;
+           }
+           isVisible = false;"
+         <?php foreach ($block->getCustomAttributes() as $name => $value): ?>
+                     <?= $escaper->escapeHtmlAttr($name) ?>="<?= $escaper->escapeHtmlAttr($value) ?>"
+         <?php endforeach; ?>
+         src="<?= $escaper->escapeUrl($block->getImageUrl()) ?>"
+         <?php if (!$hasLoadingAttribute): ?> loading="lazy" <?php endif; ?>
+         width="<?= $escaper->escapeHtmlAttr($block->getWidth()) ?>"
+         height="<?= $escaper->escapeHtmlAttr($block->getHeight()) ?>"
+         alt="<?= $escaper->escapeHtmlAttr($block->getLabel()) ?>"
+         title="<?= $escaper->escapeHtmlAttr($block->getLabel()) ?>" />
+    </a>
+
+    <?php if ($product_image_gallery && count($images) > 1): ?>
+                <div class="slider-<?= $rdn ?> h-full absolute inset-0 bg-white rounded-lg"
+                     x-show="isVisible"
+                     x-transition:enter="transition ease-in duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-out duration-300"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0" <?= $product_image_background_custom ?>>
+                    <div class="relative w-full h-full">
+                        <div class="relative flex flex-nowrap w-full h-full overflow-auto js_slides snap snap-mandatory"
+                             @scroll.debounce="calcActive">
+                            <?php foreach ($images as $index => $image): ?>
+                                        <div class="flex shrink-0 w-full js_slide snap-center">
+                                            <a href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>" title="<?= $escaper->escapeHtmlAttr($product->getName()) ?>">
+                                                <img class="<?= $product_image_rounded ?> <?= $product_image_background_mixblend ?> <?= $product_image_square ?> <?= $escaper->escapeHtmlAttr($block->getClass()) ?> mx-auto"
+                                                     src="<?= $escaper->escapeUrl($image['src']) ?>"
+                                                     alt="<?= $escaper->escapeHtmlAttr($image['alt']) ?>"
+                                                     title="<?= $escaper->escapeHtmlAttr($image['alt']) ?>"
+                                                     width="<?= $escaper->escapeHtmlAttr($block->getWidth()) ?>"
+                                                     height="<?= $escaper->escapeHtmlAttr($block->getHeight()) ?>"
+                                                     <?php if (!$hasLoadingAttribute): ?> loading="lazy" <?php endif; ?>>
+                                            </a>
+                                        </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <template x-if="itemCount > 1">
+                            <div class="flex gap-1 lg:gap-3 items-center justify-center absolute bottom-1 lg:bottom-2 left-0 right-0 z-10">
+                                <div aria-label="<?= $escaper->escapeHtml(__('Previous')) ?>" tabindex="-1"
+                                        class="block bg-white w-8 h-8 text-black rounded-full outline-none focus:outline-none z-20 cursor-pointer shadow-lg flex items-center"
+                                        :class="{ 'opacity-25 pointer-events-none' : active === 0 }" @click="scrollPrevious">
+                                    <?= $themeIcons->renderHtml('arrow-left', 'w-4 h-4 mx-auto', 24, 24, ['aria-hidden' => 'true']) ?>
+                                </div>
+                                <div aria-label="<?= $escaper->escapeHtml(__('Next')) ?>" tabindex="-1"
+                                        class="block bg-white w-8 h-8 text-black rounded-full outline-none focus:outline-none z-20 cursor-pointer shadow-lg flex items-center"
+                                        :class="{ 'opacity-25 pointer-events-none' : active >= itemCount - 1 }" @click="scrollNext">
+                                    <?= $themeIcons->renderHtml('arrow-right', 'w-4 h-4 mx-auto', 24, 24, ['aria-hidden' => 'true']) ?>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <script>
+            function initGalleryCarousel<?= $rdn ?>() {
+                        return {
+                            active: 0,
+                            itemCount: <?= count($images) ?>,
+                            getSlider() {
+                                return this.$root.querySelector('.slider-<?= $rdn ?> .js_slides');
+                            },
+                            calcActive() {
+                                const slider = this.getSlider();
+                                if (slider) {
+                                    const slideWidth = slider.scrollWidth / this.itemCount;
+                                    this.active = Math.round(slider.scrollLeft / slideWidth);
+                                }
+                            },
+                            scrollPrevious() {
+                                this.scrollTo(this.active - 1);
+                            },
+                            scrollNext() {
+                                this.scrollTo(this.active + 1);
+                            },
+                            scrollTo(idx) {
+                                const slider = this.getSlider();
+                                if (slider) {
+                                    const slideWidth = slider.scrollWidth / this.itemCount;
+                                    slider.scrollLeft = slideWidth * idx;
+                                    this.active = idx;
+                                }
+                            }
+                        }
+                    }
+                </script>
+    <?php endif; ?>
+</div>

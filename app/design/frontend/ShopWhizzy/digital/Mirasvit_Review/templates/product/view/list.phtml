@@ -1,0 +1,331 @@
+<?php
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Mirasvit\Review\Block\Product\View\ListView;
+
+/**
+ * @var ListView           $block
+ * @var SecureHtmlRenderer $secureRenderer
+ */
+
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+/** @var HeroiconsSolid $heroiconsSolid */
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+
+$reviewCollection = $block->getReviewsCollection();
+
+if ($toolbar = $block->getChildBlock('review_list.toolbar')) {
+    $toolbar->setCollection($reviewCollection);
+}
+
+$sortingOptions      = $block->getSortingOptions();
+$activeSortingOption = '';
+
+$_items    = $block->getReviewsCollection()->getItems();
+
+$product    = $block->getProduct();
+$headingTag = $block->getData('heading_tag') ? : 'h3';
+
+$requestUrl = $block->getProductReviewUrl();
+?>
+<?php if (!$block->getHideTitle()): ?>
+    <div class="flex flex-col gap-3 font-bold mb-3 lg:mb-6">
+        <div class="text-sm uppercase text-whizzy-graylighter">
+            <?= $escaper->escapeHtml(__('Reviews')) ?>
+        </div>
+        <div class="text-3xl lg:text-4xl text-whizzy-body">
+            <?= $escaper->escapeHtml(__('Customer Reviews')) ?>
+        </div>
+    </div>
+<?php endif ?>
+
+<?php if (count($_items)): ?>
+<div
+    class="mx-auto items-center"
+    id="customer-review-list"
+    aria-label="<?= $escaper->escapeHtmlAttr(__('Customer Reviews')) ?>"
+    tabindex="-1"
+    role="group"
+    x-data="initReviewListing"
+    x-init="init"
+>
+    <?=
+    $block->getChildBlock('review.summary')
+        ->setReviewSummary($block->getReviewSummary())
+        ->setProduct($product)
+        ->toHtml()
+    ?>
+
+    <?= $block->getChildHtml('loading') ?>
+
+    <?php if ($block->isShowGallery()): ?>
+        <div class="block-title mx-auto flex pt-6 pb-3 mb-6 justify-start items-center flex-wrap">
+            <<?= /* @noEscape */ $headingTag ?> class="text-gray-900 text-2xl title-font font-base relative mr-1">
+                <?= $block->escapeHtml(__('Photos from Customers')) ?>
+            </<?= /* @noEscape */ $headingTag ?>>
+        </div>
+        <?= $block->getChildBlock('summary.gallery')->setProductId((int)$block->getProduct()->getId())->toHtml(); ?>
+    <?php endif; ?>
+
+    <?php if ($block->isDisplayFilters()): ?>
+        <div class="mst-review-toolbar flex flex-wrap justify-between items-start mb-6" id="filter_sorting">
+            <div class="mst-review-filters flex items-start mb-3 w-full justify-between md:w-auto md:justify-start">
+                <div class="rating-label mt-2"><?= $block->escapeHtml(__('Reviews By Rating')) ?>:</div>
+                <div class="rating-summary ml-2 flex-col">
+                    <?php foreach ($block->getFilterOptions() as $filterOption): ?>
+                        <div class="mst-rating-option <?= $block->getReviewsCount($filterOption['value']) == 0 ? ' mst-rating-option-disabled' : '' ?>">
+                            <label class="flex mt-2
+                                   <?= $block->getReviewsCount($filterOption['value']) == 0 ? 'cursor-default grayscale' : 'cursor-pointer' ?>
+                                   <?= $filterOption['checked'] ? 'font-semibold' : ''; ?>
+                                ">
+                                <div class="rating-result" title="<?= $filterOption['value'] * 20 ?>%">
+                                    <?php
+                                    $rating      = $filterOption['value'] * 20;
+                                    $ratingSteps = 5;
+                                    $starsFilled = is_numeric($rating) ? floor($rating / 100 * $ratingSteps) : 0;
+                                    $starsEmpty  = floor($ratingSteps - $starsFilled);
+                                    ?>
+
+                                    <div
+                                        class="flex flex-row"
+                                        role="img"
+                                        aria-label="<?= $escaper->escapeHtmlAttr(__('%1 rating. %2 out of %3 stars', $block->getProduct()->getName(), $starsFilled, $ratingSteps)) ?>"
+                                    >
+                                        <?php $i = 0; ?>
+                                        <?php while ($i < $starsFilled): ?>
+                                            <?= $heroiconsSolid->starHtml('text-yellow-400', 24, 24, ["aria-hidden" => "true"]); ?>
+                                            <?php $i++; ?>
+                                        <?php endwhile; ?>
+                                        <?php $i = 0; ?>
+                                        <?php while ($i < $starsEmpty): ?>
+                                            <?= $heroiconsSolid->starHtml('text-gray-400', 24, 24, ["aria-hidden" => "true"]); ?>
+                                            <?php $i++; ?>
+                                        <?php endwhile; ?>
+                                    </div>
+
+                                    <input type="checkbox" style="display: none" name="filter_rating[]" value="<?= $block->escapeHtml($filterOption['value']) ?>"
+                                           <?= $filterOption['checked'] ? 'checked' : ' '; ?>
+                                           <?= $block->getReviewsCount($filterOption['value']) == 0 ? 'disabled' : '' ?>>
+                                </div>
+                                <?php if ($filterOption['checked']): ?>
+                                    <span class="ml-2 text-bold"> <?= ' (' . $block->escapeHtml($block->getReviewsCount($filterOption['value'])) . ')'; ?></span>
+                                <?php else: ?>
+                                    <span class="ml-2"> <?= ' (' . $block->escapeHtml($block->getReviewsCount($filterOption['value'])) . ')'; ?></span>
+                                <?php endif; ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <div class="mst-review-sorting flex items-center">
+                <div class="mst-review-filter border-r border-gray-500 flex items-center">
+                    <input
+                        class="form-input w-6 h-6 min-h-6"
+                        type="checkbox"
+                        id="verified_buyers"
+                        name="verified_buyers"
+                        value="is_verified_buyer"
+                        <?= $block->getRequest()->getParam('is_verified_buyer') ? 'checked' : '' ?>
+                    />
+                    <label for="verified_buyers" class="mx-2">Verified Buyers</label>
+                </div>
+                <span class="mst-review-sorting-label mx-2">Sort by</span>
+                <select name="sorting" id="sorting" class="form-input pr-8">
+                    <?php foreach ($block->getSortingOptions() as $sortingOption): ?>
+                        <?php
+                            if ($sortingOption['selected']) {
+                                $activeSortingOption = $sortingOption['value'];
+                            }
+                        ?>
+                        <option value="<?= $block->escapeHtml($sortingOption['value']); ?>" <?= $sortingOption['selected'] ? 'selected' : '' ?>>
+                            <?= $block->escapeHtml($sortingOption['label']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="mst-review-list-container w-full">
+        <?php foreach ($_items as $_review): ?>
+            <?=
+            $block->getChildBlock('mst.product.review')
+                ->setReview($_review)
+                ->setProduct($product)
+                ->toHtml();
+            ?>
+        <?php endforeach; ?>
+        <?php if ($toolbar): ?>
+            <div class="toolbar review-toolbar mt-4">
+                <?= $toolbar->toHtml() ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <script>
+        function initReviewListing() {
+            return {
+                requestUrl: '<?= $requestUrl ?>',
+                isLoading: false,
+                ratingFilter: [],
+                verifiedBuyerFilter: false,
+                sortOrder: false,
+                defaultSortOrder: '<?= $activeSortingOption ?>',
+                page: 1,
+                limit: 10,
+                initiated: false,
+                reviewListSelector: '.mst-review-list-container',
+                actionSelectors: [
+                    '#customer-review-list [name="filter_rating[]"]:not([disabled])',
+                    '#customer-review-list #verified_buyers',
+                    '#customer-review-list #sorting',
+                ],
+
+                init: function () {
+                    if (this.initiated) {
+                        return;
+                    }
+
+                    const limiter = document.querySelector('#customer-review-list #limiter');
+
+                    if (limiter) {
+                        limiter.removeAttribute('onchange');
+
+                        limiter.addEventListener('change', (e) => {
+                            const link = e.target.value;
+
+                            if (link) {
+                                const url = new URL(link);
+
+                                this.limit = url.searchParams.get('limit') || 10;
+                                this.request()
+                            }
+                        })
+                    }
+
+                    document.querySelectorAll(this.actionSelectors.join(', ')).forEach((elem) => {
+                        elem.addEventListener('change', (e) => {
+                            this.request()
+                        })
+                    });
+
+                    const pagingLinks = document.querySelectorAll('#customer-review-list .pages a');
+
+                    if (pagingLinks.length) {
+                        pagingLinks.forEach((link) => {
+                            link.addEventListener('click', (e) => {
+                                e.preventDefault();
+
+                                const pagingUrl = link.getAttribute('href');
+
+                                if (pagingUrl) {
+                                    const url = new URL(pagingUrl);
+
+                                    this.page = url.searchParams.get('p') || 1;
+                                    this.request();
+                                }
+                            })
+                        })
+                    }
+
+                    this.initiated = true;
+                },
+
+                collectParams: function () {
+                    this.ratingFilter = [];
+
+                    const availableRatingFilters = document.querySelectorAll('#customer-review-list [name="filter_rating[]"]:not([disabled])');
+
+                    if (availableRatingFilters.length) {
+                        availableRatingFilters.forEach((filter) => {
+                            if (filter.checked) {
+                                this.ratingFilter.push(filter.value)
+                            }
+                        });
+                    }
+
+                    const verifiedBuyerFilter = document.querySelector('#customer-review-list #verified_buyers');
+
+                    this.verifiedBuyerFilter = verifiedBuyerFilter && verifiedBuyerFilter.checked
+                        ? document.querySelector('#customer-review-list #verified_buyers').value
+                        : false;
+
+                    const sortingEl = document.querySelector('#customer-review-list #sorting');
+
+                    this.sortOrder = sortingEl && sortingEl.value != this.defaultSortOrder
+                        ? document.querySelector('#customer-review-list #sorting').value
+                        : false;
+                },
+
+                request: function() {
+                    this.isLoading = true;
+                    this.collectParams()
+
+                    let formData = new FormData();
+
+                    const params = new URLSearchParams();
+
+                    this.ratingFilter.forEach((value) => {
+                        params.append('rating[]', value);
+                    });
+
+                    if (this.verifiedBuyerFilter) {
+                        params.set('is_verified_buyer', this.verifiedBuyerFilter);
+                    }
+
+                    if (this.sortOrder) {
+                        params.set('sorting', this.sortOrder);
+                    }
+
+                    if (this.page) {
+                        params.set('p', this.page);
+                    }
+
+                    if (this.limit) {
+                        params.set('limit', this.limit)
+                    }
+
+                    fetch(
+                        this.requestUrl + '?' + params.toString()
+                    ).then(response => {
+                        if (! response.ok) console.warn('GET request failed');
+                        return response.text()
+                    }).then(content => {
+                        this.updateReviewsList(content);
+                        document.querySelector('.mst-review-title').scrollIntoView({behavior: "smooth", block: "start"})
+                    }).finally(() => {
+                        this.isLoading = false;
+                    });
+                },
+
+                updateReviewsList: function(content) {
+                    const wrapper = document.createElement('div');
+                    wrapper.innerHTML = content;
+
+                    const reviewList = wrapper.querySelector('.mst-review-list-container');
+
+                    document.querySelector('.mst-review-list-container').innerHTML = reviewList.innerHTML;
+
+                    const toolbar = wrapper.querySelector('#filter_sorting');
+
+                    if (toolbar && document.querySelector('#filter_sorting')) {
+                        document.querySelector('#filter_sorting').innerHTML = toolbar.innerHTML;
+                    }
+
+                    this.initiated = false;
+                    this.init();
+                }
+            }
+        }
+    </script>
+</div>
+<?php endif; ?>

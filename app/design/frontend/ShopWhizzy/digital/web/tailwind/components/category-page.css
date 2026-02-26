@@ -1,0 +1,72 @@
+#category-view-container {
+    @apply mx-auto flex p-0 flex-col items-center mb-6;
+}
+
+.category-image {
+    img {
+        @apply w-full mx-6 rounded-lg;
+        width: calc(100% - 48px);
+    }
+}
+
+.category-description {
+    @apply w-full px-6 overflow-hidden text-base lg:text-lg text-whizzy-body;
+
+    table {
+        @apply table-fixed mb-6;
+
+        tr {
+            td {
+                @apply px-4 py-2 border-b border-black;
+
+            }
+
+            &:last-child td {
+                @apply border-0;
+            }
+        }
+
+        iframe {
+            @apply w-full rounded-lg mt-6;
+        }
+    }
+
+    em {
+        @apply not-italic;
+    }
+
+    strong {
+        @apply font-semibold;
+    }
+
+    p {
+        @apply mb-6;
+    }
+
+    a {
+        @apply text-whizzy-primary underline;
+    }
+
+    h2 {
+        @apply mb-2 mt-4 text-xl lg:text-2xl;
+    }
+
+    h3, h4,h5, h6 {
+        @apply mb-2 mt-4 text-sans-serif;
+    }
+
+    img {
+        @apply rounded-lg my-6;
+    }
+
+    &.category-description-bottom {
+        @apply px-0 my-6 lg:my-12 lg:text-base;
+    }
+}
+
+/*
+Use the following selector to extend the toolbar modes switcher with your own icon,
+also replace `custom` with your own mode name.
+
+.modes-mode.mode-custom {}
+*/

@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="checkout.cart.methods">
+            <block class="Bol\CheckoutViaBol\Block\Checkout\Link"
+                   name="checkout.cart.methods.bol.checkout"
+                   after="checkout.cart.methods.onepage.bottom"
+                   template="Bol_CheckoutViaBol::checkout/link.phtml"
+            />
+        </referenceContainer>
+    </body>
+</page>

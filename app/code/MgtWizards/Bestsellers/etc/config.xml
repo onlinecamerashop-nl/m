@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © MgtWizards. All rights reserved.
+ * See MS-LICENSE.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <mgtwizards_bestsellers>
+            <general>
+                <enabled>0</enabled>
+                <show_out_of_stock>0</show_out_of_stock>
+                <show_with_images>1</show_with_images>
+                <show_rule_products>0</show_rule_products>
+                <module_name>Bestsellers Category</module_name>
+                <!--Please, change it to 1 for the marketplace version-->
+                <is_marketplace>0</is_marketplace>
+            </general>
+        </mgtwizards_bestsellers>
+    </default>
+</config>

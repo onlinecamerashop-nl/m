@@ -1,0 +1,40 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ */
+?>
+<?php
+/**
+ * Blog related posts template
+ *
+ * @var $block \Magefan\Blog\Block\Post\View\RelatedPosts
+ * @var $block \Magefan\Blog\Block\Catalog\Product\RelatedPosts
+ */
+?>
+
+<?php if ($block->displayPosts()) { ?>
+    <?php $postCollection = $block->getPostCollection(); ?>
+    <?php if (count($postCollection)) { ?>
+        <div class="mfblog-related-posts-block block related my-10">
+            <?php if (!$block->getHideTitle()) { ?>
+                <div class="block-title flex flex-col items-center md:flex-row">
+                    <strong class="text-xl lg:text-2xl mb-4 lg:mb-6">
+                        <?= $block->escapeHtml(__('Related Posts')) ?>
+                    </strong>
+                </div>
+            <?php } ?>
+            <ol class="block-content pl-5 list-decimal">
+                <?php foreach ($postCollection as $post) { ?>
+                    <li class="item mb-2">
+                        <a class="post-item-link text-whizzy-body hover:text-whizzy-graylighter transition-all duration-200"
+                            title="<?= $block->escapeHtml($post->getTitle()) ?>"
+                            href="<?= $block->escapeUrl($post->getPostUrl()) ?>">
+                            <?= $block->escapeHtml($post->getTitle()) ?>
+                        </a>
+                    </li>
+                <?php } ?>
+            </ol>
+        </div>
+    <?php } ?>
+<?php } ?>

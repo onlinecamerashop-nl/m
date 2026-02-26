@@ -1,0 +1,59 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+/** @var \Magento\Customer\Block\Newsletter $block */
+/** @var \Magento\Framework\Escaper $escaper */
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+?>
+<?= $block->getChildHtml('form_before') ?>
+<div class="py-6 px-4 lg:py-8 lg:px-6">
+    <span class="text-2xl text-heading">
+        <?= $escaper->escapeHtml(__('Subscription option')) ?>
+    </span>
+</div>
+
+<form class="form form-newsletter-manage" action="<?= $escaper->escapeUrl($block->getAction()) ?>" method="post"
+    id="form-validate">
+    <fieldset
+        class="fieldset flex flex-col gap-x-3 lg:gap-x-4 py-6 px-4 lg:py-8 lg:px-6 bg-white shadow-whizzy-header rounded-lg">
+        <?= $block->getBlockHtml('formkey') ?>
+        <div class="field choice">
+            <input type="checkbox" name="is_subscribed" id="subscription" value="1"
+                title="<?= $escaper->escapeHtmlAttr(__('General Subscription')) ?>" <?php if ($block->getIsSubscribed()): ?> checked<?php endif; ?> class="checkbox" />
+            <label for="subscription" class="label ml-1 text-whizzy-brown text-md">
+                <span>
+                    <?= $escaper->escapeHtml(__('General Subscription')) ?>
+                </span>
+            </label>
+        </div>
+        <?php /* Extensions placeholder */ ?>
+        <?= $block->getChildHtml('customer.form.newsletter.extra') ?>
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button type="submit" title="<?= $escaper->escapeHtmlAttr(__('Save')) ?>" class="action save primary">
+                <span>
+                    <?= $escaper->escapeHtml(__('Save')) ?>
+                </span>
+            </button>
+        </div>
+        <div class="secondary">
+            <a class="action back" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>">
+                <span>
+                    <?= $escaper->escapeHtml(__('Back')) ?>
+                </span>
+            </a>
+        </div>
+    </div>
+</form>
+<?php /* Extensions placeholder */ ?>
+<?= $block->getChildHtml('customer.form.newsletter.extra2') ?>

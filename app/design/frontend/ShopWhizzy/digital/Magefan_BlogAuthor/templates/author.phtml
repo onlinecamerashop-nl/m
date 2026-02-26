@@ -1,0 +1,129 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ */
+?>
+<?php
+/**
+ * Blog author template
+ *
+ * @var $block \Magefan\BlogAuthor\Block\Post\View\Author|\Magefan\BlogAuthor\Block\Author
+ */
+?>
+<?php
+$author = $block->getAuthor();
+$isShortContent = $block->getDisplayShortContent();
+$width = (int) $block->getBackgroundImageWidth() ?: 200;
+$imageHelper = $this->helper(\Magefan\Blog\Helper\Image::class);
+?>
+
+<?php if ($author) { ?>
+    <div class="author border-y border-whizzy-separator py-6 lg:p-6 my-10">
+        <?php if($content = $isShortContent): ?>
+            <div class="block-info flex flex-col lg:flex-row gap-4 lg:gap-8 items-center">
+        <?php else: ?>
+            <div class="block-info flex flex-col lg:flex-row gap-4 lg:gap-8 items-start">
+        <?php endif; ?>
+                <div class="flex flex-row justify-start items-center gap-4 w-full lg:block lg:w-auto">
+                    <div class="w-fit">
+                        <?php if ($featuredImage = $author->getFeaturedImg()) { ?>
+                            <?php $featuredImage = $imageHelper->init($featuredImage)->resize($width, null, false); ?>
+                                <?php if($content = $isShortContent): ?>
+                                        <div class="shrink-0 block-img w-[70px] lg:w-[90px]">
+                                            <img class="shrink-0 author-image w-[70px] lg:w-[90px] rounded-full h-auto"
+                                                src="<?= $featuredImage ?>" alt="<?= $block->escapeHtml($author->getName()) ?>" />
+                                        </div>
+                                <?php else: ?>
+                                        <div class="shrink-0 block-img w-[90px] lg:w-[160px]">
+                                            <img class="shrink-0 author-image w-[90px] lg:w-[160px] rounded-full h-auto"
+                                                src="<?= $featuredImage ?>" alt="<?= $block->escapeHtml($author->getName()) ?>" />
+                                        </div>
+                                <?php endif; ?>
+                        <?php } ?>
+                    </div>
+                    <div class="block lg:hidden">
+                        <div class="block-data">
+                            <div class="author-name font-semibold leading-wide text-lg text-whizzy-body">
+                                <?= $block->escapeHtml($author->getName()) ?>
+                            </div>
+                            <div class="author-position leading-wide text-sm text-whizzy-graylighter">
+                                <?= $block->escapeHtml($author->getRole()) ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="flex flex-col gap-2 lg:gap-4 w-full">
+                <div class="block-data grow hidden lg:block">
+                    <?php if($content = $isShortContent): ?>
+                        <a href="<?php echo $author->getAuthorUrl() ?>" class="author-name font-semibold leading-wide text-xl lg:text-2xl text-whizzy-body cursor-pointer hover:text-whizzy-graylighter transition-all duration-300">
+                            <?= $block->escapeHtml($author->getName()) ?>
+                        </a>
+                    <?php else: ?>
+                        <div class="author-name font-semibold leading-wide text-xl lg:text-2xl text-whizzy-body">
+                            <?= $block->escapeHtml($author->getName()) ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="author-position leading-wide text-sm text-whizzy-graylighter">
+                        <?= $block->escapeHtml($author->getRole()) ?>
+                    </div>
+                </div>
+                <?php if($content = $isShortContent): ?>
+                <?php else: ?>
+                <div class="w-auto">
+                    <?php
+                    $content = $isShortContent ? trim($author->getShortFilteredContent(null, '...')) : trim($author->getFilteredContent()); ?>
+                    <?php if ($content && $content != '...') { ?>
+                        <div class="text-whizzy-body text-sm">
+                            <?= $content ?>
+                        </div>
+                    <?php } ?>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <div class="social-icons flex">
+            <?php if ($socialUrl = $author->getFacebookPageUrl()) { ?>
+                <div class="icon my-1.5 mr-3">
+                    <a href="<?= $block->escapeHtml($socialUrl) ?>" target="_blank" rel="nofollow noopener">
+                        <img class="w-5"
+                            src="<?= $block->escapeUrl($this->getViewFileUrl('Magefan_BlogAuthor::images/facebook.svg')) ?>" />
+                    </a>
+                </div>
+            <?php } ?>
+            <?php if ($socialUrl = $author->getTwitterPageUrl()) { ?>
+                <div class="icon my-1.5 mr-3">
+                    <a href="<?= $block->escapeHtml($socialUrl) ?>" target="_blank" rel="nofollow noopener">
+                        <img class="w-5"
+                            src="<?= $block->escapeUrl($this->getViewFileUrl('Magefan_BlogAuthor::images/twitter.svg')) ?>" />
+                    </a>
+                </div>
+            <?php } ?>
+            <?php if ($socialUrl = $author->getInstagramPageUrl()) { ?>
+                <div class="icon my-1.5 mr-3">
+                    <a href="<?= $block->escapeHtml($socialUrl) ?>" target="_blank" rel="nofollow noopener">
+                        <img class="w-5"
+                            src="<?= $block->escapeUrl($this->getViewFileUrl('Magefan_BlogAuthor::images/Instagram.svg')) ?>" />
+                    </a>
+                </div>
+            <?php } ?>
+            <?php if ($socialUrl = $author->getGoogleplusPageUrl()) { ?>
+                <div class="icon my-1.5 mr-3">
+                    <a href="<?= $block->escapeHtml($socialUrl) ?>" target="_blank" rel="nofollow noopener">
+                        <img class="w-5"
+                            src="<?= $block->escapeUrl($this->getViewFileUrl('Magefan_BlogAuthor::images/google.svg')) ?>" />
+                    </a>
+                </div>
+            <?php } ?>
+            <?php if ($socialUrl = $author->getLinkedinPageUrl()) { ?>
+                <div class="icon my-1.5 mr-3">
+                    <a href="<?= $block->escapeHtml($socialUrl) ?>" target="_blank" rel="nofollow noopener">
+                        <img class="w-5"
+                            src="<?= $block->escapeUrl($this->getViewFileUrl('Magefan_BlogAuthor::images/linkedin.svg')) ?>" />
+                    </a>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+<?php } ?>

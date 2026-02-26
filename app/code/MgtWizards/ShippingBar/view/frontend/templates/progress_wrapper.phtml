@@ -1,0 +1,78 @@
+<?php
+
+/** @var MgtWizards\ShippingBar\Block\Wrapper $block */
+$helper = $this->helper(\MgtWizards\ShippingBar\Helper\Data::class);
+if (!$helper->isEnabled())
+{
+    return;
+}
+?>
+<div x-data="shippingBar()" x-init="init()" x-show="data_loaded">
+    <div class="pb-6 mb-2 border-b border-container">
+        <div class="space-y-2">
+            <?php if ($helper->isShowProgressText()): ?>
+                <div class="progress-text text-sm text-black text-center">
+                    <template x-if="has_free_shipping">
+                        <span><?= $block->escapeHtml(__('You have FREE Shipping')) ?><span
+                                class="text-2xl leading-3 ml-1"><?= __('&#127881;') ?></span></span>
+                    </template>
+
+                    <template x-if="!has_free_shipping">
+                        <span
+                            x-html="`<?= $block->escapeHtml(__("You're %1 away from FREE Shipping &#128640;")) ?>`.replace('%1', remaining_amount)"></span>
+                    </template>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($helper->isShowProgressGraph()): ?>
+                <div class="bg-gray-200 rounded h-2 w-full">
+                    <div class="w-0 bg-green-500 h-2 rounded transition-all duration-700 ease-out" role="progressbar"
+                        :style="{ width: animated_percent + '%' }" :aria-valuenow="animated_percent" aria-valuemin="0"
+                        aria-valuemax="100"></div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<script>
+    function shippingBar() {
+        return {
+            data_loaded: false,
+            has_free_shipping: false,
+            remaining_amount: '',
+            progress_percent: 0,
+            animated_percent: 0,
+
+            init() {
+                window.addEventListener('private-content-loaded', (event) => {
+                    const sectionShipping = event.detail.data['shipping-bar'];
+                    if (!sectionShipping) return;
+
+                    this.data_loaded = sectionShipping.data_loaded;
+                    this.has_free_shipping = sectionShipping.has_free_shipping;
+                    this.remaining_amount = sectionShipping.remaining_amount;
+                    this.progress_percent = sectionShipping.progress_percent;
+
+                    // Animate the bar smoothly
+                    this.animateProgress();
+                }, { once: true });
+            },
+
+            animateProgress() {
+                const interval = 10; // ms
+                const step = 1; // %
+                const animation = setInterval(() => {
+                    if (this.animated_percent < this.progress_percent) {
+                        this.animated_percent += step;
+                        if (this.animated_percent > this.progress_percent) {
+                            this.animated_percent = this.progress_percent;
+                        }
+                    } else {
+                        clearInterval(animation);
+                    }
+                }, interval);
+            }
+        };
+    }
+</script>

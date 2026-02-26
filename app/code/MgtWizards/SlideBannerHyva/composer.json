@@ -1,0 +1,25 @@
+{
+    "name": "mgtwizards/module-slidebannerhyva",
+    "description": "MgtWizards_SlideBannerHyva",
+    "type": "magento2-module",
+    "license": "proprietary",
+    "version": "1.1.0",
+    "authors": [
+        {
+            "name": "ShopWhizzy",
+            "email": "info@shopwhizzy.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "rosell-dk/webp-convert": "^2.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MgtWizards\\SlideBannerHyva\\": ""
+        }
+    }
+}

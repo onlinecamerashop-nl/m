@@ -1,0 +1,22 @@
+{
+    "name": "mgtwizards/module-seopagination",
+    "description": "",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "ShopWhizzy",
+            "email": "info@shopwhizzy.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "MgtWizards\\SeoPagination\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

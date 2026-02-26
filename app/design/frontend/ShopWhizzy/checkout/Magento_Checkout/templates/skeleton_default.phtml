@@ -1,0 +1,47 @@
+<style>
+	.t,
+	.p {
+		background: #e0e0e0;
+		border-radius: 20px;
+		animation: pulse 1.5s ease-in-out infinite;
+	}
+
+	.t {
+		height: 20px;
+		width: 60%;
+		margin-bottom: 10px;
+	}
+
+	.p {
+		height: 14px;
+		width: 80%;
+	}
+
+	@keyframes pulse {
+		0% {
+			background-color: #e0e0e0;
+		}
+
+		50% {
+			background-color: #f0f0f0;
+		}
+
+		100% {
+			background-color: #e0e0e0;
+		}
+	}
+</style>
+<div class="opc-wrapper skeleton">
+	<ol class="opc" id="checkoutSteps">
+		<li>
+			<div class="t"></div>
+			<div class="p"></div>
+		</li>
+	</ol>
+</div>
+<aside class="opc-sidebar opc-summary-wrapper skeleton">
+	<div class="modal-inner-wrap">
+		<div class="t"></div>
+		<div class="p"></div>
+	</div>
+</aside>

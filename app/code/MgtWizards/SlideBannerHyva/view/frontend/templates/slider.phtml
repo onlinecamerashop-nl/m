@@ -1,0 +1,292 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\Store;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+// phpcs:disable Generic.Files.LineLength.TooLong
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var Store $viewModelStore */
+$viewModelStore = $viewModels->require(Store::class);
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+$title = (string)$block->getTitle();
+$items = $block->getItems() ?? [];
+if (is_object($items) && $items instanceof Iterator)
+{
+	$items = iterator_to_array($items);
+}
+if (!$itemCount = count($items))
+{
+	return '';
+}
+$sliderItemRenderer = $block->getChildBlock('slider.item.template');
+$showNavigation = false;
+$showPagination = false;
+$showProgressBar = false;
+$autoplay = false;
+$rounded = false;
+$autoplayTime = 5000;
+
+foreach ($items as $item)
+{
+	if (isset($item['slider_navigation']) && $item['slider_navigation'])
+	{
+		$showNavigation = true;
+	}
+	if (isset($item['slider_pagination']) && $item['slider_pagination'])
+	{
+		$showPagination = true;
+	}
+	if (isset($item['slider_progress_bar']) && $item['slider_progress_bar'])
+	{
+		$showProgressBar = $item['slider_progress_bar'];
+	}
+	if (isset($item['slider_autoplay']) && $item['slider_autoplay'])
+	{
+		$autoplay = $item['slider_autoplay'];
+		$autoplayTime = $item['slider_autoplaytime'];
+	}
+	else
+	{
+		$showProgressBar = false;
+	}
+	if (isset($item['slider_rounded']) && $item['slider_rounded'])
+	{
+		$rounded = $item['slider_rounded'];
+	}
+	break;
+}
+?>
+<script>
+	'use strict';
+
+	function initSliderComponent() {
+		return {
+			active: 0,
+			itemCount: 0,
+			autoplay: <?= json_encode($autoplay) ?>,
+			autoplayTime: <?= json_encode((int)$autoplayTime) ?>,
+			autoplayInterval: null,
+			getSlider() {
+				return this.$root.querySelector('.js_slides');
+			},
+			pageSize: 1,
+			pageFillers: 0,
+			calcPageSize() {
+				const slider = this.getSlider();
+				if (slider) {
+					this.itemCount = slider.querySelectorAll('.js_slide').length;
+					this.pageSize = Math.round(slider.clientWidth / slider.querySelector('.js_slide').clientWidth);
+					this.pageFillers = (
+						this.pageSize * Math.ceil(this.itemCount / this.pageSize)
+					) - this.itemCount;
+				}
+			},
+			calcActive() {
+				const slider = this.getSlider();
+				if (slider) {
+					const sliderItems = this.itemCount + this.pageFillers;
+					const calculatedActiveSlide = slider.scrollLeft / (slider.scrollWidth / sliderItems);
+					this.active = Math.round(calculatedActiveSlide / this.pageSize) * this.pageSize;
+				}
+			},
+			scrollPrevious() {
+				this.scrollTo(this.active - this.pageSize);
+			},
+			scrollNext() {
+				this.scrollTo(this.active + this.pageSize);
+			},
+			scrollTo(idx) {
+				const slider = this.getSlider();
+				if (slider) {
+					const slideWidth = slider.scrollWidth / (this.itemCount + this.pageFillers);
+					slider.scrollLeft = Math.floor(slideWidth) * idx;
+					this.active = idx;
+				}
+			},
+			startAutoplay() {
+				if (this.autoplay) {
+					this.autoplayInterval = setInterval(() => {
+						if (this.active >= this.itemCount - this.pageSize) {
+							this.scrollTo(0);
+						} else {
+							this.scrollNext();
+						}
+					}, this.autoplayTime);
+				}
+			},
+			init() {
+				this.calcPageSize();
+				this.startAutoplay();
+			}
+		}
+	}
+</script>
+
+<div class="slider-container relative <?= ($rounded ? 'rounded-xl' : '') ?> overflow-hidden <?= $escaper->escapeHtmlAttr($block->getData('maybe_purged_tailwind_section_classes')) ?: ''; ?>"
+	x-data="initSliderComponent()" x-init="calcPageSize();"
+	@resize.window.debounce="calcPageSize(); $nextTick( function() { calcActive() })">
+	<?php if ($items): ?>
+		<div class="relative flex flex-nowrap w-full overflow-auto js_slides snap" @scroll.debounce="calcActive">
+			<?php foreach ($items as $item): ?>
+				<div class="flex shrink-0 w-full js_slide">
+					<div class="w-full text-center lg:text-left">
+						<?= $sliderItemRenderer->setItem($item)->toHtml() ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+			<div :class="{'js_dummy_slide w-full flex-none' : pageFillers > 0}"></div>
+			<div :class="{'js_dummy_slide w-full flex-none' : pageFillers > 1}"></div>
+			<div :class="{'js_dummy_slide w-full flex-none' : pageFillers > 2}"></div>
+		</div>
+		<template x-if="itemCount > pageSize">
+			<div class="absolute w-full flex items-center justify-between top-1/2 left-0 -translate-y-1/2 z-10 px-8">
+				<?php if ($showNavigation): ?>
+					<button aria-label="<?= $escaper->escapeHtml(__('Previous')) ?>" tabindex="-1"
+						class="hidden lg:block bg-white w-11 h-11 text-black rounded outline-none focus:outline-none opacity-100 cursor-pointer shadow-whizzy-header"
+						:class="{ 'opacity-25 pointer-events-none' : active === 0 }" @click="scrollPrevious">
+						<?= $themeIcons->renderHtml('arrow-left', 'text-black hover:text-black mx-auto', 24, 24, ['aria-hidden' => 'true']) ?>
+					</button>
+					<button aria-label="<?= $escaper->escapeHtml(__('Next')) ?>" tabindex="-1"
+						class="hidden lg:block bg-white w-11 h-11 text-black rounded outline-none focus:outline-none opacity-100 cursor-pointer shadow-whizzy-header"
+						:class="{ 'opacity-25 pointer-events-none' : active >= itemCount-pageSize }" @click="scrollNext">
+						<?= $themeIcons->renderHtml('arrow-right', 'text-black hover:text-black mx-auto', 24, 24, ['aria-hidden' => 'true']) ?>
+					</button>
+				<?php endif; ?>
+			</div>
+		</template>
+		<template x-if="itemCount > pageSize">
+			<?php if ($showPagination): ?>
+				<div class="w-full absolute w-full bottom-4 lg:bottom-8 left-0 right-0">
+					<?php if ($showProgressBar): ?>
+						<div
+							class="relative z-10 w-full flex flex-wrap w-full md:w-auto justify-center gap-2 lg:gap-4 max-w-4xl mx-auto">
+							<?php foreach ($items as $i => $item): ?>
+								<button class="transition-all text-white shrink-0 block text-base cursor-pointer"
+									:class="{'opacity-100': active === <?= (int)$i - 1 ?>,'opacity-75': active !== <?= (int)$i - 1 ?>}"
+									aria-label="<?= $escaper->escapeHtml($item['slide_alt']) ?>" @click="scrollTo(<?= (int)$i - 1 ?>)"
+									<?= ($item['slide_main_color']) ? 'style="--sw-progress-active: ' . $item['slide_main_color'] . ';"' : ''; ?>>
+									<span class="hidden lg:inline title px-3"><?= $escaper->escapeHtml($item['slide_alt']) ?></span>
+									<?php if ($autoplay): ?>
+										<span class="progress-bar block w-full h-1 mt-1 min-w-6"
+											:class="{'progress-bar-active': active === <?= (int)$i - 1 ?>}">
+										</span>
+									<?php endif; ?>
+								</button>
+							<?php endforeach; ?>
+						</div>
+					<?php else: ?>
+						<div class="flex flex-wrap w-full md:w-auto justify-center mx-auto">
+							<?php for ($i = 0; $i < $itemCount; $i++): ?>
+								<span
+									class="transition-all bg-black shrink-0 block w-2 h-2 m-1 bg-black bg-opacity-25 rounded-full shadow cursor-pointer"
+									:class="{'bg-opacity-100 w-5': active === <?= (int)$i ?>,'bg-opacity-25': active !== <?= (int)$i ?>,'hidden': (pageSize !== 1 && !!(<?= (int)$i ?> % pageSize))}"
+									@click="scrollTo(<?= (int)$i ?>)">
+								</span>
+							<?php endfor; ?>
+						</div>
+					<?php endif; ?>
+				</div>
+			<?php endif; ?>
+		</template>
+
+		<?php if ($showProgressBar): ?>
+
+			<style>
+				.slider-container {
+					--sw-progress-active: #0033AB;
+					--sw-progress-bg: #fff;
+					--sw-progress-hover: #fff;
+					--sw-overlay-from: rgba(0, 0, 0, .25);
+					--sw-overlay-to: rgba(0, 0, 0, 0)
+				}
+
+				.slider-container:before {
+					content: '';
+					width: 100%;
+					height: 150px;
+					display: block;
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					background: linear-gradient(to top, var(--sw-overlay-from) 10%, var(--sw-overlay-to) 100%);
+					z-index: 2
+				}
+
+				.slider-container .progress-bar {
+					width: 100%;
+					height: 2px;
+					display: block;
+					background: var(--sw-progress-bg);
+					margin: 8px 0 0;
+					transition: all 0.2s;
+					position: relative;
+					overflow: hidden;
+				}
+
+				.slider-container button:hover .progress-bar {
+					background: var(--sw-progress-hover, var(--sw-progress-bg));
+				}
+
+				.slider-container .progress-bar::after {
+					content: '';
+					width: 100%;
+					height: 100%;
+					display: block;
+					background: var(--sw-progress-active);
+					transform-origin: left;
+					transform: scaleX(0);
+				}
+
+				.slider-container .progress-bar::after {
+					content: '';
+					width: 100%;
+					height: 100%;
+					display: block;
+					background: var(--sw-progress-active);
+					transform-origin: left;
+					transform: scaleX(0);
+				}
+
+				.slider-container .progress-bar-active::after {
+					transform: scaleX(1);
+					/*animation: progress-horizontal <?= $autoplayTime ?>
+					ms linear forwards;
+					*/
+				}
+
+				.slider-container:hover .progress-bar-active::after {
+					animation-play-state: paused;
+				}
+
+				@keyframes progress-horizontal {
+					from {
+						transform: scaleX(0);
+					}
+
+					to {
+						transform: scaleX(1);
+					}
+				}
+			</style>
+		<?php endif; ?>
+	<?php endif; ?>
+</div>

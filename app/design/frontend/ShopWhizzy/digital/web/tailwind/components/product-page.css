@@ -1,0 +1,200 @@
+.page-product-bundle {
+    .price-final_price {
+
+        .price-from,
+        .price-to {
+            .price-container {
+                @apply text-gray-700 block mb-4;
+
+                .price-label {
+                    @apply block text-lg font-medium;
+                }
+
+                .price {
+                    @apply font-semibold text-2xl text-gray-800 leading-tight;
+                }
+            }
+
+            .price-including-tax+.price-excluding-tax {
+                @apply mt-1;
+
+                .price {
+                    @apply text-base;
+                }
+            }
+
+            .old-price {
+                .price-container {
+
+                    .price,
+                    .price-label {
+                        @apply text-gray-500 font-normal inline text-base;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.price-wrapper,
+#amcart_product_addtocart_form,
+#product_addtocart_form {
+    .price-box {
+        .price-container {
+            .price {
+                @apply text-xl font-semibold;
+            }
+        }
+
+        .special-price .price-container {
+            .price {
+                @apply text-xl font-semibold mr-2;
+            }
+        }
+
+        .old-price .price-container {
+            @apply text-gray-500;
+
+            .price {
+                @apply font-normal text-base line-through;
+            }
+        }
+    }
+
+    &.price-green {
+        .price-box {
+            .price-container,
+            .final-price {
+                .price {
+                    @apply text-green-800 font-semibold;
+                }
+            }
+
+            .old-price .price-container {
+                .price {
+                    @apply font-normal text-sm line-through text-gray-500;
+                }
+            }
+        }
+    }
+}
+
+.product-description {
+    @apply w-full;
+
+    .pagebuilder-column-line {
+        @apply gap-6;
+    }
+
+    .pagebuilder-column {
+        @apply gap-6;
+    }
+
+    p {
+        @apply text-base mb-4;
+    }
+
+    h2 {
+        @apply text-2xl font-semibold mt-4;
+    }
+
+    h3 {
+        @apply text-xl font-semibold mt-4;
+    }
+
+    h4, h5, h6 {
+        @apply text-lg font-semibold mt-4;
+    }
+
+    img {
+        @apply  !rounded-lg mb-4;
+    }
+
+    table {
+        @apply w-full border-collapse mb-6;
+    }
+
+    th {
+        @apply py-3 px-4 text-left text-sm font-medium border-b border-gray-200;
+    }
+
+    td {
+        @apply py-3 px-4 text-sm text-gray-800 border-b border-gray-200;
+    }
+
+    ul {
+        @apply list-disc pl-6 mb-4;
+    }
+
+    li {
+        @apply text-base mb-2;
+    }
+
+    iframe {
+        @apply w-full mb-2;
+    }
+
+    a {
+        @apply text-whizzy-primary hover:text-opacity-80 font-bold transition-all duration-200;
+    }
+}
+
+.product-short-description {
+    @apply w-full my-4 lg:my-6 text-sm;
+
+    .pagebuilder-column-line {
+        @apply gap-6;
+    }
+
+    .pagebuilder-column {
+        @apply gap-6;
+    }
+
+    p {
+        @apply mb-4;
+    }
+
+    h2 {
+        @apply text-xl font-semibold mt-4;
+    }
+
+    h3 {
+        @apply text-lg font-semibold mt-4;
+    }
+
+    h4, h5, h6 {
+        @apply text-base font-semibold mt-4;
+    }
+
+    img {
+        @apply  !rounded-lg mb-4;
+    }
+
+    table {
+        @apply w-full border-collapse mb-6;
+    }
+
+    th {
+        @apply py-3 px-4 text-left text-sm font-medium border-b border-gray-200;
+    }
+
+    td {
+        @apply py-3 px-4 text-sm text-gray-800 border-b border-gray-200;
+    }
+
+    ul {
+        @apply list-disc pl-6 mb-4;
+    }
+
+    li {
+        @apply mb-1;
+    }
+
+    iframe {
+        @apply w-full mb-2;
+    }
+
+    a {
+        @apply text-whizzy-primary hover:text-opacity-80 font-bold transition-all duration-200;
+    }
+}

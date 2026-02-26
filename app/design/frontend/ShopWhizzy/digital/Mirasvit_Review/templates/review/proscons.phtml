@@ -1,0 +1,43 @@
+<?php
+declare(strict_types=1);
+
+/** @var \Mirasvit\Review\Block\Product\Review\ProsCons $block */
+?>
+<?php if (count($block->fieldToArray('pros')) || count($block->fieldToArray('cons'))): ?>
+    <div class="review-additional flex flex-wrap mt-2">
+        <div class="review-content pros w-full lg:w-1/2 mt-2">
+            <span class="label font-semibold"><?= $block->escapeHtml(__('Pros')) ?>:</span>
+
+            <?php if (count($block->fieldToArray('pros'))): ?>
+                <div class="content">
+                    <ul class="text-sm">
+                        <?php foreach ($block->fieldToArray('pros') as $item): ?>
+                            <li class="relative">
+                                <?= $block->escapeHtml($item) ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php else: ?>
+                -
+            <?php endif ?>
+        </div>
+        <div class="review-content cons w-full lg:w-1/2 mt-2">
+            <span class="label font-semibold"><?= $block->escapeHtml(__('Cons')) ?>:</span>
+
+            <?php if (count($block->fieldToArray('cons'))): ?>
+                <div class="content">
+                    <ul class="text-sm">
+                        <?php foreach ($block->fieldToArray('cons') as $item): ?>
+                            <li class="relative">
+                                <?= $block->escapeHtml($item) ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php else: ?>
+                -
+            <?php endif ?>
+        </div>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Bol\CheckoutViaBol\Api\Data\CvbOrderInterface" type="Bol\CheckoutViaBol\Model\CvbOrder"/>
+    <preference for="Bol\CheckoutViaBol\Api\CvbOrderRepositoryInterface" type="Bol\CheckoutViaBol\Model\CvbOrderRepository"/>
+
+    <!-- Log definition -->
+    <virtualType name="Bol\CheckoutViaBol\LogHandler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/checkout-via-bol.log</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Bol\CheckoutViaBol\Model\Logger">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">Bol\CheckoutViaBol\LogHandler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Gateway and method definition -->
+    <virtualType name="CvbFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Bol\CheckoutViaBol\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">CvbValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">CvbCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="CvbCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <!-- Initialize the order after placing, set state pending payment etc etc -->
+                <item name="initialize" xsi:type="string">Bol\CheckoutViaBol\Gateway\Command\InitializeCommand</item>
+                <!-- Calls cvb api to notify a refund -->
+                <item name="refund" xsi:type="string">Bol\CheckoutViaBol\Gateway\Command\RefundCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="CvbValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">CvbConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="CvbConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">CvbConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="CvbConfig" type="\Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Bol\CheckoutViaBol\Model\Ui\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Checkout\Model\Session">
+        <plugin name="purge_cvb_session_id" type="Bol\CheckoutViaBol\Plugin\CheckoutSessionPlugin"/>
+    </type>
+
+    <!-- You can add stuff here if you need it or create your own order success task list and inject it in the CvbOrderService, this could be handy if you don't want certain things -->
+    <virtualType name="defaultCvbOrderSuccessTask" type="Bol\CheckoutViaBol\Model\CvbOrderSuccessTask\CompositeOrderSuccessTask">
+        <arguments>
+            <argument name="tasks" xsi:type="array">
+                <item name="update_order" xsi:type="object">Bol\CheckoutViaBol\Model\CvbOrderSuccessTask\UpdateOrderTask</item>
+                <item name="create_invoice" xsi:type="object">Bol\CheckoutViaBol\Model\CvbOrderSuccessTask\CreateInvoiceTask</item>
+                <item name="create_cvb_order_record" xsi:type="object">Bol\CheckoutViaBol\Model\CvbOrderSuccessTask\CreateCvbOrderRecordTask</item>
+                <item name="send_confirmation" xsi:type="object">Bol\CheckoutViaBol\Model\CvbOrderSuccessTask\SendOrderConfirmationMailTask</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Bol\CheckoutViaBol\Service\CvbOrderService">
+        <arguments>
+            <argument name="orderSuccessTask" xsi:type="object">defaultCvbOrderSuccessTask</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\PageCache\Model\DepersonalizeChecker">
+        <plugin name="cvb_session_purge" type="Bol\CheckoutViaBol\Plugin\DepersonalizeCheckerPlugin"/>
+    </type>
+
+</config>

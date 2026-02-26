@@ -1,0 +1,40 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Hyva\Theme\ViewModel\ProductPage;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var ProductPage $productViewModel */
+$productViewModel = $viewModels->require(ProductPage::class);
+
+/** @var Product $product */
+$product = $productViewModel->getProduct();
+
+if (!$product->getDescription()) {
+    return;
+}
+
+$cssClasses = $block->getData('css_classes')
+    ?? 'text-whizzy-body text-sm lg:text-base prose max-w-full prose-h2:text-xl prose-h3:text-lg prose-h4:text-md prose-h2:leading-6 prose-h3:leading-4 prose-h4:leading-4 prose-headings:first:mt-0 prose-headings:first:mb-2';
+?>
+
+<div class="<?= $escaper->escapeHtmlAttr($cssClasses) ?>">
+    <?= $productViewModel->productAttributeHtml($product, $product->getDescription(), 'description') ?>
+    <!--
+    prose prose-slate max-w-full prose-h2:text-xl prose-h3:text-lg prose-h4:text-base prose-headings:first:mt-0
+    --->
+</div>

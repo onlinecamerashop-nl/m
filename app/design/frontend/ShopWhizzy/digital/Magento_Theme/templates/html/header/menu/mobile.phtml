@@ -1,0 +1,385 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\Navigation;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+use Magento\Cms\Block\BlockByIdentifier as CmsBlock;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+/** @var Navigation $viewModelNavigation */
+$viewModelNavigation = $viewModels->require(Navigation::class, $block);
+
+$uniqueId = '_' . uniqid();
+
+// Order is important here: 1. build the menu data, 2. then set the cache tags from the view model identities
+$menuItems = $viewModelNavigation->getNavigation(5);
+$block->setData('cache_tags', $viewModelNavigation->getIdentities());
+// This version of the mobile menu is only here to fix the issues found in the default theme version,
+
+// This fixes the overlay (z-index) being present on the wrong element and the flex order classes only adding bad A11y with no layout benefit
+// If you have your own version of a mobile menu feel free to replace it with this one
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$header_layout = $whizzyHelper->getConfigValue('header/header_layout');
+$menu_desktop_version = $whizzyHelper->getConfigValue('header/menu_desktop_version');
+$menu_shop_wrap_text = $whizzyHelper->getConfigValue('header/menu_shop_wrap_text') ?: __('Shop');
+$menu_mobile_shop_wrap = $whizzyHelper->getConfigValue('header/menu_mobile_shop_wrap');
+
+$menu_text_color = (($menu_text_color_value = $whizzyHelper->getConfigValue('header/menu_text_color')) ? 'text-[' . $menu_text_color_value . ']' : 'text-whizzy-body');
+$menu_text_color_hover = (($menu_text_color_hover_value = $whizzyHelper->getConfigValue('header/menu_text_color_hover')) ? 'hover:text-[' . $menu_text_color_hover_value . ']' : 'hover:text-whizzy-graylighter');
+$show_sale_link = $whizzyHelper->getConfigValue('header/show_sale_link');
+$sale_link = (($whizzyHelper->getConfigValue('header/sale_link')) ? $whizzyHelper->getConfigValue('header/sale_link') : 'sale');
+
+if ($menu_desktop_version === 'desktop_2' && $menu_mobile_shop_wrap)
+{
+    $menuItems = [
+        'menu-node-shop' => [
+            'name' => $menu_shop_wrap_text,
+            'url' => '#',
+            'class' => 'main-shop',
+            'type' => 'link',
+            'icon' => '',
+            'childData' => $menuItems,
+        ],
+    ];
+}
+
+$menu_show_home = $whizzyHelper->getConfigValue('header/menu_show_home');
+$menu_items_after = (($whizzyHelper->getConfigValue('header/menu_items_after')) ?: '');
+$menu_items_after_decoded = (json_decode($menu_items_after, true) ?: []);
+?>
+<nav x-data="initMenuMobile<?= $escaper->escapeHtml($uniqueId) ?>()" @load.window="setActiveMenu($root)"
+    @keydown.window.escape="closeMenu()" class="z-30 navigation lg:hidden relative"
+    aria-label="<?= $escaper->escapeHtmlAttr(__('Site navigation')) ?>" role="navigation">
+    <!-- mobile -->
+    <button x-ref="mobileMenuTrigger" @click="openMenu()" class="px-[13px] py-2.5"
+        :class="{'overflow-x-hidden overflow-y-auto fixed top-0 left-0 w-full' : open}" type="button"
+        aria-label="<?= $escaper->escapeHtmlAttr(__('Open menu')) ?>" aria-haspopup="menu" :aria-expanded="open"
+        :hidden="open">
+        <?php if ($header_layout === 'header_3' || $header_layout === 'header_4'): ?>
+            <?= $themeIcons->renderHtml('menu', "inline $menu_text_color $menu_text_color_hover", 18, 18, [":class" => "{ 'hidden' : open, 'block': !open }", "aria-hidden" => "true"]) ?>
+        <?php else: ?>
+            <?= $themeIcons->renderHtml('menu', "inline", 18, 18, [":class" => "{ 'hidden' : open, 'block': !open }", "aria-hidden" => "true"]) ?>
+        <?php endif; ?>
+    </button>
+    <button @click="closeMenu()" :class="{'block' : open, 'hidden' : !open}"
+        aria-label="<?= $escaper->escapeHtmlAttr(__('Close menu')) ?>" type="button" class="hidden p-[13px]">
+        <?php if ($header_layout === 'header_3' || $header_layout === 'header_4'): ?>
+            <?= $themeIcons->renderHtml('close', "hidden $menu_text_color $menu_text_color_hover", 18, 18, [":class" => "{ 'hidden' : !open, 'block': open }", "aria-hidden" => "true"]) ?>
+        <?php else: ?>
+            <?= $themeIcons->renderHtml('close', "hidden", 18, 18, [":class" => "{ 'hidden' : !open, 'block': open }", "aria-hidden" => "true"]) ?>
+        <?php endif; ?>
+    </button>
+    <div x-ref="mobileMenuNavLinks"
+        class="hidden fixed top-[110px] left-0 mx-6 w-[calc(100%-48px)] h-[calc(100%-136px)] flex-col overflow-y-auto overflow-x-hidden bg-white shadow-whizzy-submenu rounded-lg flex pt-6 pb-16"
+        :class="{ 'flex': open, 'hidden': !open }" :aria-hidden="open ? 'false' : 'true'" role="dialog"
+        aria-modal="true">
+
+        <ul class="flex flex-col text-sans-serif pb-6"
+            aria-label="<?= $escaper->escapeHtmlAttr(__('Site navigation links')) ?>">
+            <?php if ($menu_show_home): ?>
+                <li class="level-0">
+                    <div class="flex items-center transition-transform duration-150 ease-in-out transform" :class="{
+                            '-translate-x-full' : mobilePanelActiveId,
+                            'translate-x-0' : !mobilePanelActiveId
+                        }">
+                        <a class="flex items-center w-full gap-2 px-6 py-2.5 text-base level-0 font-medium"
+                            href="<?= $escaper->escapeUrl($block->getBaseUrl()) ?>"
+                            title="<?= $escaper->escapeHtmlAttr(__('Home')) ?>">
+                            <?= $themeIcons->renderHtml('home', "flex self-center transition", 20, 20, ['aria-hidden' => 'true']) ?>
+                            <?= $escaper->escapeHtml(__('Home')) ?>
+                        </a>
+                    </div>
+                </li>
+            <?php endif; ?>
+
+            <?php foreach ($menuItems as $index => $menuItem): ?>
+                <li data-child-id="<?= $escaper->escapeHtmLAttr($index) ?>-main" class="level-0">
+                    <?php if (!empty($menuItem['childData'])): ?>
+                        <div class="flex items-center transition-transform duration-150 ease-in-out transform" :class="{
+                            '-translate-x-full' : mobilePanelActiveId,
+                            'translate-x-0' : !mobilePanelActiveId
+                        }">
+                            <span class="flex items-center w-full px-6 py-2.5 text-base level-0 font-medium"
+                                title="<?= $escaper->escapeHtmlAttr($menuItem['name']) ?>"
+                                @click="openSubcategory('<?= /* @noEscape */ $index ?>')">
+                                <?= $escaper->escapeHtml($menuItem['name']) ?>
+                            </span>
+                            <button @click="openSubcategory('<?= /* @noEscape */ $index ?>')"
+                                class="absolute right-0 flex items-center justify-center w-11 h-11 mr-2 cursor-pointer"
+                                aria-label="<?= $escaper->escapeHtmlAttr(__('Open %1 subcategories', $menuItem['name'])) ?>"
+                                aria-haspopup="true"
+                                :aria-expanded="mobilePanelActiveId === '<?= /* @noEscape */ (string)$index ?>'">
+                                <div class="p-3">
+                                    <?= $themeIcons->renderHtml('arrow-right', 'w-full h-full', 18, 18, ["aria-hidden" => "true"]) ?>
+                                </div>
+                            </button>
+                        </div>
+                        <div data-child-id="<?= $escaper->escapeHtmLAttr($index) ?>"
+                            class="absolute top-0 right-0 z-10 flex flex-col gap-1 w-full h-full bg-white" :class="{
+                                'hidden': mobilePanelActiveId !== '<?= /* @noEscape */ (string)$index ?>'
+                            }">
+                            <div class="absolute top-0 bg-white w-full shadow-whizzy-menu-negative">
+                                <button type="button" class="flex items-center px-6 py-4 cursor-pointer w-full"
+                                    @click="backToMainCategories('<?= /* @noEscape */ $index ?>-main')"
+                                    aria-label="<?= $escaper->escapeHtmlAttr(__('Back to main categories')) ?>">
+                                    <?= $themeIcons->renderHtml('arrow-left', '', 18, 18, ["aria-hidden" => "true"]) ?>
+                                    <span class="ml-4 font-semibold">
+                                        <?= $escaper->escapeHtml($menuItem['name']) ?>
+                                    </span>
+                                </button>
+                            </div>
+                            <ul class="transition-transform duration-200 ease-in-out translate-x-full transform text-base my-14 py-3 overflow-y-auto"
+                                :class="{
+                                    'translate-x-full' : mobilePanelActiveId !== '<?= /* @noEscape */ (string)$index ?>',
+                                    'translate-x-0' : mobilePanelActiveId === '<?= /* @noEscape */ (string)$index ?>',
+                                }" aria-label="<?= $escaper->escapeHtmlAttr(__('Subcategories')) ?>">
+                                <?php $i = 0; ?>
+                                <?php foreach ($menuItem['childData'] as $subMenuItem): ?>
+                                    <li :class="{'mt-1' : <?= /* @noEscape */ $i ?> != 0}">
+                                        <span
+                                            class="flex items-center w-full px-6 py-2.5 cursor-pointer font-medium text-base break-inside-avoid"
+                                            onclick="location.href='<?= $escaper->escapeUrl($subMenuItem['url']) ?>';">
+                                            <?= $escaper->escapeHtml($subMenuItem['name']) ?>
+                                        </span>
+                                    </li>
+                                    <?php $childcount = count($subMenuItem['childData']); ?>
+                                    <?php if ($childcount > 0): ?>
+                                        <ul>
+                                            <?php foreach ($subMenuItem['childData'] as $subMenuItems): ?>
+                                                <li>
+                                                    <a href="<?= $escaper->escapeUrl($subMenuItems['url']) ?>"
+                                                        title="<?= $escaper->escapeHtmlAttr($subMenuItems['name']) ?>"
+                                                        class="flex items-center w-full pl-8 pr-6 py-1 cursor-pointer text-sm break-inside-avoid">
+                                                        <span>
+                                                            <?= $escaper->escapeHtml($subMenuItems['name']) ?>
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                        <div class="px-6">
+                                            <a class="group text-whizzy-body inline-flex text-lg w-full py-2 font-semibold items-center gap-2 cursor-pointer justify-center bg-whizzy-primary-lighter rounded-md my-2"
+                                                href="<?= $escaper->escapeUrl($subMenuItem['url']) ?>">
+                                                <span
+                                                    class="text-sm font-normal"><?= $escaper->escapeHtml(__('View all %1', $subMenuItem['name'])) ?></span>
+                                                <?= $themeIcons->renderHtml('arrow-up-right', 'group-hover:rotate-45 transition-all duration-200', 18, 18, ['aria-hidden' => 'true']) ?>
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php $i++; ?>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <div class="flex items-center transition-transform duration-150 ease-in-out transform" :class="{
+                            '-translate-x-full' : mobilePanelActiveId,
+                            'translate-x-0' : !mobilePanelActiveId
+                        }">
+                            <a class="flex items-center w-full px-6 py-2.5 text-base level-0 font-medium"
+                                href="<?= $escaper->escapeUrl($menuItem['url']) ?>"
+                                title="<?= $escaper->escapeHtmlAttr($menuItem['name']) ?>">
+                                <?= $escaper->escapeHtml($menuItem['name']) ?>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+
+            <?php $i = 1; ?>
+            <?php foreach ($menu_items_after_decoded as $item): ?>
+                <?php $linkurl = ($item['url'] === '#') ? null : $escaper->escapeUrl($block->getBaseUrl() . $item['url']); ?>
+                <?php if ($item['block']): ?>
+                    <?php
+                    // Try to load the mobile-specific block first
+                    $mobileBlockIdentifier = $item['block'] . '_mobile';
+                    $cmsBlock = $this->getLayout()->createBlock(CmsBlock::class)->setIdentifier($mobileBlockIdentifier);
+                    $cmsBlockHtml = $cmsBlock->toHtml();
+
+                    // Check if the mobile block exists, is enabled, and has content
+                    $blockExists = $cmsBlock->getBlockId();
+                    $blockIsEnabled = $blockExists && $cmsBlock->getBlock()->getIsActive();
+                    $hasContent = !empty(trim($cmsBlockHtml));
+
+                    if ($blockExists && $blockIsEnabled && $hasContent)
+                    {
+                        $cmsDropdownBlockHtml = $cmsBlockHtml;
+                    }
+                    else
+                    {
+                        $cmsDropdownBlockHtml = $this->getLayout()->createBlock(CmsBlock::class)
+                            ->setIdentifier($item['block'])
+                            ->toHtml();
+                    }
+                    ?>
+
+                    <li data-child-id="<?= $escaper->escapeHtmLAttr('mobile-menu-after-' . $i) ?>-main" class="level-0">
+                        <div class="flex items-center transition-transform duration-150 ease-in-out transform"
+                            :class="{'-translate-x-full' : mobilePanelActiveId,'translate-x-0' : !mobilePanelActiveId}">
+
+                            <?php if ($linkurl): ?>
+                                <a class="flex items-center gap-2 w-full px-6 py-2.5 text-base level-0 font-medium"
+                                    href="<?= $escaper->escapeUrl($linkurl) ?>"
+                                    title="<?= $escaper->escapeHtmlAttr($item['title']) ?>">
+                                    <?php if ($item['icon']): ?>
+                                        <?= $themeIcons->renderHtml($item['icon'], "flex self-center transition", 20, 20, ['aria-hidden' => 'true']) ?>
+                                    <?php endif; ?>
+                                    <?= $escaper->escapeHtml($item['title']) ?>
+                                </a>
+                            <?php else: ?>
+                                <span class="flex items-center gap-2 w-full px-6 py-2.5 text-base level-0 font-medium"
+                                    @click="openSubcategory('<?= /* @noEscape */ 'mobile-menu-after-' . $i ?>')">
+                                    <?php if ($item['icon']): ?>
+                                        <?= $themeIcons->renderHtml($item['icon'], "flex self-center transition", 20, 20, ['aria-hidden' => 'true']) ?>
+                                    <?php endif; ?>
+                                    <?= $escaper->escapeHtml($item['title']) ?>
+                                </span>
+                            <?php endif; ?>
+
+                            <button @click="openSubcategory('<?= /* @noEscape */ 'mobile-menu-after-' . $i ?>')"
+                                class="absolute right-0 flex items-center justify-center w-11 h-11 mr-2 cursor-pointer"
+                                aria-label="<?= $escaper->escapeHtmlAttr(__('Open %1 subcategories', $item['title'])) ?>"
+                                aria-haspopup="true"
+                                :aria-expanded="mobilePanelActiveId === '<?= /* @noEscape */ (string)'mobile-menu-after-' . $i ?>'">
+                                <div class="p-3">
+                                    <?= $themeIcons->renderHtml('arrow-right', 'w-full h-full', 18, 18, ["aria-hidden" => "true"]) ?>
+                                </div>
+                            </button>
+                        </div>
+                        <div data-child-id="<?= $escaper->escapeHtmLAttr('mobile-menu-after-' . $i) ?>"
+                            class="absolute top-0 right-0 z-10 flex flex-col gap-1 w-full h-full bg-white"
+                            :class="{'hidden': mobilePanelActiveId !== '<?= /* @noEscape */ (string)'mobile-menu-after-' . $i ?>'}">
+                            <div class="absolute top-0 bg-white w-full shadow-whizzy-menu-negative">
+                                <button type="button" class="flex items-center px-6 py-4 cursor-pointer w-full"
+                                    @click="backToMainCategories('<?= /* @noEscape */ 'mobile-menu-after-' . $i ?>-main')"
+                                    aria-label="<?= $escaper->escapeHtmlAttr(__('Back to main categories')) ?>">
+                                    <?= $themeIcons->renderHtml('arrow-left', '', 18, 18, ["aria-hidden" => "true"]) ?>
+                                    <span class="ml-4 font-semibold">
+                                        <?= $escaper->escapeHtml($item['title']) ?>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="transition-transform duration-200 ease-in-out translate-x-full transform text-base my-14 py-3 overflow-y-auto"
+                                :class="{'translate-x-full' : mobilePanelActiveId !== '<?= /* @noEscape */ (string)'mobile-menu-after-' . $i ?>','translate-x-0' : mobilePanelActiveId === '<?= /* @noEscape */ (string)'mobile-menu-after-' . $i ?>',}"
+                                aria-label="<?= $escaper->escapeHtmlAttr(__('Subcategories')) ?>">
+                                <?= /** @noEscape */ $cmsDropdownBlockHtml ?>
+                            </div>
+                        </div>
+                    </li>
+                <?php else: ?>
+                    <li>
+                        <div class="flex items-center transition-transform duration-150 ease-in-out transform" :class="{
+                            '-translate-x-full' : mobilePanelActiveId,
+                            'translate-x-0' : !mobilePanelActiveId
+                        }">
+                            <?php if ($linkurl): ?>
+                                <a href="<?= $escaper->escapeUrl($linkurl) ?>"
+                                    title="<?= $escaper->escapeHtmlAttr($item['title']) ?>"
+                                    class="flex items-center gap-2 w-full px-6 py-2.5 text-base level-0 font-medium">
+                                    <?php if ($item['icon']): ?>
+                                        <?= $themeIcons->renderHtml($item['icon'], "flex self-center transition", 20, 20, ['aria-hidden' => 'true']) ?>
+                                    <?php endif; ?>
+                                    <span class="relative"><?= $escaper->escapeHtml($item['title']) ?></span>
+                                </a>
+                            <?php else: ?>
+                                <span class="flex items-center gap-2 w-full px-6 py-2.5 text-base level-0 font-medium">
+                                    <?php if ($item['icon']): ?>
+                                        <?= $themeIcons->renderHtml($item['icon'], "flex self-center transition", 20, 20, ['aria-hidden' => 'true']) ?>
+                                    <?php endif; ?>
+                                    <span class="relative"><?= $escaper->escapeHtml($item['title']) ?></span>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                    </li>
+                <?php endif; ?>
+                <?php $i++; ?>
+            <?php endforeach; ?>
+
+            <?php if ($show_sale_link): ?>
+                <li>
+                    <a class="flex items-center w-full px-6 py-2.5 text-base level-0 font-medium"
+                        href="<?= $this->getUrl() . $sale_link ?>" title="<?= $escaper->escapeHtmlAttr(__('Sale')) ?>">
+                        <?= $escaper->escapeHtml(__('Sale')) ?>
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+
+        <div
+            class="fixed bottom-6 bg-white flex flex-row justify-between shadow-whizzy-menu-negative-inv z-10 w-[calc(100%-48px)] rounded-lg">
+            <a href="<?= $this->getBaseUrl() . 'customer/account' ?>"
+                class="py-4 text-sm w-full text-center font-semibold">
+                <span><?= $escaper->escapeHtml(__('Account')) ?></span>
+            </a>
+            <a href="<?= $this->getBaseUrl() . 'contact' ?>" class="py-4 text-sm w-full text-center font-semibold">
+                <span><?= $escaper->escapeHtml(__('Contact Us')) ?></span>
+            </a>
+        </div>
+    </div>
+</nav>
+<script>
+    'use strict';
+
+    const initMenuMobile<?= $escaper->escapeHtml($uniqueId) ?> = () => {
+        return {
+            mobilePanelActiveId: null,
+            open: false,
+            setActiveMenu(menuNode) {
+                Array.from(menuNode.querySelectorAll('a')).filter(link => {
+                    return link.href === window.location.href.split('?')[0];
+                }).map(item => {
+                    item.classList.add('underline');
+                    item.closest('li.level-0') &&
+                        item.closest('li.level-0').querySelector('a.level-0').classList.add('underline');
+                });
+            },
+            openMenu() {
+                this.open = true
+                this.$nextTick(() => hyva.trapFocus(this.$refs['mobileMenuNavLinks']));
+                // Prevent from body scrolling while mobile menu opened
+                //document.body.style.position = 'fixed';
+                document.body.classList.add('fixed', 'w-full');
+            },
+            closeMenu() {
+                //document.body.style.position = '';
+                document.body.classList.remove('fixed', 'w-full');
+
+                if (this.open) {
+                    this.$nextTick(() => this.$refs['mobileMenuTrigger'].focus() || hyva.releaseFocus());
+                }
+
+                this.open = false
+                this.mobilePanelActiveId = null
+            },
+            openSubcategory(index) {
+                const menuNodeRef = document.querySelector('[data-child-id=' + index + ']')
+                this.mobilePanelActiveId = this.mobilePanelActiveId === index ? 0 : index
+                this.$nextTick(() => hyva.trapFocus(menuNodeRef))
+            },
+            backToMainCategories(index) {
+                const menuNodeRef = document.querySelector('[data-child-id=' + index + ']')
+                this.mobilePanelActiveId = 0
+                this.$nextTick(() => {
+                    hyva.trapFocus(this.$refs['mobileMenuNavLinks'])
+                    menuNodeRef.querySelector('a').focus()
+                })
+            }
+        }
+    }
+</script>

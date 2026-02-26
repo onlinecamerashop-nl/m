@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="MgtWizards\Base\ViewModel\ThemeIcons">
+        <arguments>
+            <argument name="iconPathPrefix" xsi:type="string">MgtWizards_Base::svg/theme</argument>
+        </arguments>
+    </type>
+    <type name="MgtWizards\Base\ViewModel\FlagsIcons">
+        <arguments>
+            <argument name="iconPathPrefix" xsi:type="string">MgtWizards_Base::svg/flags</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Framework\App\FrontControllerInterface">
+        <plugin name="front-controller-hyva-header" disabled="true"/>
+    </type>
+
+    <type name="Magento\Framework\App\FrontControllerInterface">
+        <plugin name="front-controller-whizzy-header" type="MgtWizards\Base\Plugin\FrontController\HeaderPlugin" sortOrder="100"/>
+    </type>
+
+    <!-- Plugin on Hyva\Theme\ViewModel\SvgIcons::hasTitle -->
+    <type name="Hyva\Theme\ViewModel\SvgIcons">
+        <plugin name="mgtwizards_force_svg_title" type="MgtWizards\Base\Plugin\SvgIconsPlugin" sortOrder="10"/>
+    </type>
+</config>

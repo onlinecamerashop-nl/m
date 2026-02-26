@@ -1,0 +1,53 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsSolid $heroiconsSolid */
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+
+$title = (string) $block->getTitle() ?: __("Details");
+$open = (bool) $block->getOpen() ? 'true' : 'false';
+?>
+
+<?php if ($childrenHtml = $block->getChildHtml()): ?>
+    <div x-data="{
+            open: <?= /** @noEscape */ $open ?>,
+            isMobile: false,
+            checkIsMobileResolution() { this.isMobile = getComputedStyle(this.$refs.toggleIcon).display !== 'none' }
+        }" x-id="['collapse-id']" x-init="checkIsMobileResolution()"
+        @resize.window.debounce="checkIsMobileResolution()" @visibilitychange.window.debounce="checkIsMobileResolution()"
+        class="border-b border-whizzy-separator lg:border-b-0 last:border-b-0">
+        <div :id="$id('collapse-id')" :role="isMobile && 'button'" :tabindex="isMobile && '0'"
+            class="group flex w-full items-center justify-between py-2 lg:pb-4 gap-2 uppercase font-bold text-whizzy-body text-sm mb-2 lg:mb-0"
+            @click="isMobile && (open = !open)" @keyup.enter="isMobile && (open = !open)"
+            @keyup.space="isMobile && (open = !open)" :aria-expanded="isMobile ? open : null"
+            :aria-controls="isMobile ? $id('collapse-id') : null">
+            <div><?= $escaper->escapeHtml($title); ?></div>
+            <span class="transition-transform group-aria-expanded:rotate-180 lg:hidden" x-ref="toggleIcon">
+                <?= $heroiconsSolid->chevronDownHtml('text-whizzy-body', 20, 20, ["aria-hidden" => 'true']); ?>
+            </span>
+        </div>
+        <div class="<?= /** @noEscape */ $open === 'true' ? 'lg:block' : 'hidden lg:block' ?>"
+            :class="{ 'hidden': isMobile && !open }" :aria-labelledby="isMobile ? $id('collapse-id') : null"
+            :aria-hidden="isMobile && (open ? 'false' : 'true')">
+            <div class="text-whizzy-body text-sm">
+                <?= /** @noEscape */ $childrenHtml ?>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,31 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Checkout\Block\Cart;
+use Magento\Framework\Escaper;
+
+/** @var Cart $block */
+/** @var Escaper $escaper */
+?>
+<div class="cart-empty p-8 lg:py-8 lg:px-10 text-center my-20">
+  <?= $block->getChildHtml('checkout_cart_empty_widget') ?>
+  <p class="text-whizzy-graylighter mb-2"><?= $escaper->escapeHtml(__('You have no items in your shopping cart.')) ?>
+  </p>
+  <p class="cursor-pointer hover:text-whizzy-graylighter transition-all duration-200 font-medium underline">
+    <?= $escaper->escapeHtml(
+      __(
+        '<a href="%1"> Click here to continue shopping </a>',
+        $escaper->escapeUrl($block->getContinueShoppingUrl())
+      ),
+      ['a']
+    ) ?>
+  </p>
+  <?= $block->getChildHtml('shopping.cart.table.after') ?>
+</div>

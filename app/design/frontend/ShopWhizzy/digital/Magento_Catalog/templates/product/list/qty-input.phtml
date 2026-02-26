@@ -1,0 +1,51 @@
+<?php
+declare(strict_types=1);
+
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \Hyva\Theme\Model\ViewModelRegistry $viewModels */
+
+$product = $block->getData('current_product');
+
+if (!$product instanceof \Magento\Catalog\Model\Product || !$product->getId())
+{
+    return;
+}
+
+$productId = $product->getId();
+
+$stock = $viewModels->require(\Hyva\Theme\ViewModel\ProductStockItem::class);
+$rawDefault = (float)($block->getData('default_qty') ?? $product->getDefaultQty() ?? 0);
+$minQty = (float)($stock->getMinSaleQty($product) ?: 1);
+$startingQty = ($rawDefault > 0) ? $rawDefault : $minQty;
+$maxQty = $stock->getMaxSaleQty($product);
+$step = (float)($stock->getQtyIncrements($product) ?: 1);
+$isDecimal = $stock->isQtyDecimal($product);
+
+$heroicons = $viewModels->require(\Hyva\Theme\ViewModel\HeroiconsOutline::class);
+?>
+
+<?php if ($product->isSaleable()): ?>
+    <div x-data="{ 
+        qty: <?= $startingQty ?>, 
+        min: <?= $minQty ?>, 
+        max: <?= $maxQty ? $maxQty : 'null' ?>, 
+        step: <?= $step ?>
+    }" class="qty-wrapper flex items-center rounded-lg overflow-hidden border border-whizzy-separator bg-white flex-1">
+
+        <button type="button" class="px-3 h-full text-gray-600 hover:text-black transition-colors"
+            @click="qty = Math.max(min, qty - step)">
+            <?= $heroicons->minusHtml('w-4 h-4', 20, 20) ?>
+        </button>
+
+        <input type="text" name="qty" id="qty-<?= (int)$productId ?>" :value="qty" x-model.number.trim.debounce.500ms="qty"
+            @input.debounce.500ms="$dispatch('update-qty-' + <?= (int)$productId ?>, qty)"
+            class="w-full text-center font-medium text-lg bg-transparent border-0 focus:ring-0 p-0 h-full" <?= $isDecimal ? 'pattern="[0-9]+(\.[0-9]+)?" inputmode="decimal"' : 'pattern="[0-9]*" inputmode="numeric"' ?>
+            min="<?= $minQty ?>" <?= $maxQty ? "max=\"$maxQty\"" : '' ?> step="<?= $step ?>"
+            title="<?= $escaper->escapeHtml(__('Quantity')) ?>" />
+
+        <button type="button" class="px-3 h-full text-gray-600 hover:text-black transition-colors"
+            @click="qty = Math.min(max ?? 9999, qty + step)">
+            <?= $heroicons->plusHtml('w-4 h-4', 20, 20) ?>
+        </button>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,49 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+?>
+
+<nav aria-label="<?= $escaper->escapeUrl($escaper->escapeHtmlAttr('Information')) ?>">
+    <ul class="flex flex-col gap-y-2 text-whizzy-graylighter pb-4 lg:pb-0">
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('sitemap')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Sitemap')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('kratom-guide')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Kratom Guide')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('shipping-and-returns')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Shipping & Returns')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('termins-and-conditions')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Terms & Conditions')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('privacy-policy')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Privacy Policy')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('news-and-updates')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('News & Updates')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('affiliates')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Affiliate Program')) ?></a>
+        </li>
+    </ul>
+</nav>

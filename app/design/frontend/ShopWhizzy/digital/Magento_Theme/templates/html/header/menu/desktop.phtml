@@ -1,0 +1,165 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+use Hyva\Theme\ViewModel\Navigation;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+use Magento\Cms\Block\BlockByIdentifier as CmsBlock;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+// phpcs:disable Generic.Files.LineLength.TooLong
+
+/** @var Navigation $viewModelNavigation */
+$viewModelNavigation = $viewModels->require(Navigation::class, $block);
+
+/** @var HeroiconsSolid $heroiconsSolid */
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+$uniqueId = '_' . uniqid();
+$canOpenOnHover = $block->getOpenTopLevelMenuOnHover();
+$showTopLevelAllLink = $block->getShowTopLevelAllLink() !== null ? $block->getShowTopLevelAllLink() : true;
+$topMenuCtaItem = $block->getTopMenuCtaItem();
+
+// Order is important here: 1. build the menu data, 2. then set the cache tags from the view model identities
+$menu = $viewModelNavigation->getNavigation(maxLevel: 5);
+
+$block->setData('cache_tags', $viewModelNavigation->getIdentities());
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$header_layout = $whizzyHelper->getConfigValue('header/header_layout');
+
+$sale_link = (($whizzyHelper->getConfigValue('header/sale_link')) ? $whizzyHelper->getConfigValue('header/sale_link') : 'sale');
+$menu_background_color = (($menu_background_color_value = $whizzyHelper->getConfigValue('header/menu_background_color')) ? 'bg-[' . $menu_background_color_value . ']' : 'bg-white');
+$menu_text_color = (($menu_text_color_value = $whizzyHelper->getConfigValue('header/menu_text_color')) ? 'text-[' . $menu_text_color_value . ']' : 'text-whizzy-body');
+
+$hover_classes = "aria-expanded:text-black";
+$menu_text_color_hover = (($menu_text_color_hover_value = $whizzyHelper->getConfigValue('header/menu_text_color_hover')) ? 'aria-expanded:text-[' . $menu_text_color_hover_value . '] hover:text-[' . $menu_text_color_hover_value . ']' : 'hover:text-whizzy-graylighter');
+$show_sale_link = $whizzyHelper->getConfigValue('header/show_sale_link');
+?>
+<nav class="z-20 navigation hidden lg:flex items-center justify-center <?= $header_layout ?>"
+    aria-label="<?= $escaper->escapeHtmlAttr(__('Main menu')) ?>"
+    x-data="initMenuDesktop<?= $escaper->escapeHtml($uniqueId) ?>()" x-ref="nav-desktop"
+    @load.window="setActiveMenu($root)">
+    <ul class="flex flex-wrap gap-x-6 items-center py-3">
+        <?php foreach ($menu as $item): ?>
+            <?php if (!empty($item['childData'])): ?>
+                <li class="level-0" x-data="{
+                        open: false,
+                        canHover(func) {
+                            const isHoverableDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+                            if (!isHoverableDevice) return;
+                            func();
+                        }
+                    }" @click.outside="open = false" <?php if ($canOpenOnHover): ?>
+                        @mouseenter="canHover(() => { open = true })" @mouseleave="canHover(() => { open = false })" <?php endif ?>
+                    @keydown.escape="open = false" onclick="location.href='<?= $escaper->escapeUrl($item['url']) ?>';">
+                    <?php $menuId = 'desktop-menu-' . str_replace('-node', '', $item['id']) ?>
+                    <button type="button"
+                        class="level-0 group w-full flex justify-between items-center gap-1 py-3 font-medium transition top-menu-item has-sub aria-[current=page]:underline data-[has-current]:underline hover:underline underline-offset-4 <?= $menu_text_color . ' ' . $menu_text_color_hover ?>"
+                        @click="open = !open" aria-expanded="false" :aria-expanded="open"
+                        aria-controls="<?= $escaper->escapeHtml($menuId) ?>">
+                        <span class="relative"><?= $escaper->escapeHtml($item['name']) ?></span>
+                        <?= $themeIcons->renderHtml('arrow-down', "flex self-center transition group-aria-expanded:rotate-180 $menu_text_color group-aria-expanded:text-inherit", 16, 16, ['aria-hidden' => 'true']) ?>
+                    </button>
+                    <div id="<?= $escaper->escapeHtml($menuId) ?>"
+                        class="z-30 absolute top-18 left-0 bg-white overflow-auto shadow-whizzy-submenu w-full p-8 overflow-hidden <?= $header_layout === 'header_3' ? 'rounded-b-lg' : '' ?>"
+                        x-show="open === true" x-transition x-cloak>
+                        <div class="container">
+                            <div id="$menuId" class="text-whizzy-body">
+                                <ul class="columns-3xs gap-4">
+                                    <?php foreach ($item['childData'] as $subMenu): ?>
+                                        <li class="break-inside-avoid pb-4">
+                                            <a href="<?= $escaper->escapeUrl($subMenu['url']) ?>"
+                                                class="level-1 block py-1 font-medium hover:underline aria-[current=page]:underline text-heading font-semibold"><?= $escaper->escapeHtml($subMenu['name']) ?></a>
+                                            <?php if (!empty($subMenu['childData'])): ?>
+                                                <ul>
+                                                    <?php foreach ($subMenu['childData'] as $subMenuItems): ?>
+                                                        <li>
+                                                            <a href="<?= $escaper->escapeUrl($subMenuItems['url']) ?>"
+                                                                class="level-2 block py-0.5 hover:underline aria-[current=page]:underline text-xs"><?= $escaper->escapeHtml($subMenuItems['name']) ?></a>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            <?php endif; ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <?php if ($showTopLevelAllLink): ?>
+                                    <div class="mt-4 border-t border-black">
+                                        <a href="<?= $escaper->escapeUrl($item['url']) ?>"
+                                            class="level-0 block pt-3 hover:underline aria-[current=page]:underline"><?= $escaper->escapeHtml(__('See all %1', $item['name'])) ?></a>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <?php
+                            $cmsBlockHtml = $this->getLayout()
+                                ->createBlock(CmsBlock::class)
+                                ->setIdentifier($menuId)
+                                ->toHtml();
+                            if (!empty($cmsBlockHtml)):
+                                ?>
+                                <div class="max-w-[50%]">
+                                    <?= /** @noEscape */ $cmsBlockHtml ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </li>
+            <?php else: ?>
+                <li>
+                    <a href="<?= $escaper->escapeUrl($item['url']) ?>" title="<?= $escaper->escapeHtmlAttr($item['name']) ?>"
+                        class="level-0 group w-full flex justify-between items-center gap-1 py-3 font-medium transition aria-[current=page]:underline data-[has-current]:underline hover:underline aria-[current=page]:underline data-[has-current]:underline hover:underline underline-offset-4 <?= $menu_text_color . ' ' . $menu_text_color_hover ?> <?= $item['name'] === $topMenuCtaItem ? 'text-red-700' : '' ?>">
+                        <?= $escaper->escapeHtml($item['name']) ?>
+                    </a>
+                </li>
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+        <?php if ($show_sale_link): ?>
+            <li>
+                <a href="<?= $this->getUrl() . $sale_link ?>" title="<?= $escaper->escapeHtml('Sale') ?>"
+                    class="group level-0 flex py-5 hover:bg-black px-2 relative">
+                    <?= $themeIcons->renderHtml('discount-tag', "$menu_text_color group-hover:text-white", 32, 32, ['aria-hidden' => 'true']) ?>
+                    <span
+                        class="absolute z-10 whitespace-normal break-words rounded-b bg-black py-1 px-3 text-xs font-normal text-white focus:outline-none right-0 -bottom-6">
+                        <?= $escaper->escapeHtml('Sale') ?>
+                    </span>
+                </a>
+            </li>
+        <?php endif; ?>
+    </ul>
+</nav>
+<script>
+    const initMenuDesktop<?= $escaper->escapeHtml($uniqueId) ?> = () => {
+        return {
+            setActiveMenu(menuNode) {
+                Array.from(menuNode.querySelectorAll('a')).filter(link => {
+                    return link.href === window.location.href.split('?')[0];
+                }).map(item => {
+                    item.setAttribute('aria-current', 'page');
+
+                    let menuLevelCount = 0;
+                    while (menuLevelCount < 3) {
+                        let selector = `.level-${menuLevelCount}`;
+                        item.closest(selector)
+                            && item.closest(selector).querySelector('button')
+                            && item.closest(selector).querySelector('button').setAttribute('data-has-current', '');
+                        menuLevelCount++;
+                    }
+                });
+            }
+        }
+    }
+</script>

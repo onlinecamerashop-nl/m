@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<type name="Amasty\Base\ViewModel\LicenseRegistration">
+		<plugin name="MgtWizards_Amasty_Plugin_Amasty_Base_ViewModel_LicenseRegistration" type="MgtWizards\Amasty\Plugin\Amasty\Base\ViewModel\LicenseRegistration" sortOrder="10" disabled="false"/>
+	</type>
+</config>

@@ -1,0 +1,71 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Catalog\Block\Navigation;
+use Magento\Framework\Escaper;
+use Magento\Catalog\Model\Category;
+
+/** @var Escaper $escaper */
+/** @var Category $category */
+/** @var Navigation $block */
+
+if (!$block->getCategory()) {
+    return '';
+}
+
+$categories = $block->getCurrentChildCategories();
+$categoriesId = 'cat';
+$categoriesTitle = __('Category');
+$count = is_array($categories) ? count($categories) : $categories->count();
+$showFilterInput = $block->getShowInput() !== null ? (bool) $block->getShowInput() : true;
+
+if (!$count) {
+    return '';
+}
+?>
+<div>
+    <div class="block-content filter-content rounded-md shadow-whizzy-header border-0 text-whizzy-body p-6">
+        <details id="<?= $escaper->escapeHtmlAttr($categoriesId) ?>" class="filter-option group" open>
+            <summary class="block-title [&::-webkit-details-marker]:hidden flex items-center justify-between"
+                aria-label="<?= $escaper->escapeHtml(__('%1 filter', $categoriesTitle)) ?>">
+                <h3 class="flex items-center font-semibold text-xl tracking-tight mb-2 lg:mb-5">
+                    <?= $escaper->escapeHtml($categoriesTitle) ?>
+                </h3>
+            </summary>
+            <div class="filter-options-content">
+                <ol class="items space-y-2.5 mb-2 lg:mb-4 text-whizzy-body"
+                    aria-label="<?= $escaper->escapeHtmlAttr(__('%1 filter options', $categoriesTitle)) ?>">
+                    <?php foreach ($categories as $category): ?>
+                        <?php if ($category->getIsActive()): ?>
+                            <li class="relative text-sm text-whizzy-body">
+                                <a href="<?= $escaper->escapeUrl($block->getCategoryUrl($category)) ?>"
+                                    class="group/filter flex gap-2 justify-between items-center" <?php if ($block->isCategoryActive($category)): ?> aria-current="page" <?php endif; ?>>
+                                    <span class="flex gap-2 items-center">
+                                        <?php if ($showFilterInput): ?>
+                                            <span
+                                                class="relative inline-flex shrink-0 justify-center items-center border border-whizzy-separator bg-whizzy-artic hover:bg-whizzy-separator after:bg-whizzy-artic transition-all duration-300 w-4 h-4 rounded-sm"
+                                                aria-hidden="true">
+                                            </span>
+                                            <span><?= $escaper->escapeHtml($category->getName()) ?></span>
+                                        <?php endif; ?>
+                                    </span>
+                                    <span class="count tabular-nums text-whizzy-graylighter font-regular text-end"
+                                        aria-label="<?= ((int) $category->getProductCount() === 1)
+                                            ? $escaper->escapeHtmlAttr(__('1 product available in filter'))
+                                            : $escaper->escapeHtmlAttr(__('%1 products available in filter', $category->getProductCount())) ?>"><?= $escaper->escapeHtml($category->getProductCount()) ?></span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                    <?php endforeach ?>
+                </ol>
+            </div>
+        </details>
+    </div>
+</div>

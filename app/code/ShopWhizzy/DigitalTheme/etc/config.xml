@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <digitaltheme_settings>
+            <!-- ====================== GENERAL ====================== -->
+            <general>
+                <enable>1</enable>
+                <product_image_background>1</product_image_background>
+                <product_image_background_custom>rgb(242, 243, 245)</product_image_background_custom>
+                <product_image_background_mixblend>0</product_image_background_mixblend>
+                <product_image_padding>0</product_image_padding>
+                <product_image_square>1</product_image_square>
+                <product_image_shadow>0</product_image_shadow>
+                <home_layout>home_1</home_layout>
+            </general>
+
+            <!-- ====================== HEADER ====================== -->
+            <header>
+                <header_layout>header_3</header_layout>
+                <menu_show_home>0</menu_show_home>
+                <search_logo_swap>0</search_logo_swap>
+                <menu_desktop_version>desktop_1</menu_desktop_version>
+                <menu_shop_wrap_text></menu_shop_wrap_text>
+                <menu_mobile_shop_wrap>0</menu_mobile_shop_wrap>
+                <menu_background_color></menu_background_color>
+                <menu_text_color></menu_text_color>
+                <menu_text_color_hover>rgb(203, 203, 203)</menu_text_color_hover>
+                <menu_border_color>rgb(238, 238, 238)</menu_border_color>
+                <menu_items_after><![CDATA[[]]]></menu_items_after>
+                <support_text></support_text>
+                <support_phone></support_phone>
+                <support_email></support_email>
+                <top_header_usps><![CDATA[{"_1749573873131_131":{"title":"Free gift above 99\u20ac"},"_1749573937097_97":{"title":"Worldwide shipment"},"_1749573951782_782":{"title":"30 days refunds"},"_1749573973454_454":{"title":"5% discount on first order"},"_1749573995226_226":{"title":"Loyalty program for regular users"}}]]></top_header_usps>
+                <usps_background_color></usps_background_color>
+                <uspsmenu_text_color></uspsmenu_text_color>
+                <show_sale_link>0</show_sale_link>
+            </header>
+
+            <!-- ====================== FOOTER ====================== -->
+            <footer>
+                <footer_layout>footer_1</footer_layout>
+                <show_footer>0</show_footer>
+            </footer>
+
+            <!-- ====================== PRODUCT PAGE ====================== -->
+            <product>
+                <product_page_layout>product_1</product_page_layout>
+                <product_usps><![CDATA[{"_1749591079883_883":{"title":"UltraSync Smartwatch","text":"Seamless connectivity with all your devices for real-time notifications and fitness tracking.","icon":"android"},"_1749591160463_463":{"title":"CrystalVision 4K Smart TV","text":"Stunning 4K resolution with HDR for vibrant colors and immersive viewing","icon":"amazon"},"_1749591161011_11":{"title":"PowerCore Wireless Charger","text":"Fast-charging technology delivers full power to your devices in under an hour.","icon":"bolt"},"_1749591161571_571":{"title":"AudioWave Noise-Canceling Earbuds","text":"Advanced noise cancellation for crystal-clear audio in any environment.","icon":"star-award"}}]]></product_usps>
+                <show_share_this>0</show_share_this>
+                <share_this_code></share_this_code>
+            </product>
+
+            <!-- ====================== CATEGORY / LISTING ====================== -->
+            <products_listing>
+                <category_page_layout>category_1</category_page_layout>
+                <product_card_layout>item_3</product_card_layout>
+                <product_list_grid>list_grid_1</product_list_grid>
+                <product_image_gallery>1</product_image_gallery>
+                <product_price_green>0</product_price_green>
+                <product_show_description>1</product_show_description>
+                <enable_hot_rated>1</enable_hot_rated>
+                <hot_rated_min_rating>4</hot_rated_min_rating>
+                <hot_rated_min_reviews>1</hot_rated_min_reviews>
+                <hot_rated_label></hot_rated_label>
+                <brand_attribute></brand_attribute>
+                <subcategories_top_layout>top_1</subcategories_top_layout>
+                <subcategories_bottom_layout>bottom_1</subcategories_bottom_layout>
+            </products_listing>
+
+            <!-- ====================== CONTACT US ====================== -->
+            <contact_us>
+                <map_iframe><![CDATA[<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d83998.9676943691!2d2.26463430836898!3d48.85882554257878!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2zUGFyaXMsIEZyYW7Dp2E!5e0!3m2!1spt-PT!2spt!4v1749591061523!5m2!1spt-PT!2spt" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>]]></map_iframe>
+            </contact_us>
+
+            <!-- ====================== DEVELOPER (CSS) ====================== -->
+            <developer>
+                <css></css>
+            </developer>
+        </digitaltheme_settings>
+    </default>
+</config>

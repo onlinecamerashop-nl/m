@@ -1,0 +1,254 @@
+<?php
+/** @var Escaper $escaper */
+?>
+
+<script>
+    function initApplier() {
+        return {
+            config: getMstNavConfig(),
+            $from: null,
+            $to: null,
+
+            apply(url, $initiator = null, force = false, from = null, to = null) {
+                this.$from = from;
+                this.$to = to;
+                url = this.fixUrl(url);
+
+                if (!$initiator || $initiator.closest("[data-mst-nav-part=state]")) {
+                    force = true;
+                } else {
+                    const mode = $initiator.dataset.mode;
+
+                    if (mode === 'instant') {
+                        force = true;
+                    }
+                }
+
+                if (!this.config.isAjax()) {
+                    this.noAjaxMode(url);
+                } else if (this.config.isConfirmationMode() && force === false) {//@todo
+                    this.confirmationMode(url, $initiator);
+                } else {
+                    this.instantMode(url);
+                }
+            },
+
+            applyForced: function (url) {
+                this.apply(url, null, true);
+            },
+
+            fixUrl: function (url) {
+                url = url.replace('&amp;', '&');
+                url = url.replace(/%2C/g, ',');
+
+                return url;
+            },
+
+            noAjaxMode(url) {
+                window.location.href = url;
+            },
+
+            instantMode(url, force) {
+                let event;
+
+                if (window.CustomEvent && typeof window.CustomEvent === 'function') {
+                    event = new CustomEvent(this.config.getAjaxCallEvent(), {detail: {url: url, force: force}});
+                } else {
+                    event = document.createEvent('CustomEvent');
+                    event.initCustomEvent(this.config.getAjaxCallEvent(), true, true, {url: url, force: force});
+                }
+
+                document.dispatchEvent(event);
+            },
+
+            confirmationMode(url, $initiator, force) {
+                if (this.config.isSeoFilterEnabled()) {
+                    url = this.config.getFriendlyClearUrl();
+                }
+
+                const actualParams = new URLSearchParams(window.location.search.substr(1));
+                const filtersParams = this.getFilters($initiator);
+
+                if (actualParams.has('q')) {
+                    filtersParams['q'] = actualParams.get('q');
+                }
+                
+                let cacheKey = filtersParams.cacheKey !== undefined ? filtersParams.cacheKey : '';
+
+                if (cacheKey) {
+                    delete filtersParams.cacheKey;
+                }
+
+                const params = Object.assign({}, filtersParams, {mode: 'by_button_click'});
+
+                const urlSearchObject = new URLSearchParams();
+
+                for (const key in params) {
+                    urlSearchObject.set(key, params[key]);
+                }
+
+                const query = urlSearchObject.toString();
+
+                url = url.split('?')[0];
+
+                if (query) {
+                    url += "?" + query;
+                }
+
+                const applyButton = initApplyButton();
+
+                cacheKey = url + cacheKey;
+
+                let oldInitiator = null;
+
+                if (this.config.isPreCalculationEnabled() && !$initiator.closest('.mst-nav__horizontal-bar')) {
+                    oldInitiator = $initiator
+                } else {
+                    applyButton.show();
+                    applyButton.move($initiator);
+                }
+
+                applyButton.load(url, cacheKey, force, oldInitiator);
+            },
+
+            filters: {},
+
+            getFilters($initiator) {
+                let cacheKey = '';
+
+                document.querySelectorAll('[data-mst-nav-filter]').forEach(function (filter) {
+                    // skip filter one time if it is used twice (in the sidebar and horizontal filters bar)
+                    if (this.checkDuplicatedAttributes(filter, $initiator)) {
+                        return;
+                    }
+                    cacheKey += filter.dataset.mstNavCacheKey;
+                    this.collectActiveFilters(filter);
+                }.bind(this));
+
+                document.querySelectorAll('.filter-option.card template').forEach(function (template) {
+                    const filter = template.content.querySelector('[data-mst-nav-filter]')
+                    if (!filter || this.config.isPreCalculationEnabled() || this.checkDuplicatedAttributes(filter, $initiator)) {
+                        return;
+                    }
+                    this.collectActiveFilters(filter, this);
+                }.bind(this));
+
+                this.filters['cacheKey'] = cacheKey;
+
+                return this.filters;
+            },
+
+            checkDuplicatedAttributes(filter, $initiator) {
+                const appliedFilter           = $initiator.closest('[data-mst-nav-filter]');
+                const appliedFilterCachedName = appliedFilter ? appliedFilter.dataset.mstNavFilter : '';
+                const appliedFilterName       = appliedFilter ? appliedFilter.dataset.mstAttribute : '';
+                const filterCachedName        = filter.dataset.mstNavFilter;
+                const filterName              = filterCachedName.replace(/A\d{6,7}A/, '');
+
+                if (appliedFilterName == filterName && appliedFilterCachedName != filterCachedName) {
+                    return true;
+                }
+                return false;
+            },
+
+            collectActiveFilters(filter) {
+                let filterName = filter.dataset.mstNavFilter;
+
+                filterName = filterName.replace(/A\d{6,7}A/, '');
+                let filterValues = [];
+
+                switch (filterName) {
+                    case 'price': //@todo
+                        let filterValue = this.getSliderPriceFilterValue(filter);
+                        if (filterValue) {
+                            filterValues.push(filterValue);
+                            this.filters[filterName] = filterValues.join(',');
+                        } else {
+                            filter.querySelectorAll('[data-element = filter]._checked').forEach( function (item) {
+                                let filterValue = item.dataset.value;
+                                filterValues.push(filterValue);
+                            }.bind(this));
+
+                            if (filterValues.length > 0 && !this.filters[filterName]) {
+                                this.filters[filterName] = filterValues.join(',');
+                            }
+                        }
+                        break;
+
+                    default:
+                        filter.querySelectorAll('[data-element = filter]._checked').forEach( function (item) {
+                            let filterValue = item.dataset.value;
+                            filterValues.push(filterValue);
+                        }.bind(this));
+
+                        if (filterValues.length > 0 && !this.filters[filterName]) {
+                            this.filters[filterName] = filterValues.join(',');
+                        }
+                }
+            },
+
+            getSliderPriceFilterValue($el) {
+                
+                if ($el.getAttribute("x-init") !== 'initSlider') {
+                    return false;
+                }
+                
+                let sliderElement = $el.querySelector('.mst-nav__slider-slider') ?? $el.querySelector('.mst-nav__slider-from-to');
+                if (!sliderElement) {
+                    return false;
+                }
+
+                const priceWidget = sliderElement.noUiSlider
+
+                let minVal  = 0;
+                let maxVal  = 0;
+                let fromVal = 0;
+                let toVal   = 0;
+
+                if (priceWidget) {
+                    minVal = parseFloat(priceWidget.options.range.min).toFixed(2);
+                    maxVal = parseFloat(priceWidget.options.range.max).toFixed(2);
+                    fromVal = parseFloat(priceWidget.options.start[0]).toFixed(2);
+                    toVal = parseFloat(priceWidget.options.start[1]).toFixed(2);
+                } else {
+                    const slider = this.getSliderOption($el.getAttribute("x-data"));
+
+                    if(!slider) {
+                        return false;
+                    }
+                        minVal  = slider.min.toFixed(2);
+                        maxVal  = slider.max.toFixed(2);
+                        fromVal = slider.from.toFixed(2);
+                        toVal   = slider.to.toFixed(2);
+                }
+
+                fromVal = this.$from ? parseFloat(this.$from).toFixed(2) : fromVal;
+                toVal = this.$to ? parseFloat(this.$to).toFixed(2) : toVal;
+
+                if (fromVal === minVal && toVal === maxVal) {
+                    return false;
+                }
+
+                return fromVal + "-" + toVal;
+            },
+
+            getSliderOption(content) {
+                if (!content.includes("renderRangeSlider")) {
+                    return false;
+                }
+                let result = content.match(/\({(.*?)}\)/);
+                if (!result[1]) {
+                    return false;
+                }
+                
+                let prepareSliderObject = result[1].substring(0, result[1].indexOf('valueTemplate') - 2);
+
+                prepareSliderObject = "{" + prepareSliderObject + "}";
+
+                return JSON.parse(prepareSliderObject);
+                
+            }
+        }
+    }
+</script>
+

@@ -1,0 +1,153 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Hyva\PaymentIcons\ViewModel\PaymentIconsLight;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var PaymentIconsLight $paymentIcons */
+$paymentIcons = $viewModels->require(PaymentIconsLight::class);
+
+$paymentIconsWidth = 48;
+$paymentIconsHeight = 32;
+
+// Remove any child blocks that don't need to be part of the footer columns
+$footerColumns = array_diff(
+    $block->getChildNames(),
+    array('footer-copyright', 'form.subscribe', 'footer-content-before', 'footer-content-after')
+);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$show_footer = $whizzyHelper->getConfigValue('footer/show_footer');
+$footer_layout = $whizzyHelper->getConfigValue('footer/footer_layout');
+$footer_logo = $whizzyHelper->getConfigValue('footer/footer_logo');
+$footer_text = $whizzyHelper->getConfigValue('footer/footer_text');
+
+$footer_column_1_title = (($whizzyHelper->getConfigValue('footer/footer_column_1_title')) ? $whizzyHelper->getConfigValue('footer/footer_column_1_title') : 'Column 1');
+$footer_column_1_items = (($whizzyHelper->getConfigValue('footer/footer_column_1_items')) ?: '');
+$footer_column_1_items_decoded = (json_decode($footer_column_1_items, true) ?: []);
+
+$footer_column_2_title = (($whizzyHelper->getConfigValue('footer/footer_column_2_title')) ? $whizzyHelper->getConfigValue('footer/footer_column_2_title') : 'Column 2');
+$footer_column_2_items = (($whizzyHelper->getConfigValue('footer/footer_column_2_items')) ?: '');
+$footer_column_2_items_decoded = (json_decode($footer_column_2_items, true) ?: []);
+
+$footer_social = (($whizzyHelper->getConfigValue('footer/footer_social')) ?: '');
+$footer_social_decoded = (json_decode($footer_social, true) ?: []);
+
+$footer_payment_icons = (($whizzyHelper->getConfigValue('footer/footer_payment_icons')) ?: '');
+$footer_payment_icons_decoded = (json_decode($footer_payment_icons, true) ?: []);
+
+$show_footer_newsletter = $whizzyHelper->getConfigValue('footer/show_footer_newsletter');
+
+$footer_background_color = (($footer_background_color_value = $whizzyHelper->getConfigValue('footer/footer_background_custom')) ? 'bg-[' . $footer_background_color_value . ']' : 'bg-whizzy-artic');
+$footer_text_color = (($footer_text_color_value = $whizzyHelper->getConfigValue('footer/footer_text_custom')) ? 'text-[' . $footer_text_color_value . ']' : 'text-whizzy-body');
+$footer_text_hover_color = (($footer_text_hover_color_value = $whizzyHelper->getConfigValue('footer/footer_text_hover_custom')) ? 'hover:text-[' . $footer_text_hover_color_value . ']' : 'hover:text-whizzy-primary');
+?>
+<div class="flex flex-col <?= $footer_background_color ?> <?= $footer_text_color ?> <?= $footer_text_hover_color ?>">
+    <?php if ($show_footer): ?>
+        <div class="container py-10 lg:pt-24 lg:pb-12 mx-auto">
+            <?= $block->getChildHtml('footer-content-before') ?>
+            <div class="grid grid-cols-2 lg:grid-cols-6 gap-y-6 lg:gap-x-8">
+                <div class="col-span-2">
+                    <?php if ($footer_logo): ?>
+                        <?= $this->getLayout()->createBlock(\Magento\Theme\Block\Html\Header\Logo::class)->setLogoPathResolver($viewModels->require(\Hyva\Theme\ViewModel\Logo\LogoPathResolver::class))->setTemplate('Magento_Theme::html/footer/logo-footer.phtml')->toHtml() ?>
+                    <?php endif; ?>
+
+                    <div class="grid gap-4 lg:gap-6">
+                        <?php if ($footer_text): ?>
+                            <div class="<?= $footer_text_color ?> text-sm [&>p]:mb-1">
+                                <?= __($footer_text) ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($footer_social_decoded)): ?>
+                            <div class="flex flex-col gap-1 w-full">
+                                <div class="flex flex-row gap-1 lg:gap-2 <?= $footer_text_color ?>">
+                                    <?php foreach ($footer_social_decoded as $item): ?>
+                                        <a class="<?= $footer_text_color ?> <?= $footer_text_hover_color ?>"
+                                            href="<?= $item['url'] ?>" target="_blank" data-label="<?= $item['title'] ?>">
+                                            <?= $themeIcons->renderHtml($item['icon'], $footer_text_hover_color, 28, 28) ?>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?= $block->getChildHtml('store-switcher') ?>
+                        <?= $block->getChildHtml('store-language-switcher') ?>
+                    </div>
+                </div>
+
+                <div class="col-span-2 flex flex-wrap">
+                    <?php if (!empty($footer_column_1_items_decoded)): ?>
+                        <div class="lg:flex-1 w-1/2 lg:w-auto">
+                            <nav aria-label="<?= $escaper->escapeHtmlAttr($footer_column_1_title) ?>">
+                                <div class="mb-4 font-semibold uppercase">
+                                    <?= $escaper->escapeHtmlAttr($footer_column_1_title) ?>
+                                </div>
+                                <ul class="flex flex-col gap-y-1 <?= $footer_text_color ?> pb-4 lg:pb-0">
+                                    <?php foreach ($footer_column_1_items_decoded as $item): ?>
+                                        <li class="mr-2">
+                                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . $item['url'] ?>"
+                                                class="<?= $footer_text_color ?> <?= $footer_text_hover_color ?> text-sm"><?= $escaper->escapeHtml(__($item['title'])) ?></a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </nav>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($footer_column_2_items_decoded)): ?>
+                        <div class="lg:flex-1 w-1/2 lg:w-auto">
+                            <nav aria-label="<?= $escaper->escapeHtmlAttr($footer_column_2_title) ?>">
+                                <div class="mb-4 font-semibold uppercase">
+                                    <?= $escaper->escapeHtmlAttr($footer_column_2_title) ?>
+                                </div>
+                                <ul class="flex flex-col gap-y-1 <?= $footer_text_color ?> pb-4 lg:pb-0">
+                                    <?php foreach ($footer_column_2_items_decoded as $item): ?>
+                                        <li class="mr-2">
+                                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . $item['url'] ?>"
+                                                class="<?= $footer_text_color ?> <?= $footer_text_hover_color ?> text-sm"><?= $escaper->escapeHtml(__($item['title'])) ?></a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </nav>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="col-span-2">
+                    <?php if ($show_footer_newsletter): ?>
+                        <?= $block->getChildHtml('subscribe') ?>
+                    <?php endif; ?>
+                    <?php if (!empty($footer_payment_icons_decoded)): ?>
+                        <div class="flex gap-2 lg:gap-3 flex-wrap items-center mt-8 lg:mt-12"
+                            aria-label="<?= $escaper->escapeHtml(__('Payment Providers')) ?>">
+                            <?php foreach ($footer_payment_icons_decoded as $item): ?>
+                                <?= $paymentIcons->renderHtml($item['icon'], '', $paymentIconsWidth, $paymentIconsHeight) ?>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="container mx-auto">
+        <div class="text-center py-8 border-t border-whizzy-separator">
+            <?= $block->getChildHtml('footer.disclaimer') ?>
+            <?= $block->getChildHtml('copyright') ?>
+        </div>
+    </div>
+</div>

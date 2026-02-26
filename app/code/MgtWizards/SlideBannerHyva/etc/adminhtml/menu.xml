@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="MgtWizards_SlideBannerHyva::slidebanner" title="Slide Banner" module="MgtWizards_SlideBannerHyva" sortOrder="0" parent="mgtwizards_base::core" resource="MgtWizards_SlideBannerHyva::slidebanner"/>
+        <add id="MgtWizards_SlideBannerHyva::slider" title="Manage Slider" module="MgtWizards_SlideBannerHyva" sortOrder="0" parent="MgtWizards_SlideBannerHyva::slidebanner" action="slidebanner/slider" resource="MgtWizards_SlideBannerHyva::slider"/>
+        <add id="MgtWizards_SlideBannerHyva::slide" title="Manage Slider Items" module="MgtWizards_SlideBannerHyva" sortOrder="30" parent="MgtWizards_SlideBannerHyva::slidebanner" action="slidebanner/slide" resource="MgtWizards_SlideBannerHyva::slide"/>
+    </menu>
+</config>

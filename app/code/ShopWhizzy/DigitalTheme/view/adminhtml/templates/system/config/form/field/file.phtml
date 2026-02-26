@@ -1,0 +1,16 @@
+<?php
+/** @var \Magento\Config\Block\System\Config\Form\Field $block */
+$columnName = $block->getData('column_name');
+$elementId = $block->getData('element_id') ?: $block->getHtmlId();
+$rowId = $block->getData('row_id');
+// Fallback to hardcoded group ID if not available
+$groupId = $block->getGroupId() ?: 'general'; // Adjust 'general' based on your system.xml group ID
+$value = $block->getValue();
+?>
+
+<input type="file"
+    name="groups[<?php echo $block->escapeHtmlAttr($groupId); ?>][fields][slider_images][value][<?php echo $block->escapeHtmlAttr($rowId); ?>][<?php echo $block->escapeHtmlAttr($columnName); ?>]"
+    id="<?php echo $block->escapeHtmlAttr($elementId); ?>" />
+<?php if ($value): ?>
+    <p>Current file: <?php echo $block->escapeHtml($value); ?></p>
+<?php endif; ?>

@@ -1,0 +1,51 @@
+@layer components {
+    .btn {
+        @apply flex justify-center bg-whizzy-primary rounded-md px-4 py-2 text-white border border-whizzy-primary text-base font-medium items-center transition font-semibold shadow-none;
+
+        @screen md {
+            @apply px-6 py-2.5 text-base;
+        }
+
+        @screen xl {
+            @apply px-8 py-3 text-base;
+        }
+
+        svg:not[add-to-cart] {
+            @apply inline-flex;
+        }
+
+        span {
+            vertical-align: middle;
+        }
+
+        &:hover {
+            @apply bg-whizzy-primary-darker border-whizzy-primary-darker text-white;
+        }
+
+        &:focus {
+            @apply outline-none bg-whizzy-primary-darker border-whizzy-primary-darker text-white ring-2 ring-whizzy-primary ring-opacity-30;
+        }
+    }
+
+    .btn-primary {}
+
+    .btn-secondary {
+        @apply border-black bg-white text-black;
+
+        &:hover {
+            @apply bg-black text-white;
+        }
+
+        &:focus {
+            @apply outline-none bg-black text-white ring-2 ring-whizzy-primary ring-opacity-30;
+        }
+    }
+
+    .btn-size-lg {
+        @apply px-10 py-4 text-lg;
+    }
+
+    .btn-size-sm {
+        @apply px-2 py-2 text-sm;
+    }
+}

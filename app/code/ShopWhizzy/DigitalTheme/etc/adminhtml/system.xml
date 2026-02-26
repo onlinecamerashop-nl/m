@@ -1,0 +1,547 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+	<system>
+		<tab id="digitaltheme" translate="label" sortOrder="10">
+			<label>Digital Theme - v1.0.6</label>
+		</tab>
+		<section id="digitaltheme_settings" sortOrder="10" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+			<label>Theme Settings</label>
+			<tab>digitaltheme</tab>
+			<resource>ShopWhizzy_DigitalTheme::config_shopwhizzy_digitaltheme</resource>
+
+			<group id="general" sortOrder="10" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+				<label>General</label>
+
+				<field id="enable" type="select" sortOrder="10" showInWebsite="1" showInStore="1" showInDefault="1" translate="label">
+					<label>Enable Theme</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>This is core extension for Digital Theme (Hyva) by ShopWhizzy.com. If you want to use another theme for specific store view then disable this extension for that store view.</comment>
+				</field>
+                
+				<field id="spacer_1" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>ShopWhizzy\DigitalTheme\Model\Spacer</frontend_model>
+                </field>
+
+				<field id="product_image_background" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Image Background</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Enable product image background.</comment>
+                </field>
+
+				<field id="product_image_background_custom" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom Background Color</label>
+                    <frontend_class>whizzy-colorpicker</frontend_class>
+					<comment>Leave field empty for default (#F2F4F5) or select one with the color picker.</comment>
+					<depends>
+                        <field id="product_image_background">1</field>
+                    </depends>
+                </field>
+
+                <field id="product_image_background_mixblend" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Mix Blend</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Enable product image mix blend. Only Suitable if whole catalog has images with white background.</comment>
+					<depends>
+                        <field id="product_image_background">1</field>
+                    </depends>
+                </field>
+
+                <field id="product_image_background_category_bypass" translate="label" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Bypass at Category</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Bypass product image mix blend and background at category item. Handy when using Catalog (Category Pages) Version 3.</comment>
+					<depends>
+                        <field id="product_image_background">1</field>
+                    </depends>
+                </field>
+
+                <field id="product_image_padding" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add image padding</label>
+                    <frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Adds product image padding. Handy when product images are too near of the edge.</comment>
+                </field>
+
+                <field id="product_image_square" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Force square images</label>
+                    <frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Force parent div aspect-ratio: 1 / 1 (square images) and align product image at center.</comment>
+                </field>
+
+                <field id="product_image_shadow" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Image Shadow</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Enable product image smooth gradient shadow.</comment>
+                </field>
+
+                <field id="home_layout" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Home Layout</label>
+                    <frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Home\Layout</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                    <comment>Just for demo purposes. Contact dev team if you need help to modify the home content. <br/>If last option "CMS", the home is managed via CONTENT/PAGES (default magento workflow).</comment>
+                </field>
+			</group>
+
+			<group id="header" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Header</label>
+
+                <field id="header_layout" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Header Layout</label>
+                    <frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Header\Layout</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                    <comment>Use last layout if you have a custom coded flex header.</comment>
+                </field>
+
+                <field id="header_4_container" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Header Contained</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Header elements inside container (Yes) or full width (No).</comment>
+                    <depends>
+                        <field id="header_layout">header_4</field>
+                    </depends>
+                </field>
+
+                <field id="menu_show_home" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Home Link</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Display a link to the home page in the menu.</comment>
+
+                </field>
+
+                <field id="search_logo_swap" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Logo/Search Swap</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Swap logo and search positions: logo at left and search centered. Applicable for header 1 and 2.</comment>
+                </field>
+
+                <field id="menu_desktop_version" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Desktop Menu Version</label>
+                    <frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Header\MenuDesktop</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                </field>
+
+                <field id="menu_shop_wrap_text" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Menu Shop Wrap Text</label>
+					<comment>Default is "Shop" if empty.</comment>
+                    <depends>
+                        <field id="menu_desktop_version">desktop_2</field>
+                    </depends>
+                </field>
+
+                <field id="menu_mobile_shop_wrap" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Mobile Shop Wrap</label>
+					<frontend_class>on-off-trigger</frontend_class>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<comment>Create a "shop" mobile menu wrapper as desktop?</comment>
+                    <depends>
+                        <field id="menu_desktop_version">desktop_2</field>
+                    </depends>
+                </field>
+
+                <field id="menu_background_color" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Menu Background Color</label>
+                    <frontend_class>whizzy-colorpicker</frontend_class>
+					<comment>Leave field empty for default (#FFFFFF - white) or select one with the color picker.</comment>
+                </field>
+
+                <field id="menu_text_color" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Menu Text Color</label>
+                    <frontend_class>whizzy-colorpicker</frontend_class>
+					<comment>Leave field empty for default (#000000 - black) or select one with the color picker.</comment>
+                </field>
+
+                <field id="menu_text_color_hover" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Menu Text Hover Color</label>
+                    <frontend_class>whizzy-colorpicker</frontend_class>
+					<comment>Leave field empty for default (#000000 - black) or select one with the color picker.</comment>
+                </field>
+
+                <field id="menu_items_after" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Menu Items After</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\MenuItemsAfter</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[Menu items to display at the end. Label and URL are required. <br/><strong>Url</strong> "#" will be treated as a placeholder or use 'my-link' without main site domain. <br/><strong>Icon</strong> is the icon to display before item label. <br/><strong>Block</strong> refers to the block to display as submenu. 2 blocks are required, one for desktop (my_id) and another for mobile (my_id_mobile).<br/><strong>Width</strong> to force a fullwidth or auto width dropdown block.]]></comment>
+                </field>
+
+                <field id="spacer_2" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>ShopWhizzy\DigitalTheme\Model\Spacer</frontend_model>
+                </field>
+
+                <field id="support_text" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Support Text</label>
+					<comment>Do not include html tags. If empty, it will be hidden. Not shown if logo/search swap is enabled.</comment>
+                </field>
+
+                <field id="support_phone" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Support Phone</label>
+					<comment>Example xxx-xxxxxxx. If empty, it will be hidden. Not shown if logo/search swap is enabled.</comment>
+                </field>
+
+                <field id="support_email" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Support Email</label>
+					<comment>Example info@myshop.com. If empty, it will be hidden. Not shown if logo/search swap is enabled.</comment>
+                </field>
+
+                <field id="spacer_3" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>ShopWhizzy\DigitalTheme\Model\Spacer</frontend_model>
+                </field>
+
+                <field id="top_header_usps" translate="label" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Top Header Rotating USPs</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\TopHeaderUsps</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment>Add at least three USPs to display. Leave icon field empty if not needed. Icon will be displayed before the text.</comment>
+                </field>
+
+                <field id="usps_background_color" translate="label" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>USPs Background Color</label>
+                    <frontend_class>whizzy-colorpicker</frontend_class>
+					<comment>Leave field empty for default (#FFFFFF - white) or select one with the color picker.</comment>
+                </field>
+
+                <field id="uspsmenu_text_color" translate="label" type="text" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>USPs Text Color</label>
+                    <frontend_class>whizzy-colorpicker</frontend_class>
+					<comment>Leave field empty for default (#000000 - black) or select one with the color picker.</comment>
+                </field>
+
+                <field id="menu_header_usps" translate="label" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Menu USPs</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\TopHeaderUsps</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment>Display in grid at desktop (max 4 items) and rotating at mobile. Leave icon field empty if not needed. Icon will be displayed before the text with green color.</comment>
+                </field>
+
+                <field id="show_sale_link" translate="label comment" type="select" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Sale Menu Link</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                </field>
+
+                <field id="sale_link" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Sale Link</label>
+					<comment>Examples: "sale", "promos.html", etc.</comment>
+                    <depends>
+                        <field id="show_sale_link">1</field>
+                    </depends>
+                </field>
+			</group>
+
+			<group id="footer" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Footer</label>
+
+                <field id="show_footer" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Footer Block</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                    <comment>Copyright will always be shown despite this setting.</comment>
+                </field>
+
+                <field id="footer_layout" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Footer Layout</label>
+                    <frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Footer\Layout</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                    <comment>Use last layout if you have a custom coded footer.</comment>
+                </field>                
+
+                <field id="footer_spacer_listing_1" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>ShopWhizzy\DigitalTheme\Model\Spacer</frontend_model>
+                </field>
+
+                <field id="footer_logo" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Footer Logo</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                </field>
+
+                <field id="footer_text" translate="label" type="editor" sortOrder="50" showInWebsite="1" showInStore="1" showInDefault="1">
+					<label>Footer Text</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Editor</frontend_model>
+				</field>
+
+                <field id="footer_column_1_title" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Column 1 Title</label>
+				</field>
+
+                <field id="footer_column_1_items" translate="label" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Column 1 Items</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\FooterColumnItems</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[Title and link mandatory.]]></comment>
+                </field>
+
+                <field id="footer_column_2_title" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Column 2 Title</label>
+				</field>
+
+                <field id="footer_column_2_items" translate="label" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Column 2 Items</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\FooterColumnItems</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[Title and link mandatory.]]></comment>
+                </field>
+
+                <field id="footer_column_3_title" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Column 3 Title</label>
+				</field>
+
+                <field id="footer_column_3_items" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Column 3 Items</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\FooterColumnItems</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[Title and link mandatory. NOT APPLICABLE TO FOOTER 1]]></comment>
+                </field>
+
+                <field id="footer_column_4_title" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Column 4 Title</label>
+				</field>
+
+                <field id="footer_column_4_items" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Column 4 Items</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\FooterColumnItems</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[Title and link mandatory. NOT APPLICABLE TO FOOTER 1]]></comment>
+                </field>
+
+                <field id="footer_social" translate="label" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Social Links</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\SocialItems</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[All fields are mandatory.]]></comment>
+                </field>
+
+                <field id="footer_payment_icons" translate="label" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payment Icons</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\PaymentItems</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[Display light version payment icons at footer from Hyva_PaymentIcons module.]]></comment>
+                </field>
+
+                <field id="footer_spacer_listing_2" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>ShopWhizzy\DigitalTheme\Model\Spacer</frontend_model>
+                </field>
+
+                <field id="show_footer_newsletter" translate="label comment" type="select" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Footer Newsletter</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                </field>
+
+                <field id="footer_newsletter_title" translate="label" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Newsletter Title</label>
+				</field>
+
+                <field id="footer_newsletter_text" translate="label" type="textarea" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Footer Newsletter Text</label>
+				</field>
+
+                <field id="footer_spacer_listing_3" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>ShopWhizzy\DigitalTheme\Model\Spacer</frontend_model>
+                </field>
+
+                <field id="footer_background_custom" translate="label" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Footer Background Color</label>
+                    <frontend_class>whizzy-colorpicker</frontend_class>
+					<comment>Leave field empty for default values or select one with the color picker.</comment>
+                </field>
+
+                <field id="footer_text_custom" translate="label" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Footer Text Color</label>
+                    <frontend_class>whizzy-colorpicker</frontend_class>
+					<comment>Leave field empty for default values or select one with the color picker.</comment>
+                </field>
+
+                <field id="footer_text_hover_custom" translate="label" type="text" sortOrder="221" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Footer Text Hover Color</label>
+                    <frontend_class>whizzy-colorpicker</frontend_class>
+					<comment>Leave field empty for default values or select one with the color picker.</comment>
+                </field>
+
+                <field id="footer_spacer_listing_4" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>ShopWhizzy\DigitalTheme\Model\Spacer</frontend_model>
+                </field>
+
+                <field id="footer_disclaimer" translate="label" type="editor" sortOrder="240" showInWebsite="1" showInStore="1" showInDefault="1">
+					<label>Footer Disclaimer</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Editor</frontend_model>
+                    <comment>If empty, block will be kept hidden.</comment>
+				</field>
+
+                <field id="footer_copyright" translate="label" type="editor" sortOrder="250" showInWebsite="1" showInStore="1" showInDefault="1">
+					<label>Footer Copryright</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Editor</frontend_model>
+                    <comment>Use {YEAR} variable to update dinamically the year.</comment>
+				</field>
+			</group>
+
+            <group id="product" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Product Page</label>
+
+                <field id="product_page_layout" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Catalog (Product Pages) Version</label>
+					<frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Product\Layout</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                </field>
+
+                <field id="product_gallery" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gallery Version</label>
+					<frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Product\GalleryLayout</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                </field>
+
+                <field id="product_usps" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product USPs</label>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Form\Field\ProductUsps</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+
+                <field id="show_share_this" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Share This</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                </field>
+
+                <field id="share_this_code" translate="label" type="textarea" sortOrder="50" showInWebsite="1" showInStore="1" showInDefault="1">
+					<label>Share This Code</label>
+                    <comment>Paste the <a href="https://platform.sharethis.com/" target="_blank">Share This</a> code here. Will display on product pages below add to cart button.</comment>
+                    <depends>
+                        <field id="show_share_this">1</field>
+                    </depends>
+				</field>
+			</group>
+
+			<group id="products_listing" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Category Page</label>
+
+                <field id="category_page_layout" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Catalog (Category Pages) Version</label>
+                    <frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Category\Layout</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                </field>
+
+                <field id="product_card_layout" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Card Version</label>
+                    <frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Product\CardLayout</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                </field>
+
+                <field id="product_list_grid" translate="label" type="select" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product List Grid</label>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Category\ListGrid</source_model>
+                    <comment>Choose how many products per row at category pages.<br/>XS (mobile) SM (table) XL (desktop)</comment>
+                </field>
+
+                <field id="product_image_gallery" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Card Gallery</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                    <comment>Enable or disable a mini 3 images gallery at product card.</comment>
+                </field>
+
+                <field id="product_price_green" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Green Color Price</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                    <comment>Highlight price with dark green color and bold weight.</comment>
+                </field>
+
+                <field id="product_show_description" translate="label" type="select" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Product Description</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                    <comment>Enable or disable the product description display.</comment>
+                </field>
+
+                <field id="enable_hot_rated" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Hot Rated Badge</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <frontend_class>on-off-trigger</frontend_class>
+                    <comment>Enable or disable the hot rated badge for products.</comment>
+                </field>
+
+                <field id="hot_rated_min_rating" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Minimum Rating for Hot Rated</label>
+                    <comment>Enter the minimum rating (0.0 to 5.0) for a product to be considered hot rated. Default is 4.5.</comment>
+                    <validate>validate-number validate-zero-or-greater validate-less-than-equals-to-5</validate>
+                    <depends>
+                        <field id="enable_hot_rated">1</field>
+                    </depends>
+                </field>
+
+                <field id="hot_rated_min_reviews" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Minimum Reviews for Hot Rated</label>
+                    <comment>Enter the minimum number of reviews required for a product to be considered hot rated. Default is 2.</comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <depends>
+                        <field id="enable_hot_rated">1</field>
+                    </depends>
+                </field>
+
+                <field id="hot_rated_label" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Hot Rated Label</label>
+                    <comment>Enter the label to be displayed for hot rated products. Default is "Hot Rated".</comment>
+                    <depends>
+                        <field id="enable_hot_rated">1</field>
+                    </depends>
+                </field>
+
+                <field id="brand_attribute" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Brand Attribute</label>
+					<comment>If present, will display brand text at listing item. Usually is "manufacturer" or "brand".</comment>
+                </field>
+
+                <field id="spacer_listing_1" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>ShopWhizzy\DigitalTheme\Model\Spacer</frontend_model>
+                </field>
+
+                <field id="subcategories_top_layout" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SubCategories Top Version</label>
+                    <frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Category\SubcategoriesTop</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                </field>
+
+                <field id="subcategories_bottom_layout" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SubCategories Bottom Version</label>
+                    <frontend_class>select-image</frontend_class>
+                    <source_model>ShopWhizzy\DigitalTheme\Model\Config\Settings\Category\SubcategoriesBottom</source_model>
+                    <frontend_model>ShopWhizzy\DigitalTheme\Block\Adminhtml\System\Config\Field\SelectImageField</frontend_model>
+                </field>
+			</group>
+
+            <group id="contact_us" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Contact Us</label>
+
+                <field id="map_iframe" translate="label" type="textarea" sortOrder="10" showInWebsite="1" showInStore="1" showInDefault="1">
+					<label>Google Maps Iframe</label>
+                    <comment>Google Maps iframe</comment>
+				</field>
+			</group>
+
+            <group id="developer" translate="label" sortOrder="999" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>CSS</label>
+
+                <field id="css" translate="label" type="textarea" sortOrder="10" showInWebsite="1" showInStore="1" showInDefault="1">
+					<label>Custom Css</label>
+				</field>
+			</group>
+		</section>
+	</system>
+</config>

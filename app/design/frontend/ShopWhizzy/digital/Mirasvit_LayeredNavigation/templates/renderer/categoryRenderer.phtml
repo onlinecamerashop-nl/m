@@ -1,0 +1,149 @@
+<?php
+/**
+ * @var $block \Mirasvit\LayeredNavigation\Block\Renderer\CategoryRenderer
+ * @var $escaper \Magento\Framework\Escaper
+ */
+$attributeCode = $block->getAttributeCode();
+$filterAccessor = $attributeCode;
+$lastLevel = 0;
+$filterItems = $block->getFilterItems();
+$filter = $block->getFilter();
+
+$useAlphabeticalIndex = !$filter->isShowNestedCategories() && $filter->isUseAlphabeticalIndex();
+
+$checkedItemsCount = 0;
+
+$letter = '';
+?>
+
+<div data-mst-nav-filter="<?= $filterAccessor ?>" class="mst-nav__label mst-nav__category" x-data="initLabelRenderer()">
+    <?= $block->getSearchBoxElement($filterAccessor) ?>
+    <div data-holder="alphabetical"
+        x-data="initAlphabeticalIndex(<?= (int)($useAlphabeticalIndex && $filter->isAlphabeticalIndexAllowedByLimit()) ?>, <?= $filter->getAlphabeticalLimit() ?>)"
+         x-init="init()"
+    ></div>
+
+    <?php if ($block->isCategoriesCollapsible()): ?>
+        <div x-data="createCollapsibleCategories()" x-init="initToggler($el)"></div>
+    <?php endif ?>
+
+    <ol class="items ml-0 <?= $block->isCategoriesCollapsible() ? 'collapsible' : '' ?>">
+        <?php foreach ($filterItems as $key => $filterItem):
+            $label = $filterItem->getData('label');
+            $numberOfResults = $filterItem->getData('count');
+            $level = $filterItem->getData('level');
+            $isParent = $filterItem->getData('is_parent');
+
+            $isItemChecked = $block->isFilterItemChecked($filterItem, true);
+
+            if ($isItemChecked) {
+                $checkedItemsCount++;
+            }
+
+            $linkMode = $block->getFilterItemDisplayMode('category_ids');
+            ?>
+
+            <?= $level > $lastLevel
+                        ? str_repeat('<ol class="items pl-6 block ' . ($block->isCategoriesCollapsible() ? 'hidden' : '') . '">', $level - $lastLevel)
+                        : str_repeat('</ol>', $lastLevel - $level)
+                        ?>
+
+            <?php if (
+            $useAlphabeticalIndex
+            && $filter->isSortByLabel()
+            && $letter !== $block->getFirstLetter($label)
+            ):
+                $letter = $block->getFirstLetter($label);
+                ?>
+            <li class="mst-nav__letter mst-nav__label-item py-1 leading-6 <?= $block->isCategoriesCollapsible() ? 'ml-0' : '' ?>" data-letter="<?= $letter ?>" data-element = filter>
+                    <b><?= $letter ?></b>
+                </li>
+            <?php endif; ?>
+
+            <li data-element="filter"
+                data-hidden="false"
+                data-search-hidden="false"
+                data-letter-hidden="false"
+                data-value="<?= $filterItem->getValueString() ?>"
+                class="item mst-nav__label-item py-1 leading-6
+                <?= $block->isCategoriesCollapsible() ? ' ml-7 ' : '' ?>
+                <?= $isParent ? ' _parent inline-block ' : '' ?>
+                <?= $isItemChecked ? '_checked' : '' ?>"
+                <?= $isItemChecked && $block->isHighlightEnabled() ? '_highlight' : '' ?>"
+                @click="handleClick"
+                <?= $useAlphabeticalIndex ? 'data-letter="' .  $block->getFirstLetter($label) . '"' : '' ?>
+            >
+                <?php if ($numberOfResults >= 0): ?>
+                    <?php if ($block->isCategoryFilterModeLink()) {
+                        $url = $filterItem->getData('url');
+                    } else {
+                        $url = $isItemChecked ? $filterItem->getRemoveUrl() : $filterItem->getUrl();
+                    }
+                    $id = $block->getItemId($filterItem);
+                    ?>
+                    <a href="<?= $numberOfResults > 0 ? $escaper->escapeUrl($url) : '#' ?>"
+                       rel="<?= $block->getRelAttributeValue() ?>"
+                       aria-label="<?= $escaper->escapeHtmlAttr($label) ?>"
+                       class="flex items-center <?= $numberOfResults == 0 ? 'pointer-events-none opacity-50 disabled' : '' ?>"
+                    >
+                        <input id="<?= $id ?>" type="checkbox" <?= $isItemChecked ? 'checked' : '' ?>
+                            <?= $filterItem->getData('count') == 0 ? 'disabled' : '' ?>
+                               class="
+                               <?php if ($linkMode == 'link') {
+                                   echo 'hidden';
+                               } elseif ($linkMode == 'checkbox' || $linkMode == 'circle') {
+                                   echo 'checked:bg-none checked:bg-inherit checked:border checked:border-gray-300 checked:hover:border-gray-300 checked:hover:bg-inherit checked:focus:border-gray-300 checked:focus:bg-inherit '
+                                       . ' relative appearance-none bg-container-lighter w-6 h-6 min-w-6 min-h-6 inline-block border border-gray-300 cursor-pointer '
+                                       . ' checked:before:absolute checked:before:inline-block checked:before:w-4 checked:before:h-4 before:m-auto before:top-0 before:bottom-0 before:right-0 before:left-0 before:bg-primary ';
+
+                                   if ($linkMode == 'checkbox') {
+                                       echo ' rounded before:rounded ';
+                                   }
+
+                                   if ($linkMode == 'circle') {
+                                       echo ' rounded-full before:rounded-full ';
+                                   }
+                               }
+                               ?>"
+                        />
+
+                        <label 
+                            for="<?= $id ?>" 
+                            class="ml-2 flex justify-between items-center grow cursor-pointer hover:cursor-pointer overflow-hidden"
+                            title="<?= $label ?>"
+                        >
+                            <span class="mst-nav__label-item__label pr-4 overflow-hidden text-ellipsis"><?= $label ?></span>
+                            <?php if ($block->getCountElement($filterItem)): ?>
+                                <span
+                                    class="count text-primary cursor-pointer hover:cursor-pointer text-xs text-gray-400">(<?= $filterItem->getData('count') ?>)</span>
+                            <?php endif; ?>
+                        </label>
+                    </a>
+                <?php else: ?>
+                    <span class="mst-nav__label-item__label pr-4"><?= $label ?></span>
+                    <?php if ($block->getCountElement($filterItem)): ?>
+                        <span class="count text-primary text-xs text-gray-400">(<?= $filterItem->getData('count') ?>)</span>
+                    <?php endif; ?>
+                <?php endif ?>
+            </li>
+            <?php $lastLevel = $level ?>
+        <?php endforeach ?>
+
+        <?php if (!$block->isCategoriesCollapsible()): ?>
+            <?= $block->getSizeLimiterElement($filterAccessor) ?>
+        <?php endif; ?>
+    </ol>
+    <div class="hidden mst-clear-options-link" data-checked-count="<?= $checkedItemsCount ?>">
+        <div class="mst-nav__checked-counter__wrapper font-normal flex items-center mx-2">
+            <div class="mst-nav__checked-counter rounded px-2 bg-gray-200 mr-1"><?= $checkedItemsCount ?></div>
+            <a class="hover:underline text-2xl opacity-50" rel="<?= $block->escapeHtmlAttr($block->getRelAttributeValue()) ?>"
+                href="<?= $block->getAttributeClearUrl($attributeCode) ?>" data-element="filter" aria-label="Clear filter">&#10005;</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .mst-nav__category ol.items.collapsible li._parent {
+        width: calc(100% - 1.75rem);
+    }
+</style>

@@ -1,0 +1,70 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+use Magento\Sales\Block\Order\Creditmemo\Items;
+
+/** @var Escaper $escaper */
+/** @var Items $block */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+
+$order = $block->getOrder();
+?>
+<?php foreach ($order->getCreditmemosCollection() as $creditmemo): ?>
+    <div
+        class="flex flex-col lg:flex-row justify-between lg:items-center gap-2 p-6 bg-white shadow-whizzy-header rounded-lg h-full w-full mb-8">
+        <div class="order-title text-2xl">
+            <?= $escaper->escapeHtml(__('Refund #')) ?>
+            <?= $escaper->escapeHtml($creditmemo->getIncrementId()) ?>
+        </div>
+        <div>
+            <a href="<?= $escaper->escapeUrl($block->getPrintCreditmemoUrl($creditmemo)) ?>" target="_blank" rel="noopener">
+                <div class="inline-flex items-center gap-x-1 lg:gap-x-2">
+                    <?= $themeIcons->renderHtml('printer', '', 18, 18); ?>
+                    <span class="text-base py-2 lg:py-4 text-whizzy-body underline font-medium mt-0.5">
+                        <?= $escaper->escapeHtml(__('Print Refund')) ?>
+                    </span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <?= $block->getCommentsHtml($creditmemo) ?>
+
+    <div class="creditmemo flex flex-col gap-4 h-full">
+        <div class="hidden lg:grid grid-cols-7 text-base text-whizzy-body font-medium text-start">
+            <div class="pb-4 text-start col-span-2"><?= $escaper->escapeHtml(__('Product Name')) ?></div>
+            <div class="pb-4 text-start"><?= $escaper->escapeHtml(__('Price')) ?></div>
+            <div class="pb-4 text-start"><?= $escaper->escapeHtml(__('Qty')) ?></div>
+            <div class="pb-4 text-start"><?= $escaper->escapeHtml(__('Subtotal')) ?></div>
+            <div class="pb-4 text-start"><?= $escaper->escapeHtml(__('Discount Amount')) ?></div>
+            <div class="pb-4 text-end"><?= $escaper->escapeHtml(__('Row Total')) ?></div>
+        </div>
+        <?php $items = $creditmemo->getAllItems(); ?>
+        <?php foreach ($items as $item): ?>
+            <?php if (!$item->getOrderItem()->getParentItem()): ?>
+                <div class="p-6 rounded-lg bg-white shadow-whizzy-header text-whizzy-body">
+                    <?= $block->getItemHtml($item) ?>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        <div class="w-full h-full flex justify-center lg:justify-end py-4">
+            <div class="lg:w-1/2 grid grid-cols-2 items-center text-whizzy-body text-base gap-x-0 gap-y-2 lg:gap-y-3.5">
+                <?= $block->getTotalsHtml($creditmemo) ?>
+            </div>
+        </div>
+    </div>
+<?php endforeach; ?>

@@ -1,0 +1,9 @@
+@layer components {
+    .swatch-attribute-options {
+        @apply flex flex-row flex-wrap;
+    }
+
+    .swatch-option {
+        @apply flex border justify-center m-0 rounded-full;
+    }
+}

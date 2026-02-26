@@ -1,0 +1,132 @@
+<?php
+/**
+ * @var $block \Magento\Framework\View\Element\Template
+ */
+?>
+<div
+    class="hidden lg:block absolute -top-8 left-0 w-full h-[calc(100%+64px)] overflow-hidden [mask-image:_linear-gradient(to_bottom,transparent_0,_black_72px,_black_calc(100%-72px),transparent_100%)] after:content-[''] after:bg-white after:bg-opacity-20 after:w-full after:h-full after:absolute after:top-0 after:left-0">
+    <div class="flex gap-6 px-6">
+        <?php
+        $x = 1;
+        $rotators = [
+            'rotator1' => [
+                $block->getUrl() . 'media/customer_slider/customer_slider_3537.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3570.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3615.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3610.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3622.webp',
+            ],
+            'rotator2' => [
+                $block->getUrl() . 'media/customer_slider/customer_slider_3539.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3640.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3644.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3620.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3770.webp',
+            ],
+            'rotator3' => [
+                $block->getUrl() . 'media/customer_slider/customer_slider_3763.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3764.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3650.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3707.webp',
+                $block->getUrl() . 'media/customer_slider/customer_slider_3645.webp',
+            ],
+        ];
+        /*
+        media/customer_slider/customer_slider_3537.webp
+        media/customer_slider/customer_slider_3570.webp
+        media/customer_slider/customer_slider_3615.webp
+        media/customer_slider/customer_slider_3621.webp
+        media/customer_slider/customer_slider_3634.webp
+        media/customer_slider/customer_slider_3650.webp
+        media/customer_slider/customer_slider_3718.webp
+        media/customer_slider/customer_slider_3763.webp
+        media/customer_slider/customer_slider_3538.webp 
+        media/customer_slider/customer_slider_3610.webp
+        media/customer_slider/customer_slider_3616.webp
+        media/customer_slider/customer_slider_3622.webp
+        media/customer_slider/customer_slider_3640.webp
+        media/customer_slider/customer_slider_3661.webp
+        media/customer_slider/customer_slider_3724.webp
+        media/customer_slider/customer_slider_3764.webp
+        media/customer_slider/customer_slider_3539.webp
+        media/customer_slider/customer_slider_3611.webp
+        media/customer_slider/customer_slider_3617.webp
+        media/customer_slider/customer_slider_3626.webp
+        media/customer_slider/customer_slider_3644.webp
+        media/customer_slider/customer_slider_3707.webp
+        media/customer_slider/customer_slider_3757.webp
+        media/customer_slider/customer_slider_3769.webp
+        media/customer_slider/customer_slider_3541.webp
+        media/customer_slider/customer_slider_3612.webp
+        media/customer_slider/customer_slider_3620.webp
+        media/customer_slider/customer_slider_3631.webp
+        media/customer_slider/customer_slider_3645.webp
+        media/customer_slider/customer_slider_3710.webp
+        media/customer_slider/customer_slider_3761.webp
+        media/customer_slider/customer_slider_3770.webp
+        */
+        ?>
+        <?php foreach ($rotators as $k => $rotator): ?>
+            <div class="w-full<?= ($x == 1 || $x == 3) ? ' hidden lg:block' : '' ?>">
+                <div class="relative" x-data="{}"
+                    x-init="$nextTick(() => {let <?= $k ?>div = $refs.<?= $k ?>div;<?= $k ?>div.insertAdjacentHTML('afterend', <?= $k ?>div.outerHTML);<?= $k ?>div.nextSibling.setAttribute('aria-hidden', 'true'); const <?= $k ?>aelmnts = <?= $k ?>div.nextSibling.querySelectorAll('a'); const <?= $k ?>arrayOfAElmnts = Array.from(<?= $k ?>aelmnts); <?= $k ?>arrayOfAElmnts.forEach( elmnt => {elmnt.setAttribute('tabindex', '-1')})})">
+                    <div class="<?= $k ?>elm mb-6" x-ref="<?= $k ?>div">
+                        <div class="overflow-hidden flex flex-col gap-6">
+                            <?php foreach ($rotator as $src): ?>
+                                <div class="block w-full">
+                                    <img src="<?= $src ?>" class="rounded-lg" alt="customer slider" />
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php $x++; ?>
+        <?php endforeach; ?>
+        <script>
+            window.onload = function () {
+                <?php foreach ($rotators as $k => $rotator): ?>
+                    var <?= $k ?>elm = document.getElementsByClassName('<?= $k ?>elm'), len = <?= $k ?>elm !== null ? <?= $k ?>elm.length : 0, i = 0;
+                    for (i; i < len; i++) {<?= $k ?>elm[i].className += ' <?= $k ?>'; }
+                <?php endforeach; ?>
+            };
+        </script>
+    </div>
+    <style>
+        .rotator1 {
+            animation: marqueeBottom 120s linear infinite;
+        }
+
+        .rotator2 {
+            animation: marqueeTop 120s linear infinite;
+        }
+
+        .rotator3 {
+            animation: marqueeBottom 120s linear infinite;
+        }
+
+        @keyframes marqueeTop {
+            0% {
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0)
+            }
+
+            100% {
+                -webkit-transform: translate3d(0, -100%, 0);
+                transform: translate3d(0, -100%, 0)
+            }
+        }
+
+        @keyframes marqueeBottom {
+            0% {
+                -webkit-transform: translate3d(0, -100%, 0);
+                transform: translate3d(0, -100%, 0)
+            }
+
+            100% {
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0)
+            }
+        }
+    </style>
+</div>

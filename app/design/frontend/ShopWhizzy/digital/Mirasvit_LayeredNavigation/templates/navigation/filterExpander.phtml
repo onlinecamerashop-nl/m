@@ -1,0 +1,50 @@
+<?php
+
+/** @var \Mirasvit\LayeredNavigation\Block\Navigation\FilterExpander $block */
+?>
+
+<script>
+    var mstOpenFilters = {};
+
+    function expandFilters() {
+        const idxs = <?= \Mirasvit\Core\Service\SerializeService::encode($block->getOpenedFilterIndexes()) ?>;
+        const precalculationMode = getMstNavConfig().isPreCalculationEnabled();
+        let filters = document.querySelectorAll('.sidebar.sidebar-main div.filter-option');
+
+        if(filters.length == 0) {
+            filters = document.querySelectorAll('.column.main div.filter-option');
+        }
+
+        if (precalculationMode) {
+            updateFilterState();
+        }
+
+        filters.forEach(function(filter, idx) {
+            let isOpen = idxs.includes(idx) ? 'true' : 'false';
+            if (precalculationMode) {
+                isOpen = isOpen == 'true' ? isOpen 
+                    : mstOpenFilters.hasOwnProperty(idx) ? mstOpenFilters[idx] 
+                    : 'false';
+            }
+            filter.setAttribute('x-data', '{open: ' + isOpen + ', id: ' + idx + '}')
+
+
+        })
+    }
+
+    function updateFilterState() {
+        let filters = document.querySelectorAll('.sidebar.sidebar-main div.filter-option');
+        if (filters.length > 0) {
+            filters.forEach(function(filter, idx) {
+                filter.addEventListener('click', function(e) {
+                    const isOpen = !!filter.querySelector('.filter-options-content') ? 'true' : 'false';
+                    mstOpenFilters[idx] = isOpen;
+                });
+            })
+        }
+    }
+
+    expandFilters();
+</script>
+
+

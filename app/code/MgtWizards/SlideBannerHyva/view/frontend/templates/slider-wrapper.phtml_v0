@@ -1,0 +1,61 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+$sliderViewModel = $viewModels->require(\Hyva\Theme\ViewModel\Slider::class);
+
+// @codingStandardsIgnoreFile
+if ($banners = $block->getBannerCollection()):
+	$slider = $block->getSlider();
+	$sliderId = $block->getSliderId();
+	$slidersettings = $slider->getSliderSetting();
+	?>
+	<section class="container mx-auto relative overflow-hidden w-full mt-0 lg:mt-8 mb-12">
+		<div>
+			<?php
+			$itemsTemplate = 'MgtWizards_SlideBannerHyva::slider-item.phtml';
+			$sliderTemplate = 'MgtWizards_SlideBannerHyva::slider.phtml';
+			$items = [];
+			$n = 1;
+			foreach ($banners as $banner)
+			{
+				$slide_image_html = '';
+				if ($banner->getSlideImage() != '')
+				{
+					if ($banner->getSlideImageMob())
+					{
+						$slide_image_html = $block->getImageElement($banner->getSlideImage(), $banner->getSlideImageMob(), $banner->getSlideAlt(), $n);
+					}
+					else
+					{
+						$slide_image_html = $block->getImageElement($banner->getSlideImage(), null, $banner->getSlideAlt(), $n);
+					}
+					if ($link = $banner->getSlideLink())
+					{
+						$slide_image_html = '<a href="' . $link . '">' . $slide_image_html . '</a>';
+					}
+				}
+				$items[$n]['slide_text_html'] = $banner->getSlideText();
+				$items[$n]['slide_image_html'] = $slide_image_html;
+				$items[$n]['slide_elements_position'] = $banner->getSlideElementsPosition();
+				$items[$n]['slide_headline'] = $banner->getSlideHeadline();
+				$items[$n]['slide_heading'] = $banner->getSlideHeading();
+				$items[$n]['slide_button_label'] = $banner->getSlideButtonLabel();
+				$items[$n]['slide_button_url'] = ($banner->getSlideButtonUrl()) ? $banner->getSlideButtonUrl() : 'javascript:void(0)';
+				$items[$n]['slide_shadow'] = $banner->getSlideShadow();
+				$items[$n]['slide_elements_color'] = $banner->getSlideElementsColor();
+				$items[$n]['slide_classes'] = $banner->getSlideClasses();
+				$items[$n]['slider_navigation'] = $slidersettings['navigation'];
+				$items[$n]['slider_pagination'] = $slidersettings['pagination'];
+				$n++;
+			}
+			?>
+			<?= $sliderViewModel->getSliderForItems($itemsTemplate, $items, $sliderTemplate)->toHtml() ?>
+		</div>
+		<div
+			class="hidden left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full lg:w-1/2 text-center p-4 lg:p-0 top-12 lg:top-20 left-0 lg:left-20 lg:text-left right-0 lg:right-20 lg:text-right right-0 bottom-12 lg:bottom-20 border-2 border-white text-black bg-white hover:bg-black hover:text-white hover:border-black border-gray-900 bg-gray-900 border-gray-300 bg-gray-300">
+		</div>
+	</section>
+<?php endif; ?>

@@ -1,0 +1,41 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+use Magento\Catalog\Block\Product\View\Details;
+use Magento\Framework\Escaper;
+
+/** @var ViewModelRegistry $viewModels */
+/** @var Details $block */
+/** @var Escaper $escaper */
+
+/** @var HeroiconsSolid $heroiconsSolid */
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+?>
+<div class="pb-12 lg:pb-24">
+    <div class="container">
+        <div class="flex flex-col gap-4 lg:gap-12">
+            <div class="flex flex-col gap-3 font-bold">
+                <div class="text-sm uppercase text-whizzy-graylighter">
+                    <?= __('Details') ?>
+                </div>
+                <div class="text-3xl text-whizzy-body">
+                    <?= __('Description') ?>
+                </div>
+            </div>
+            <div>
+                <?= /** @noEscape  */ $sectionHtml ?>
+            </div>
+        </div>
+    </div>
+</div>

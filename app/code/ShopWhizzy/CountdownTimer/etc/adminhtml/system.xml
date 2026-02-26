@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+	<system>
+		<!-- Main section -->
+		<section id="countdowntimer" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+			<class>separator-top</class>
+			<label>Countdown Timer</label>	
+			<tab>mgtwizards</tab>
+			<resource>ShopWhizzy_CountdownTimer::config</resource>
+			<group id="wiz_shipping_integration" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+				<label>Integration Instructions</label>
+				<field id="wiz_instructions" translate="label" type="note" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+					<comment><![CDATA[
+                    <p>By default the countdown timer block (shopwhizzy.countdowntimer) is added the reference container product.info.main in catalog_product_view.xml.</p>
+<p>You can move it via the XML layout config, e.g.<pre style="border: 1px solid #ccc;padding: 4px;font-family: 'Courier New', serif;font-size: 11px;background-color: #F5F5F5;width: auto;display: inline-block;margin-bottom: 10px;">&lt;move element=&quot;shopwhizzy.countdowntimer&quot; destination=&quot;content&quot; /&gt;</pre></p>
+                    ]]></comment>
+				</field>
+			</group>			
+			<group id="wiz_shipping_settings" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+				<label>Settings</label>				
+				<!-- Enable extension -->
+				<field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+				 	<label>Enable Module</label>
+				 	<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
+				<!-- Skip days -->
+				<field id="skip_days" translate="label comment tooltip" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+				 	<label>Skip Days</label>
+				 	<comment><![CDATA[Occasional days on which your carrier will not deliver and so should be excluded from delivery calculations.]]></comment>
+					<frontend_model>ShopWhizzy\CountdownTimer\Block\Adminhtml\System\Config\Form\Field\SkipDays</frontend_model>
+					<backend_model>ShopWhizzy\CountdownTimer\Model\System\Config\SkipDays</backend_model>
+				</field>
+				<!-- Processing days -->
+				<field id="processing_days" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Processing Days</label>
+					<validate>validate-number</validate>
+					<comment><![CDATA[Expected number of days for order processing from order placement to dispatch.]]></comment>
+					<frontend_model>Magento\Config\Block\System\Config\Form\Field</frontend_model>
+				</field>
+				<!-- Delivery Days -->
+				<field id="delivery_days" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+					<label>Delivery Days</label>
+					<validate>validate-number</validate>
+					<comment><![CDATA[Expected number of days for shipping from time of dispatch.]]></comment>
+					<frontend_model>Magento\Config\Block\System\Config\Form\Field</frontend_model>
+				</field>
+				<!-- Cutoff time -->
+                <field id="cutoff_time" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                	<label>Cut Off Time (hh:mm)</label>
+                	<comment><![CDATA[24 hour format, e.g. 16:01. Orders placed after this time will fall to the next business day.]]></comment>
+                	<frontend_model>Magento\Config\Block\System\Config\Form\Field</frontend_model>
+                    <validate>validate-no-empty</validate>
+                </field>
+                <!-- Available days -->
+                <field id="available_days" translate="label" type="multiselect" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                	<label>Available Days</label>
+                	<comment><![CDATA[Days on which your carrier will deliver. Hold CTRL key to select multiple values.]]></comment>
+                	<source_model>Magento\Config\Model\Config\Source\Locale\Weekdays</source_model>
+                	<can_be_empty>1</can_be_empty>
+                </field>
+				<!-- Only in stock toggle -->
+				<field id="only_in_stock" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+				 	<label>In-Stock Filter</label>
+				 	<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				 	<comment><![CDATA[If enabled, the countdown timer will only display on products that are in stock with quantity greater than 0.]]></comment>
+				</field>
+                <!-- Countdown Text -->
+                <field id="countdown_time" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                	<label>Countdown Text</label>
+                	<comment><![CDATA[The word "{{TIMERS}}" will be replaced with dynamic countdown.<br>The word "{{DATE}}" will be replaced with the calculated Delivery Date (based on the countdown) and is <i>optional</i>.]]></comment>
+                	<frontend_model>Magento\Config\Block\System\Config\Form\Field</frontend_model>
+                    <validate>validate-no-empty</validate>
+                </field>
+			</group>
+		</section>
+	</system>
+</config>

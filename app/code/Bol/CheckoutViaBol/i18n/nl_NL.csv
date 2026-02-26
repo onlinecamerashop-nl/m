@@ -1,0 +1,7 @@
+"Checkout via bol","Checkout via bol"
+"Merchant id and secret are valid.","Het wijzigen van merchant id en secret is succesvol."
+"Merchant id or secret is invalid.","Merchant id of secret is niet valide."
+"Could not validate configuration due to a temporary server error. Bol is working on it, please try again later.","Configuratie kon niet gevalideerd worden door een tijdelijke fout. Bol is bezig om het probleem te verhelpen. Probeer het later nog eens."
+"Something went wrong trying to validate the configuration.","Er ging iets mis met het valideren van de configuratie."
+"Checkout via bol is not available for this order. Please try a different payment method.","Checkout via bol is niet beschikbaar voor deze order. Probeer een andere betaaloptie."
+"Prefill and buy now, pay later using your bol account","Snel je gegevens invullen en achteraf betalen via je bol account"

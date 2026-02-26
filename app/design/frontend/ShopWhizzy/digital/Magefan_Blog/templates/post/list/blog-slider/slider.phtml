@@ -1,0 +1,148 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\Store;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+// phpcs:disable Generic.Files.LineLength.TooLong
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var Store $viewModelStore */
+$viewModelStore = $viewModels->require(Store::class);
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+$title = (string) $block->getTitle();
+$items = $block->getItems() ?? [];
+if (is_object($items) && $items instanceof Iterator) {
+    $items = iterator_to_array($items);
+}
+if (!$itemCount = count($items)) {
+    return '';
+}
+$sliderItemRenderer = $block->getChildBlock('slider.item.template');
+?>
+<script>
+    'use strict';
+
+    function initSliderComponent() {
+        return {
+            active: 0,
+            itemCount: 0,
+            getSlider() {
+                return this.$root.querySelector('.js_slides');
+            },
+            pageSize: 1,
+            pageFillers: 0,
+            calcPageSize() {
+                const slider = this.getSlider();
+                if (slider) {
+                    this.itemCount = slider.querySelectorAll('.js_slide').length;
+                    this.pageSize = Math.round(slider.clientWidth / slider.querySelector('.js_slide').clientWidth);
+                    this.pageFillers = (
+                        this.pageSize * Math.ceil(this.itemCount / this.pageSize)
+                    ) - this.itemCount;
+                }
+            },
+            calcActive() {
+                const slider = this.getSlider();
+                if (slider) {
+                    const sliderItems = this.itemCount + this.pageFillers;
+                    const calculatedActiveSlide = slider.scrollLeft / (slider.scrollWidth / sliderItems);
+                    this.active = Math.round(calculatedActiveSlide / this.pageSize) * this.pageSize;
+                }
+            },
+            scrollPrevious() {
+                this.scrollTo(this.active - this.pageSize);
+            },
+            scrollNext() {
+                this.scrollTo(this.active + this.pageSize);
+            },
+            scrollTo(idx) {
+                const slider = this.getSlider();
+                if (slider) {
+                    const slideWidth = slider.scrollWidth / (this.itemCount + this.pageFillers);
+                    slider.scrollLeft = Math.floor(slideWidth) * idx;
+                    this.active = idx;
+                }
+            }
+        }
+    }
+</script>
+<div class="<?=
+    $escaper->escapeHtmlAttr($block->getData('maybe_purged_tailwind_section_classes'))
+    ?: '';
+?>" x-data="initSliderComponent()" x-init="calcPageSize();"
+    @resize.window.debounce="calcPageSize(); $nextTick( function() { calcActive() })">
+    <?php if ($items): ?>
+        <div class="relative inline-block">
+            <div class="flex flex-nowrap w-full overflow-auto js_slides snap" @scroll.debounce="calcActive">
+                <?php $totalitems = count($items) ?>
+                <?php $x = 1 ?>
+                <?php foreach ($items as $item): ?>
+                    <div class="flex shrink-0 w-full js_slide">
+                        <?= $sliderItemRenderer->setItem($item)->toHtml() ?>
+                    </div>
+                    <?php $x++ ?>
+                <?php endforeach; ?>
+                <div :class="{
+                        'js_dummy_slide w-full flex-none py-1' : pageFillers > 0
+                        }"></div>
+                <div :class="{
+                        'js_dummy_slide w-full flex-none py-1' : pageFillers > 1
+                        }"></div>
+                <div :class="{
+                        'js_dummy_slide w-full flex-none py-1' : pageFillers > 2
+                        }"></div>
+            </div>
+            <template x-if=" itemCount> pageSize">
+                <div class="absolute top-1/2 -mt-12 w-full">
+                    <div class="w-full hidden lg:flex justify-between">
+                        <button aria-label="<?= $escaper->escapeHtml(__('Previous')) ?>" tabindex="-1"
+                            class="bg-white rounded-full p-2 shadow-whizzy-header focus:border-0 focus:ring-0 focus:offset-0 focus:outline-none -ml-8"
+                            :class="{ 'opacity-25 pointer-events-none' : active === 0 }" @click="scrollPrevious">
+                            <?= $themeIcons->renderHtml('arrow-left', 'fill-none w-11 h-11 p-3', 20, 20, ["aria-hidden" => "true"]) ?>
+                        </button>
+                        <button aria-label="<?= $escaper->escapeHtml(__('Next')) ?>" tabindex="-1"
+                            class="bg-white rounded-full p-2 shadow-whizzy-header focus:border-0 focus:ring-0 focus:offset-0 focus:outline-none -mr-8"
+                            :class="{ 'opacity-25 pointer-events-none' : active >= itemCount-pageSize }"
+                            @click="scrollNext">
+                            <?= $themeIcons->renderHtml('arrow-right', 'fill-none w-11 h-11 p-3', 20, 20, ["aria-hidden" => "true"]) ?>
+                        </button>
+                    </div>
+                </div>
+            </template>
+            <div>
+                <template x-if="itemCount > pageSize">
+                    <div class="flex items-center justify-center pt-4">
+                        <div class="flex flex-wrap w-full md:w-auto justify-center items-center">
+                            <?php for ($i = 0; $i < $itemCount; $i++): ?>
+                                <span
+                                    class="transition-all bg-whizzy-body shrink-0 w-2 h-2 m-1 bg-black bg-opacity-25 rounded-full shadow cursor-pointer"
+                                    :class="{
+                                            'bg-opacity-100 w-3 h-3': active === <?= (int) $i ?>,
+                                            'bg-opacity-25': active !== <?= (int) $i ?>,
+                                            'hidden': (pageSize !== 1 && !!(<?= (int) $i ?> % pageSize))
+                                        }" @click="scrollTo(<?= (int) $i ?>)">
+                                </span>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>

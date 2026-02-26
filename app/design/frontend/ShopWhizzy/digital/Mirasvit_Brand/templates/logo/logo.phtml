@@ -1,0 +1,31 @@
+<?php
+declare(strict_types=1);
+
+/* @var $block \Mirasvit\Brand\Block\Logo */
+?>
+<?php
+$brandUrl = $block->getBrandUrl();
+$title = $block->getTitle();
+$logoImageUrl = $block->getLogoImageUrl();
+$imageWidth = $block->getImageWidth();
+$tooltipContent = $block->getTooltipContent();
+$isProductPage = $block->isProductPage();
+?>
+<div class="m-logo inline-block" x-data="{show: false}">
+    <a class="m-brand-tooltip relative" href="<?= $brandUrl ?>" @mouseover="show = true" @mouseleave="show = false">
+        <img style="width: <?= $imageWidth ?>px;" title="<?= $title ?>" alt="<?= $title ?>"
+            src="<?= $logoImageUrl ?>" />
+        <?php if ($tooltipContent): ?>
+            <div class="mst_tooltip absolute w-80 p-2.5 border border-container rounded bottom-full mb-5 left-1/4 text-justify bg-white opacity-0 shadow-xl z-50 flex flex-wrap justify-center"
+                x-show="show" :class="{'opacity-100': (show == true)}">
+                <?= $tooltipContent ?>
+                <div
+                    class="mst_tooltip__pointer absolute w-4 h-4 border-l border-b border-container -bottom-2 left-2.5 -rotate-45 bg-white">
+                </div>
+            </div>
+        <?php endif; ?>
+    </a>
+    <?php if ($isProductPage): ?>
+        <span><?= $block->getBrandDescription() ?></span>
+    <?php endif ?>
+</div>

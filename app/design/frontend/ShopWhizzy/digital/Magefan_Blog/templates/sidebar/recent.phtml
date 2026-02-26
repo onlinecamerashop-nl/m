@@ -1,0 +1,83 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ */
+?>
+<?php
+/**
+ * Blog sidebar posts list template
+ *
+ * @var $block \Magefan\Blog\Block\Post\PostList\AbstractList
+ */
+?>
+
+<?php
+$_postCollection = $block->getPostCollection();
+$width = (int)$block->getBlockImageWidth() ?: 300;
+$height = (int)$block->getBlockImageheight() ?: 200;
+$imageHelper = $this->helper(\Magefan\Blog\Helper\Image::class);
+?>
+<?php if ($_postCollection->count())
+{ ?>
+    <div class="block-<?= $escaper->escapeHtml(str_replace('_', '-', $block->getWidgetKey())) ?> block-list-posts">
+        <div class="title text-xs uppercase font-bold tracking-wider my-6 lg:mt-8 lg:mb-6">
+            <?= $block->escapeHtml(__('Trending Posts')) ?>
+        </div>
+        <div class="block-content flex flex-col">
+            <?php foreach ($_postCollection as $_post)
+            {
+                $_postUrl = $escaper->escapeUrl($_post->getPostUrl());
+                $_postName = $escaper->escapeHtml($_post->getTitle());
+                ?>
+                <div class="item">
+                    <div class="grid grid-cols-6 items-center gap-4 py-4 border-b border-whizzy-separator">
+                        <div class="col-span-2">
+                            <?php if ($block->getDisplayImage())
+                            { ?>
+                                <?php
+                                $featuredImage = $_post->getFeaturedListImage() ?: $_post->getFeaturedImage();
+                                $featuredImgAlt = $_post->getData('featured_list_img_alt') ?: $_post->getData('featured_img_alt');
+                                $featuredImgAlt = $featuredImgAlt ?: $_postName;
+                                ?>
+                                <div class="post-image flex-grow-0 flex-shrink-0 w-full h-full overflow-hidden rounded-lg">
+                                    <a class="post-item-link" title="<?= $_postName ?>" href="<?= $_postUrl ?>">
+                                        <?php
+                                        $featuredImageUrl = $featuredImage
+                                            ? $imageHelper->init($_post->getFeaturedListImg() ?: $_post->getFeaturedImg())->resize($width, $height)
+                                            : $this->getViewFileUrl('Magefan_Blog::images/default-no-image.png');
+                                        ?>
+                                        <img class="min-w-24 min-h-20 bg-cover hover:scale-110 transition-transform duration-300 cursor-pointer"
+                                            data-width-amp="<?= $width ?>" data-height-amp="<?= $height ?>" layout="responsive"
+                                            src="<?= $escaper->escapeUrl($featuredImageUrl) ?>"
+                                            alt="<?= $escaper->escapeHtml($featuredImgAlt) ?>" />
+                                    </a>
+                                </div>
+                            <?php } ?>
+                        </div>
+                        <div class="col-span-4">
+                            <div class="post-info flex-grow-1 flex flex-col justify-between gap-1">
+                                <div class="post-title-holder flex items-center justify-between flex-wrap">
+                                    <h2
+                                        class="post-title font-semibold leading-wide text-sm lg:text-base text-whizzy-body hover:text-whizzy-graylighter transition-all duration-200">
+                                        <a class="post-item-link" href="<?= /*@noEscape*/ $_postUrl ?>">
+                                            <?= /*@noEscape*/ $_postName ?>
+                                        </a>
+                                    </h2>
+                                </div>
+                                <?php if ($block->getDisplayImage() && $_post->isPublishDateEnabled())
+                                { ?>
+                                    <div class="post-item-date text-whizzy-graylighter text-sm">
+                                        <span><?= __('Updated on') ?></span>
+                                        <span class="value"><?= $escaper->escapeHtml($_post->getPublishDate()) ?></span>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+
+<?php } ?>

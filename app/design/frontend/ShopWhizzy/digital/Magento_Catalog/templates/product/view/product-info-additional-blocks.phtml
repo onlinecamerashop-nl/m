@@ -1,0 +1,58 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\ProductAttributes;
+use Hyva\Theme\ViewModel\ProductCompare;
+use Hyva\Theme\ViewModel\ProductPage;
+use Hyva\Theme\ViewModel\Wishlist;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var ProductPage $productViewModel */
+$productViewModel = $viewModels->require(ProductPage::class);
+/** @var ProductAttributes $attributesViewModel */
+$attributesViewModel = $viewModels->require(ProductAttributes::class);
+/** @var Product $product */
+$product = $productViewModel->getProduct();
+$productType = $product->getTypeId();
+$productName = $product->getName();
+$productId = $product->getId();
+$productShortDescription = $product->getShortDescription();
+$hideRatingSummary = $block->getData('hide_rating_summary') ?: false;
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$show_share_this = $whizzyHelper->getConfigValue('product/show_share_this');
+$share_this_code = $whizzyHelper->getConfigValue('product/share_this_code');
+
+?>
+
+<?= $this->getLayout()->createBlock("Magento\Catalog\Block\Product\View\Attributes")->setTemplate("Magento_Catalog::product/view/attributes.phtml")->toHtml() ?>
+
+<div class="w-full">
+    <?= $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate("Magento_Catalog::product/view/usp-product.phtml")->toHtml() ?>
+</div>
+
+<hr class="border-t border-whizzy-separator my-6" />
+
+<div class="mb-0 lg:mb-6">
+    <?= $this->getLayout()->createBlock("MgtWizards\Faqs\Block\Faqs")->setFaqsId("product-faqs-$productId")->setTemplate("MgtWizards_Faqs::faqs-products.phtml")->toHtml() ?>
+    <?= $this->getLayout()->createBlock("MgtWizards\Faqs\Block\Faqs")->setFaqsId("product-faqs")->setTemplate("MgtWizards_Faqs::faqs-products.phtml")->toHtml() ?>
+</div>
+
+<?php if ($show_share_this && $share_this_code): ?>
+    <div class="sharethis-inline-share-buttons"></div>
+<?php endif; ?>

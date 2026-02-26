@@ -1,0 +1,139 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\ProductAttributes;
+use Hyva\Theme\ViewModel\ProductCompare;
+use Hyva\Theme\ViewModel\ProductPage;
+use Hyva\Theme\ViewModel\Wishlist;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var ProductPage $productViewModel */
+$productViewModel = $viewModels->require(ProductPage::class);
+/** @var ProductAttributes $attributesViewModel */
+$attributesViewModel = $viewModels->require(ProductAttributes::class);
+/** @var Product $product */
+$product = $productViewModel->getProduct();
+$productType = $product->getTypeId();
+$isArchive = $product->getIsArchive();
+
+?>
+<div class="w-full mt-4 mb-6">
+    <?php /* $block->getChildHtml('product.info.review') */ ?>
+
+    <div class="lg:border-b lg:border-whizzy-separator">
+        <div class="flex flex-col justify-between mb-2">
+            <h1 class="text-2xl lg:text-4xl font-semibold tracking-tight">
+                <?= $escaper->escapeHtml($product->getName()) ?>
+            </h1>
+            <?= $this->getLayout()->createBlock("Magento\Catalog\Block\Product\View")->setTemplate("Magento_Catalog::product/view/brand.phtml")->toHtml(); ?>
+        </div>
+
+        <div class="flex flex-row justify-between items-start text-base lg:text-xl text-whizzy-body mb-2">
+            <div role="group" aria-label="<?= $escaper->escapeHtmlAttr('Price') ?>">
+                <?php if (!$isArchive): ?>
+                    <?php if ($productType === 'grouped'): ?>
+                        <?php echo $this->getProductPrice($product); ?>
+                    <?php elseif ($productType === 'simple'): ?>
+                        <?= $block->getChildHtml("product.info.price") ?>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
+            <div class="flex flex-col gap-2 text-sm font-regular text-whizzy-body">
+                <?= $block->getChildHtml("product.info.stockstatus") ?>
+                <?= $block->getChildHtml("alert.urls") ?>
+                <div class="w-full">
+                    <dl id="product-details">
+                        <?php foreach ($block->getAttributes() as $attributeConfig):
+                            $attribute = $attributesViewModel->getAttributeFromLayoutConfig($attributeConfig); ?>
+                            <?php if ($value = $attribute['value'] ?? null): ?>
+                                <?php if ($attribute['label'] === 'Color'): ?>
+                                <?php else: ?>
+                                    <div class="flex attribute-<?=/* @noEscape */ $attribute['code'] ?: "" ?>">
+                                        <div class="w-full inline-flex items-center">
+                                            <dt
+                                                class="text-left text-whizzy-body text-sm font-semibold uppercase product-detail-label">
+                                                <?= $escaper->escapeHtml($attribute['label']) ?>
+                                            </dt>
+                                            <dd
+                                                class="hyphens-none break-normal ml-2 text-whizzy-body text-sm font-semibold uppercase product-detail-value">
+                                                <?= $escaper->escapeHtml($value) ?>
+                                            </dd>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endif ?>
+                        <?php endforeach; ?>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div x-data="" id="gallery-mobile"></div>
+
+    <?php if ($shortDescription = $productViewModel->getShortDescription())
+    { ?>
+        <div class="w-full mt-6 mb-8">
+            <div class="leading-relaxed product-description prose font-medium"><?= /* @noEscape */ $shortDescription ?>
+            </div>
+        </div>
+    <?php } ?>
+
+    <?php if (!$isArchive): ?>
+        <?= $block->getChildHtml('product.info.form') ?>
+
+        <?php if ($productType === 'grouped'): ?>
+        <?php elseif ($productType === 'simple'): ?>
+            <?php if ($tierPriceBlock = $block->getChildHtml("product.price.tier")): ?>
+                <div class="tier-price-container">
+                    <?= /** @noEscape */ $tierPriceBlock ?>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if ($product->isSaleable()): ?>
+            <div class="flex flex-col lg:flex-row gap-y-3 w-full">
+                <?= $block->getChildHtml("product.info.quantity") ?>
+                <?= $block->getChildHtml("product.info.addtocart") ?>
+                <?php /* $block->getChildHtml('product.info.addtowishlist'); */ ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="flex mt-6 justify-center">
+            <?= $block->getChildHtml('catalog.product.view.before.addtocart.alma.widget') ?>
+        </div>
+
+        <div class="flex mt-4 justify-end">
+            <?php /* $block->getChildHtml('product.info.addtocompare'); */ ?>
+            <?php /* $block->getChildHtml('product.info.emailtofriend'); */ ?>
+            <?php /* $block->getChildHtml('product.info.additional.actions'); */ ?>
+        </div>
+
+        <?php if ($tierPriceBlock = $block->getChildHtml("product.price.tier")): ?>
+            <div class="py-4 my-2 tier-price-container">
+                <?= /** @noEscape */ $tierPriceBlock ?>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <?= $block->getChildHtml("product.info.additional") ?>
+</div>
+
+<script>
+    /* https://github.com/nabeghe/alpine-portal */
+    !function (e) { "function" == typeof define && define.amd ? define(e) : e() }((function () { "use strict"; function e(e) { this.target = null, this.screen = 0; const t = e.parentElement; let n = null; this.update = () => { n && (n.removeEventListener("change", this.onResize), n = null), 0 !== this.screen && (n = window.matchMedia(`(${this.screen > 0 ? "min" : "max"}-width: ${Math.abs(this.screen)}px)`), n.addEventListener("change", this.onResize)) }, this.onResize = n => { n.matches ? document.querySelector(this.target).appendChild(e) : t.appendChild(e) }, window.Alpine.nextTick((() => this.onResize(n))) } const t = []; document.addEventListener("alpine:init", (() => { window.Alpine.directive("portal", ((n, { value: i, expression: s }, { evaluate: a }) => { i || void 0 !== n._x_portal || (n._x_portal = new e(n), t.push(n._x_portal)), !1 !== s && (i ? s = a(s) : i = "target", n._x_portal[i] = s, i && "screen" === i && n._x_portal.update()) })) })) }));
+</script>

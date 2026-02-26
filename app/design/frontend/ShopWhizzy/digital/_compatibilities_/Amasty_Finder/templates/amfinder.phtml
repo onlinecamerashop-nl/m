@@ -1,0 +1,654 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Product Parts Finder Hyva
+ */
+
+declare(strict_types=1);
+
+use Amasty\Finder\Block\Form;
+use Magento\Framework\Escaper;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Amasty\Finder\Model\Source\DisplayType;
+use Amasty\PartsFinderHyva\ViewModel\Dropdown;
+
+/** @var Form $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+/** @var  $dropDownViewModel */
+$dropDownViewModel = $viewModels->require(Dropdown::class);
+
+$uniqueId = uniqid();
+
+$finderId = $block->getFinder()->getId();
+$templateType = $block->getFinder()->getTemplate();
+$componentConfig = $block->getJsonConfig();
+$itemWidth = $block->getDropdownWidth() ?: '100';
+
+$isChosenEnabled = $dropDownViewModel->getIsChosenEnabled();
+
+$dropdowns = $block->getFinder()->getDropdowns();
+// phpcs:disable Generic.Files.LineLength.TooLong
+?>
+
+<div class="amfinder-common-wrapper <?= $escaper->escapeHtmlAttr($templateType); ?> p-6 w-full bg-whizzy-gray rounded-lg overflow-hidden <?= $block->getHideClassName() ? 'hidden' : '' ?>"
+    id="amfinder_<?= $escaper->escapeHtmlAttr((int)$finderId) ?>"
+    x-ref="amfinder_<?= $escaper->escapeHtmlAttr((int)$finderId) ?>"
+    x-data="partsFinder_<?= $escaper->escapeHtml($uniqueId) ?>()"
+    x-init="initFinder_<?= $escaper->escapeHtml($uniqueId) ?>($el)" @resize.window.debounce="checkMobileDevice()"
+    @visibilitychange.window.debounce="checkMobileDevice()" x-bind="eventListeners" x-spread="eventListeners"
+    location="<?= $escaper->escapeHtml($block->getLocation()) ?>" :class="{'toggle-block' : isShowMobileAccordion}">
+    <form method="post" action="<?= $escaper->escapeUrl($block->getActionUrl()) ?>">
+        <?= /** @noEscape  */ $block->getBlockHtml('formkey') ?>
+        <input type="hidden" name="finder_id" value="<?= $escaper->escapeHtmlAttr($block->getId()) ?>" />
+        <input type="hidden" name="back_url" value="<?= $escaper->escapeHtmlAttr($block->getBackUrl()) ?>" />
+        <input type="hidden" name="reset_url" value="<?= $escaper->escapeHtmlAttr($block->getResetUrl()) ?>" />
+        <input type="hidden" name="category_id"
+            value="<?= $escaper->escapeHtmlAttr($block->getCurrentCategoryId()) ?>" />
+        <input type="hidden" name="current_apply_url"
+            value="<?= $escaper->escapeUrl($block->getCurrentApplyUrlEncoded()) ?>" />
+        <div class="amfinder-title flex justify-between items-center cursor-pointer max-[768px]:flex" x-cloak
+            x-show="isMobile" @click="open = !open">
+            <span class="title text-lg lg:text-xl font-semibold text-white">
+                <?= $escaper->escapeHtml($block->getFinder()->getName()) ?>
+            </span>
+            <span class="py-1 px-1 rounded bg-white border border-container md:hidden">
+                <?= $heroicons->chevronDownHtml('transition-transform transform duration-300 ease-in-out', 24, 24, [":class" => "{ 'rotate-180': open }"]) ?>
+            </span>
+        </div>
+        <ul class="amfinder-toggle flex flex-wrap justify-between flex-col md:flex-row md:items-end relative max-[768px]:mt-2"
+            x-show="open">
+            <?php foreach ($dropdowns as $position => $dropdown): ?>
+                <li class="am-item mb-4 min-w-full md:min-w-min" style="width:<?= $escaper->escapeHtml($itemWidth) ?>%">
+                    <p class="dropdown-title text-white text-md md:text-lg font-semibold mb-2">
+                        <?= $escaper->escapeHtml(__($dropdown->getName())) ?>
+                    </p>
+                    <div class="dropdown-element amshopby-clearer">
+                        <?php if ((int)$dropdown->getDisplayType() === DisplayType::DROPDOWN): ?>
+                            <?php if ($isChosenEnabled): ?>
+                                <div class="amfinder-select-wrapper amchosen-select flex flex-col items-center relative"
+                                    x-data="amFinderDropdown_<?= $escaper->escapeHtmlAttr($dropdown->getId() . $position) ?>()"
+                                    x-init="initDropdown($el)" @keydown.enter.stop.prevent="selectOptionOnEnter()"
+                                    @keydown.arrow-up.prevent="focusPrevOption()" @keydown.arrow-down.prevent="focusNextOption()"
+                                    x-bind="eventListenersChosen" x-spread="eventListenersChosen"
+                                    x-ref="amdropdown_<?= $escaper->escapeHtmlAttr($position) ?>" data-amfinder-js="wrapper">
+                                    <div class="w-full">
+                                        <div class="from-input-wrapper relative">
+                                            <input type="hidden"
+                                                data-input-id="<?= $escaper->escapeHtmlAttr($dropdown->getId() . $position) ?>"
+                                                id="input_<?= $escaper->escapeHtmlAttr($dropdown->getId() . $position) ?>"
+                                                x-model="filter"
+                                                class="amfinder-dropdown amchosen-dropdown disabled:opacity-70 disabled:cursor-default"
+                                                data-type="chosen" data-amfinder-js="select"
+                                                data-select-position="<?= $escaper->escapeHtmlAttr($position) ?>"
+                                                x-ref="select_<?= $escaper->escapeHtmlAttr($position) ?>" <?= /**@noEscape */ $block->getDropdownAttributes($dropdown) ?>>
+                                            <label
+                                                class="input-label bg-white cursor-pointer block w-full form-input px-3 py-2 mb-0"
+                                                for="input_<?= $escaper->escapeHtmlAttr($dropdown->getId() . $position) ?>"
+                                                @click="toggle()">
+                                                <span x-text="label">
+                                                    <?= $escaper->escapeHtml(__('Please Select ...')) ?>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div x-show="isOpen()" x-cloak @click.away.outside="close()" class="options-wrapper absolute shadow bg-white top-full z-40 w-full left-0
+                                                pt-2 rounded rounded-t-none max-h-select overflow-y-auto">
+                                        <div class="search-input flex items-center relative px-2" x-show="isOpen()" x-cloak>
+                                            <input type="text" class="block flex-grow form-input"
+                                                @input="filterOptions($event.currentTarget)" x-model="searchFiled"
+                                                id="search_<?= $escaper->escapeHtmlAttr($dropdown->getId() . $position) ?>">
+                                            <label class="search-label absolute top-1/2 -translate-y-1/2 right-0 mb-0 mr-4"
+                                                for="search_<?= $escaper->escapeHtmlAttr($dropdown->getId() . $position) ?>">
+                                                <?= $heroicons->searchHtml("text-gray-400") ?>
+                                            </label>
+                                        </div>
+                                        <div class="options flex flex-col w-full py-2">
+                                            <?= $block->getDropdownHtml($block->getFinder(), $dropdown, $position) ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?= /** @noEscape */
+                                                        $block->assign(['dropdownId' => $dropdown->getId() . $position,
+                                                                        'inputRef' => 'select_' . $escaper->escapeHtml($position),
+                                                                        'comonentRef' => 'amdropdown_' . $escaper->escapeHtml($position),
+                                                                        'finderId' => $escaper->escapeHtml($finderId)])
+                                                            ->fetchView(
+                                                                $block->getTemplateFile(
+                                                                    'Amasty_PartsFinderHyva::js/amfinder-dropdown.phtml'
+                                                                )
+                                                            );
+                                ?>
+                            <?php else: ?>
+                                <div class="amfinder-select-wrapper" data-amfinder-js="wrapper">
+                                    <select
+                                        class="amfinder-dropdown block w-full form-input disabled:opacity-70 disabled:cursor-default"
+                                        data-type="select" data-amfinder-js="select"
+                                        data-select-position="<?= $escaper->escapeHtmlAttr($position) ?>"
+                                        x-ref="select_<?= $escaper->escapeHtmlAttr($position) ?>"
+                                        @change="selectValueChanged($event.target)" <?= /**@noEscape */ $block->getDropdownAttributes($dropdown) ?>>
+                                        <?= /**@noEscape */ $block->getDropdownHtml($block->getFinder(), $dropdown) ?>
+                                    </select>
+                                </div>
+                            <?php endif ?>
+                        <?php else: ?>
+                            <div class="amfinder-dropdown-wrapper"
+                                data-select-position="<?= $escaper->escapeHtmlAttr($position) ?>" data-amfinder-js="wrapper">
+                                <button type="button"
+                                    class="amfinder-dropdown form-input amfinder-dropdown-popup-btn w-full text-left bg-white px-3 py-2 disabled:opacity-70 disabled:cursor-default"
+                                    data-type="popup" data-amfinder-js="select"
+                                    data-select-position="<?= $escaper->escapeHtmlAttr($position) ?>"
+                                    x-ref="select_<?= $escaper->escapeHtmlAttr($position) ?>"
+                                    @click="togglePopup('<?= $escaper->escapeHtmlAttr($position) ?>')" <?= /** @noEscape  */ $block->getDropdownAttributes($dropdown) ?>>
+                                    <span data-amfinder-js="text" class="button-title">
+                                        <?= $escaper->escapeHtml(__('Please Select ...')) ?>
+                                    </span>
+                                    <span class="amfinder-reset" title="<?= $escaper->escapeHtml(__('Reset option')) ?>"
+                                        data-amfinder="reset">
+                                    </span>
+                                </button>
+                                <div class="amfinder-details gap-4 flex flex-wrap items-stretch absolute w-full mt-1 left-0 bg-white
+                                            border border-gray-300 rounded shadow-lg z-50 p-4 hidden max-h-[430px] overflow-y-auto"
+                                    data-amfinder-js="select-details" @click.stop="selectRadio($event.target)"
+                                    data-popup-position="<?= $escaper->escapeHtmlAttr($position) ?>"
+                                    x-ref="option_popup_<?= $escaper->escapeHtmlAttr($position) ?>">
+                                    <?= $block->getDropdownHtml($block->getFinder(), $dropdown, $position) ?>
+                                </div>
+                            </div>
+                        <?php endif ?>
+                        <?= /** @noEscape */ $block->fetchView($block->getTemplateFile('Amasty_PartsFinderHyva::filter-loading-block.phtml')) ?>
+                    </div>
+                </li>
+            <?php endforeach ?>
+            <template x-if="isShowActions">
+                <li class="last amfinder-actions w-full mt-4 -list-item">
+                    <div class="amfinder-buttons flex items-center justify-between gap-3 <?= ($block->isButtonsVisible() ? '' : 'no-display') ?>"
+                        data-amfinder-js="buttons">
+                        <button class="button btn btn-secondary btn-size-sm mr-4" name="reset" value="1"
+                            title="<?= $escaper->escapeHtml(__('Reset')); ?>" type="submit">
+                            <?= $escaper->escapeHtml(__('Reset')); ?>
+                        </button>
+                        <button class="button btn btn-primary btn-size-sm border-2 border-transparent"
+                            title="<?= $escaper->escapeHtml(__('Find')) ?>" type="submit">
+                            <?= $escaper->escapeHtml(__('Find')) ?>
+                        </button>
+                    </div>
+                </li>
+            </template>
+        </ul>
+    </form>
+</div>
+
+<script>
+    function partsFinder_<?= $escaper->escapeHtml($uniqueId) ?>() {
+        const dropdownTypes = {
+            select: 'select',
+            chosen: 'chosen',
+            popup: 'popup'
+        }
+        const templateTypeHorizontal = 'horizontal';
+
+        return {
+            config: <?= /* @noEscape */ $componentConfig ?>,
+            _isFirstLoad: 0,
+                selectToShow: null,
+                    selects: null,
+                        radioValue: null,
+                            lastSelectedRadioValues: [],
+                                defaultOptionLabel: "<?= $escaper->escapeHtml(__('Please Select ...')) ?>",
+                                    isShowActions: false,
+                                        optionsCallCounter: 0,
+                                            optionsCounter: <?= $escaper->escapeHtml(count($dropdowns)) ?>,
+                                                finderId: '<?= $escaper->escapeJs($finderId) ?>',
+                                                    isLoading: false,
+                                                        selectors: {
+            comonentWrapper: '.amfinder-common-wrapper',
+                dropdownSelector: '[data-amfinder-js="select"]',
+                    popupSelector: '[data-amfinder-js="select-details"]',
+                        popupItem: '[data-amfinder-js="item"]',
+                            filterWrapper: '[data-amfinder-js="wrapper"]',
+                                inputRadio: 'input[type="radio"]',
+                                    inputRadioChecked: 'input[type="radio"]:checked',
+                                        buttonTitle: '[data-amfinder-js="text"]',
+                                            closeButton: '[data-amfinder-js="close"]',
+                                                chosenOptions: '.options',
+                                                    chosenSelectWrapper: '.amchosen-select',
+                                                        loader: '.filter-loader',
+                                                            filterItem: '.dropdown-element'
+        },
+        open: true,
+            isMobile: false,
+                isShowMobileAccordion: false,
+                    templateType: '<?= $escaper->escapeJs($templateType) ?>',
+                        startAutoSubmit: false,
+                            chosenOptionValue: '',
+
+                                initFinder_<?= $escaper->escapeHtml($uniqueId) ?>(component) {
+            this.selects = component.querySelectorAll(this.selectors.dropdownSelector);
+            this._initClickOutEventForPopups(component);
+            this.$nextTick(() => {
+                this._checkSelectedOptions();
+            });
+
+            this.toggleActions();
+            this.checkMobileDevice();
+
+            this.$watch('optionsCallCounter', (counter) => {
+                if (parseInt(counter) > parseInt(this.optionsCounter)) {
+                    this.optionsCallCounter = this.optionsCounter;
+                }
+
+                this.$nextTick(() => {
+                    this.toggleActions();
+                    if (counter === this.optionsCounter && this.config.autoSubmit) {
+                        this.isShowActions = false;
+                    }
+                })
+            });
+            this.$watch('isMobile', (state) => {
+                if (this._isHorizontalTemplate()) {
+                    return;
+                }
+                if (state) {
+                    this.isShowMobileAccordion = state;
+                }
+                this.open = !state;
+            });
+
+            this.$watch('startAutoSubmit', (state) => {
+                if (state) {
+                    this._submitForm();
+                }
+                this.startAutoSubmit = false;
+            })
+
+            this.open = !this.isMobile;
+        },
+
+        _isHorizontalTemplate() {
+            return this.templateType !== templateTypeHorizontal;
+        },
+
+        _initClickOutEventForPopups(component){
+            let self = this;
+            document.addEventListener('click', function (event) {
+                const wrappers = component.querySelectorAll(self.selectors.filterWrapper);
+                for (let wrapper of wrappers) {
+                    const outsideClick = !wrapper.contains(event.target);
+                    let popup = wrapper.querySelector(self.selectors.popupSelector);
+                    if (outsideClick && popup) {
+                        popup.classList.add('hidden');
+                    }
+                }
+            });
+        },
+
+        _checkSelectedOptions() {
+            for (let select of this.selects) {
+                if (select.dataset.type === dropdownTypes.popup) {
+                    const popupWrapper = select.closest(this.selectors.filterWrapper);
+                    let inputs = popupWrapper.querySelectorAll(this.selectors.inputRadio);
+                    for (let input of inputs) {
+                        if (input.checked) {
+                            let checkedLabel = input.dataset.itemLabel;
+                            this._setTitleToButton(select, checkedLabel);
+                            this.lastSelectedRadioValues.push(parseInt(input.value))
+                        }
+                    }
+                }
+            }
+        },
+
+        selectRadio(elementOfPopup) {
+            const popupEl = elementOfPopup.closest(this.selectors.popupSelector);
+            let popupPosition = parseInt(popupEl.dataset.popupPosition),
+                buttonEl = this.$refs['select_' + popupPosition],
+                inputs = popupEl.querySelectorAll(this.selectors.inputRadio),
+                closeBtn = popupEl.querySelector(this.selectors.closeButton);
+
+            if (closeBtn === elementOfPopup) {
+                this.togglePopup(popupPosition);
+            }
+
+            for (let input of inputs) {
+                if (input.checked) {
+                    let checkedLabel = input.dataset.itemLabel;
+                    if (this.lastSelectedRadioValues.includes(parseInt(input.value))) {
+                        this.closePopup(popupPosition);
+                        break;
+                    }
+                    this.radioValue = parseInt(input.value);
+                    this.lastSelectedRadioValues = [];
+                    this.lastSelectedRadioValues.push(parseInt(input.value));
+                    this._setTitleToButton(buttonEl, checkedLabel);
+                    this._loadDropDownValues(buttonEl);
+                    this.closePopup(popupPosition);
+                    this._clearAllBelow(buttonEl);
+                    break;
+                }
+            }
+        },
+
+        selectValueChanged(select) {
+            this._loadDropDownValues(select);
+            this._clearAllBelow(select);
+        },
+
+        _selectCustomDropdown(detail) {
+            if (parseInt(detail.finderId) === parseInt(this.finderId)) {
+                if (detail.optionId) {
+                    this._loadDropDownValues(detail.input, detail.optionId);
+                } else {
+                    this.optionsCallCounter += 1;
+                }
+
+                this._clearAllBelow(detail.input);
+            }
+        },
+
+        togglePopup(popupPosition) {
+            let popupEl = this.$refs['option_popup_' + popupPosition];
+            popupEl.classList.toggle('hidden');
+        },
+
+        closePopup(popupPosition) {
+            let popupEl = this.$refs['option_popup_' + popupPosition];
+            popupEl.classList.add('hidden');
+        },
+
+        _setTitleToButton(button, titleToSet) {
+            button.querySelector(this.selectors.buttonTitle).innerHTML = titleToSet;
+        },
+
+        _prepareData(select, valueFromEvent) {
+            const component = select.closest(this.selectors.comonentWrapper),
+                selectEl = select.closest(this.selectors.dropdownSelector),
+                type = selectEl.dataset.type;
+
+            let positionToGetValues = parseInt(selectEl.dataset.selectPosition) + 1,
+                selectToGetValues = component.querySelector(`[x-ref='select_${positionToGetValues}']`);
+
+            if (!selectToGetValues) {
+                return false;
+            }
+
+            let parentDropdownId = selectEl.dataset.dropdownId,
+                currentSelectedValue = selectEl.value,
+                dropdownId = selectToGetValues.dataset.dropdownId;
+
+            currentSelectedValue = valueFromEvent ? valueFromEvent : selectEl.value;
+            this.selectToShow = selectToGetValues;
+
+            let parentIdValue = this.radioValue ? this.radioValue : currentSelectedValue;
+
+            if (parseInt(parentIdValue) === 0) {
+                return false;
+            }
+
+            let data = {
+                dropdown_id: dropdownId,
+                parent_id: parentIdValue,
+                use_saved_values: this._isFirstLoad,
+                parent_dropdown_id: parentDropdownId
+            }
+
+            return this._generateRequestString(data);
+
+        },
+
+        _generateRequestString(data) {
+            let resultString = '';
+            for (let prop in data) {
+                if (!data.hasOwnProperty(prop)) {
+                    continue;
+                }
+                resultString += prop + '=' + data[prop] + '&'
+            }
+            return resultString;
+        },
+
+        _getPopupElementByPosition(position) {
+            return this.$refs['option_popup_' + position];
+        },
+
+        _loadDropDownValues(select, valueFromEvent) {
+            const url = this.config.ajaxUrl,
+                component = select.closest(this.selectors.comonentWrapper),
+                positionToShow = parseInt(select.dataset.selectPosition) + 1;
+            let data = this._prepareData(select, valueFromEvent),
+                selectToEnable = this.selectToShow,
+                filterItemWrapper,
+                loaderToShow;
+
+            if (!data || !selectToEnable) {
+                this.$nextTick(() => {
+                    this.optionsCallCounter = this._returnSelectedDropdownsQty();
+                    if (this.optionsCallCounter === this.optionsCounter && this.config.autoSubmit) {
+                        this.startAutoSubmit = true;
+                        this.isShowActions = false;
+                    }
+                })
+                return;
+            }
+
+            filterItemWrapper = selectToEnable.closest(this.selectors.filterItem);
+            loaderToShow = filterItemWrapper.querySelector(this.selectors.loader);
+
+            let nextDropdownType = component.querySelector(`[x-ref='select_${positionToShow}']`).dataset.type,
+                isPopup = nextDropdownType === dropdownTypes.popup,
+                isChosen = nextDropdownType === dropdownTypes.chosen,
+                targetForOptions = selectToEnable;
+
+            if (isChosen) {
+                targetForOptions =
+                    selectToEnable.closest(this.selectors.chosenSelectWrapper)
+                        .querySelector(this.selectors.chosenOptions);
+            }
+
+            if (isPopup) {
+                targetForOptions = this._getPopupElementByPosition(positionToShow);
+            }
+
+            filterItemWrapper.classList.add('relative');
+            loaderToShow.classList.toggle('hidden');
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: new URLSearchParams(data),
+                credentials: "include"
+            }).then(
+                response => response.text()
+            ).then(result => {
+                if (result && result !== '') {
+                    selectToEnable.disabled = false;
+                    loaderToShow.classList.toggle('hidden');
+                    filterItemWrapper.classList.remove('relative');
+                    targetForOptions.innerHTML = result;
+                    this.radioValue = null;
+                    if (isPopup) {
+                        this._checkSelectedOptions();
+                    }
+                    this.optionsCallCounter += 1;
+
+                    this.checkSingleValue(selectToEnable);
+                } else {
+                    this._showMessage("<?= $escaper->escapeHtml(__('Something went wrong.')) ?>", 'error', 4000);
+                }
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
+        },
+
+        checkSingleValue(selectToEnable) {
+            let value = null;
+
+            if (selectToEnable.dataset.type === dropdownTypes.popup) {
+                const input = selectToEnable.closest(this.selectors.filterWrapper).querySelector('input:checked');
+                if (input) {
+                    value = input.value;
+                }
+            } else if (selectToEnable.dataset.type === dropdownTypes.select) {
+                if (selectToEnable.value && parseInt(selectToEnable.value) !== 0) {
+                    value = selectToEnable.value;
+                }
+            } else if (selectToEnable.dataset.type === dropdownTypes.chosen) {
+                let buttons = selectToEnable.closest(this.selectors.filterWrapper).querySelectorAll('.options button');
+
+                if (buttons.length === 2) {
+                    let label = buttons[1].dataset.label;
+                    let id = selectToEnable.dataset.inputId;
+                    value = buttons[1].dataset.value;
+                    window.dispatchEvent(
+                        new CustomEvent('amfilter-option-selected-single', {
+                            detail: {
+                                selectId: id,
+                                slectedValue: value,
+                                selectedLabel: label
+                            }
+                        })
+                    );
+                    selectToEnable.value = value;
+                }
+            }
+
+            if (value) {
+                this._loadDropDownValues(selectToEnable, parseInt(value));
+            }
+        },
+
+        toggleActions() {
+            const selectsQty = this.selects.length;
+            let selectedDropdowns = this._returnSelectedDropdownsQty();
+
+            if (this.config.isPartialSearch) {
+                this.isShowActions = selectedDropdowns > 0;
+            } else {
+                if (selectedDropdowns < this.optionsCallCounter) {
+                    this.optionsCallCounter = selectedDropdowns;
+                }
+                this.isShowActions = selectedDropdowns === selectsQty;
+            }
+        },
+
+        _returnSelectedDropdownsQty() {
+            let selectedDropdowns = 0;
+            for (let select of this.selects) {
+                let type = select.dataset.type;
+                let value = null;
+                if (type === dropdownTypes.popup) {
+                    let checkedInput = select.closest(this.selectors.filterWrapper)
+                        .querySelector(this.selectors.inputRadioChecked);
+                    if (checkedInput) {
+                        value = checkedInput.value;
+                    }
+                } else {
+                    value = select.value;
+                }
+                if (value && parseInt(value) !== 0) {
+                    selectedDropdowns += 1;
+                }
+            }
+            return selectedDropdowns;
+        },
+
+        _clearAllBelow(currentSelect) {
+            const currentPosition = parseInt(currentSelect.dataset.selectPosition);
+            for (let selectEl of this.selects) {
+                let selectPosition = parseInt(selectEl.dataset.selectPosition),
+                    type = selectEl.dataset.type;
+
+                selectEl.disabled = true;
+
+                if (currentPosition >= selectPosition) {
+                    selectEl.disabled = false;
+                } else {
+                    selectEl.disabled = true;
+                    switch (type) {
+                        case dropdownTypes.popup:
+                            this._clearPopup(selectEl);
+                            break;
+
+                        case dropdownTypes.chosen:
+                            this._clearChosen(selectEl)
+                            break;
+
+                        case dropdownTypes.select:
+                            selectEl.replaceChildren();
+                            selectEl.append(this._createDefaultOptionElement());
+                            break;
+                    }
+                }
+            }
+        },
+
+        _clearPopup(selectEl) {
+            const popupWrap = selectEl.closest(this.selectors.filterWrapper);
+            let items = popupWrap.querySelectorAll(this.selectors.popupItem);
+            for (let item of items) {
+                item.remove();
+            }
+            this._setTitleToButton(selectEl, this.defaultOptionLabel);
+        },
+
+        _clearChosen(selectEl) {
+            let id = selectEl.dataset.inputId;
+            window.dispatchEvent(
+                new CustomEvent('amfilter-option-select-clear', {
+                    detail: {
+                        inputId: id
+                    }
+                })
+            );
+        },
+
+        _createDefaultOptionElement() {
+            let option = document.createElement('option');
+            option.setAttribute('value', '0');
+            option.innerHTML = this.defaultOptionLabel;
+            return option;
+        },
+
+        _showMessage(message, type, delay) {
+            dispatchMessages([{
+                type: type,
+                text: message
+            }], delay);
+        },
+
+        _submitForm() {
+            const formWrapper = this.$refs['amfinder_<?= $escaper->escapeHtmlAttr((int)$finderId) ?>'];
+            this.$nextTick(() => {
+                formWrapper.querySelector('form').submit();
+            })
+        },
+
+        checkMobileDevice() {
+            this.isMobile = window.matchMedia('(max-width: 767px)').matches;
+        },
+
+        eventListeners: {
+            ['@amfilter-option-select.window'](event) {
+                this._selectCustomDropdown(event.detail)
+            },
+            ['@amfilter-option-changed.window'](event) {
+                this.chosenOptionValue = event.detail.optionValue;
+            },
+            ['@amfinder-show-buttons.window'](event) {
+                if (event.detail.showButtons && !this.isShowActions && parseInt(event.detail.finderId) === parseInt(this.finderId)) {
+                    this.isShowActions = true;
+                }
+            }
+        }
+    }
+    }
+</script>

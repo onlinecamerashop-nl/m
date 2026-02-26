@@ -1,0 +1,23 @@
+{
+    "name": "shopwhizzy/countdowntimer",
+    "description": "Shipping Deadline Countdown for Magento 2",
+    "type": "magento2-module",
+    "version": "1.0.1",
+    "license": "proprietary",
+    "authors": [
+        {
+            "email": "info@shopwhizzy.com",
+            "name": "ShopWhizzy"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "ShopWhizzy\\CountdownTimer\\": ""
+        }
+    }
+}

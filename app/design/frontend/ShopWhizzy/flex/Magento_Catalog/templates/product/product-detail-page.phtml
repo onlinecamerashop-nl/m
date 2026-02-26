@@ -1,0 +1,89 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Catalog\Block\Product\View;
+use Hyva\Theme\ViewModel\ProductPage;
+
+/** @var View $block */
+$product = $block->getProduct();
+/** @var ProductPage $productViewModel */
+$productViewModel = $viewModels->require(ProductPage::class);
+
+?>
+<section class="container">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-y-4 gap-x-0 lg:gap-x-8 lg:gap-y-0 pb-4 lg:pb-28">
+        <div><?= $block->getChildHtml('product.media') ?></div>
+        <div class="flex flex-col w-full">
+            <?php /* $block->getChildHtml('product.title') */ ?>
+            <?= $block->getChildHtml('product.info') ?>
+            <?= $block->getChildHtml('product_options_wrapper_bottom') ?>
+            <?= $block->getChildHtml('product.info.additional.blocks') ?>
+        </div>
+    </div>
+</section>
+
+<?php if ($product->getDescription()): ?>
+    <section>
+        <div class="pb-8 lg:pb-12">
+            <div class="container">
+                <div class="flex flex-col gap-4 lg:gap-12">
+                    <div class="flex flex-col gap-3 font-bold">
+                        <div class="text-sm uppercase text-whizzy-graylighter">
+                            <?= __('Details') ?>
+                        </div>
+                        <div class="text-3xl lg:text-4xl text-whizzy-body">
+                            <?= __('Description') ?>
+                        </div>
+                    </div>
+                    <div class="product-description">
+                        <?= $productViewModel->productAttributeHtml($product, $product->getDescription(), 'description') ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<?php endif ?>
+
+<hr class="container my-8 lg:my-12 border-t">
+</hr>
+
+<?= $block->getChildHtml('related') ?>
+
+<?= $block->getChildHtml('product.mirasvit.kits') ?>
+
+<?= $block->getChildHtml('yotpo_widget_div') ?>
+
+<section>
+    <div class="container">
+        <?= $block->getChildHtml('upsell') ?>
+    </div>
+</section>
+
+<?= $block->getChildHtml('product.info.blog.relatedposts') ?>
+<?= $block->getChildHtml('amasty_faq_product_tab_digital') ?>
+
+<section>
+    <div class="container">
+        <?= $block->getChildHtml('review_list') ?>
+        <?= $block->getChildHtml('review_form') ?>
+    </div>
+</section>
+
+<section>
+    <div class="container px-0">
+        <div id="doo-rec-1"></div>
+    </div>
+</section>
+
+<section>
+    <div class="container px-0">
+        <div id="doo-rec-2"></div>
+    </div>
+</section>

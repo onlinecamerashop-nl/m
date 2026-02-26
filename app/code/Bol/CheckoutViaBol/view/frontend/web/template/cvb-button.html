@@ -1,0 +1,14 @@
+<div data-bind="visible: isVisible()" class="cvb-button-wrapper">
+    <cvb-checkout-button
+        type="checkout"
+        data-role="proceed-to-checkout"
+        data-bind="click: CVBCheckoutButton.wrapOnClick($element, redirectToCvb),
+            attr: {
+                'font-url': fontUrl(),
+                'label-url': labelUrl(),
+                'label': label(),
+                'info': info(),
+            }"
+        style="margin-bottom: 20px"
+    />
+</div>

@@ -1,0 +1,79 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Shopby Base Hyva Compatibility (System)
+ */
+
+use Amasty\ShopbyBase\Api\Data\OptionSettingInterface;
+use Amasty\ShopbyBase\Block\Product\AttributeIcon;
+use Amasty\ShopbyBase\ViewModel\OptionProcessorInterface;
+use Amasty\ShopByBaseHyvaCompatibility\ViewModel\Tooltip;
+use Magento\Framework\Escaper;
+use Hyva\Theme\Model\ViewModelRegistry;
+
+/**
+ * @var AttributeIcon $block
+ * @var Escaper $escaper
+ * @var ViewModelRegistry $viewModels
+ */
+$optionsData = $block->getOptionsData();
+$tooltipViewModel = $viewModels->require(Tooltip::class);
+// phpcs:disable Generic.Files.LineLength.TooLong
+?>
+
+<?php foreach ($optionsData as $setting): ?>
+    <?php
+    $title = $block->stripTags($setting[OptionProcessorInterface::TITLE]);
+    $alt = $block->stripTags($setting[OptionSettingInterface::SMALL_IMAGE_ALT]) ?: $title;
+    $img = !empty($setting[OptionProcessorInterface::IMAGE_URL]) ? $setting[OptionProcessorInterface::IMAGE_URL] : null;
+    $tooltipJs = $setting[OptionProcessorInterface::TOOLTIP_JS] ?? null;
+    ?>
+    <?php if ($block->isShowBrandLink($setting)): ?>
+        <div class="amshopby-option-link relative" x-data="{
+                  labelledById: '',
+                  init() {
+                      const timestamp = Date.now();
+                      const randomNum = Math.floor(Math.random() * 1000);
+                      this.labelledById = `amshopby-option-id-${timestamp}-${randomNum}`;
+                  }
+              }">
+            <div
+                class="absolute w-full h-full blur-lg opacity-40 rounded-lg bg-gradient-to-br from-whizzy-primary-lighter via-whizzy-primary to-whizzy-primary-lighter animate-tilt">
+            </div>
+            <div
+                class="relative z-10 rounded-lg bg-white p-4 lg:p-6 flex flex-col lg:flex-row gap-2 lg:gap-6 justify-center items-center border-2 border-whizzy-primary-lighter">
+                <?php if ($setting[OptionProcessorInterface::LINK_URL] && !empty($img)): ?>
+                    <a href="<?= $escaper->escapeUrl($setting[OptionProcessorInterface::LINK_URL]); ?>"
+                        title="<?= $escaper->escapeHtmlAttr($title); ?>" :aria-labelledby="labelledById">
+                        <span :id="labelledById" role="button" aria-label="<?= $escaper->escapeHtmlAttr($title); ?>">
+                            <?php if (!empty($tooltipJs)): ?>
+                                <?= /** @noEscape */ $tooltipViewModel->renderTooltip($setting); ?>
+                            <?php else: ?>
+                                <img class="max-w-24" title="<?= $escaper->escapeHtmlAttr($title); ?>"
+                                    alt="<?= $escaper->escapeHtmlAttr($alt) ?>" src="<?= $escaper->escapeUrl($img) ?>" />
+                            <?php endif; ?>
+                        </span>
+                    </a>
+                <?php endif; ?>
+                <div class="flex-1">
+                    <?php if ($setting[OptionProcessorInterface::DISPLAY_TITLE] ?? false): ?>
+                        <div class="font-bold text-base">
+                            <a href="<?= $escaper->escapeUrl($setting[OptionProcessorInterface::LINK_URL]); ?>"
+                                class="amshopby-brand-title-link">
+                                <?= /* @noEscape */ strtoupper($setting[OptionProcessorInterface::TITLE]); ?>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($setting[OptionProcessorInterface::SHORT_DESCRIPTION])): ?>
+                        <div class="link-short-description text-base text-xs">
+                            <?= /* @noEscape */ $setting[OptionProcessorInterface::SHORT_DESCRIPTION]; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php endforeach; ?>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../Backend/etc/menu.xsd">
+    <menu>
+        <add id="mgtwizards_base::core" title="MgtWizards" module="MgtWizards_Base" sortOrder="90" resource="MgtWizards_Base::core"/>
+    </menu>
+</config>

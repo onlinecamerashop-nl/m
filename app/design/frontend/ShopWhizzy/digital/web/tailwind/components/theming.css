@@ -1,0 +1,53 @@
+body {
+    @apply bg-white text-sm;
+}
+
+#cart-drawer {
+    @apply text-black;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+.input {
+    @apply w-auto rounded mr-2 border text-base py-2 px-4;
+
+    @screen md {
+        @apply mr-4;
+    }
+
+    @screen lg {
+        @apply mr-0;
+    }
+
+    @screen xl {
+        @apply mr-4;
+    }
+
+    &-light {
+        @apply bg-white border-gray-400;
+
+        &:focus {
+            @apply outline-none border-primary;
+        }
+    }
+}
+
+.card {
+    @apply py-6 px-4 lg:py-8 lg:px-6 bg-white shadow-whizzy-header rounded-lg border border-transparent;
+
+    img {
+        @apply w-full shadow-none;
+    }
+
+    .product-info {
+        @apply p-4 md:p-6;
+    }
+}
+
+.card-interactive {
+    &:hover {
+        @apply bg-white;
+    }
+}

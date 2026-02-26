@@ -1,0 +1,139 @@
+<?php
+declare(strict_types=1);
+
+/** @var \Mirasvit\Review\Block\Widget\ReviewGrid $block */
+
+$reviews = $block->getReviews();
+$identifier = $block->getIdentifier();
+?>
+
+<?php if (!count($reviews)): ?>
+    <div class="message info empty">
+        <div><?= $escaper->escapeHtml(__('We can\'t find reviews to display.')) ?></div>
+    </div>
+<?php else: ?>
+    <div class="reviews-masonry-container invisible h-4 overflow-y-hidden" x-data="initMasonryGrid" x-init="render">
+        <?= $block->getLayout()->createBlock(\Magento\Framework\View\Element\Template::class)->setTemplate("Hyva_Theme::ui/loading.phtml")->toHtml() ?>
+
+        <?php if ($title = $block->getTitle()): ?>
+            <div class="review-widget-title">
+                <span class="title" role="heading"><?= $block->escapeHtml($block->getTitle()) ?></span>
+            </div>
+        <?php endif; ?>
+        <div class="review-grid w-full mb-3" data-review-grid="<?= $block->escapeHtml($identifier) ?>">
+            <?php foreach ($reviews as $review): ?>
+                <?= $block->getReviewBlock()->setNameInLayout('mst.review-' . $review->getId())->setReview($review)->toHtml() ?>
+            <?php endforeach ?>
+        </div>
+        <?php if ($block->getTotalSize() > $block->getPageSize()): ?>
+            <div class="load-reviews" x-show="!isFullyLoaded()">
+                <button class="action primary btn btn-primary m-auto min-w-32" id="load-reviews" @click="requestReviews($el)">
+                    <span
+                        class="button-loader animate-spin h-6 w-6 border-4 border-white border-b-transparent rounded-full m-auto block"
+                        x-show="!ajaxLoaded"></span>
+                    <span class="button-label" x-show="ajaxLoaded"><?= $block->escapeHtml(__('Load More')) ?></span>
+                </button>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+
+    <script>
+        function initMasonryGrid() {
+            return {
+                gridSelector: '[data-review-grid="<?= $identifier ?>"]',
+                itemSelector: '.review-grid-item',
+                requestUrl: '<?= $block->getRequestUrl() ?>',
+                loaderUrl: '',
+                totalSize: <?= $block->getTotalSize() ?>,
+                pageSize: <?= $block->getPageSize() ?>,
+                loaded: <?= $block->getPageSize() ?>,
+                sortOrder: '<?= $block->getData('sort_order') ?>',
+                isLoading: true,
+                ajaxLoaded: true,
+
+                grid: null,
+
+                render: function () {
+                    this.grid = new Masonry(document.querySelector(this.gridSelector), {
+                        itemSelector: this.itemSelector,
+                        columnWidth: this.sizerSelector,
+                        percentPosition: false,
+                        gutter: 0,
+                        transitionDuration: 0
+                    });
+
+                    document.querySelector('.reviews-masonry-container').classList.remove('invisible');
+                    document.querySelector('.reviews-masonry-container').classList.remove('h-4');
+                    document.querySelector('.reviews-masonry-container').classList.remove('overflow-y-hidden');
+
+                    this.isLoading = false;
+                },
+
+                isFullyLoaded: function () {
+                    return this.totalSize <= this.loaded;
+                },
+
+                requestReviews: function () {
+                    this.ajaxLoaded = false;
+
+                    let nextPage = Math.ceil(this.loaded / this.pageSize) + 1;
+
+                    const params = '?p=' + nextPage + '&limit=' + this.pageSize + '&sort_order=' + this.sortOrder
+
+                    let imagesCount = 0;
+
+                    fetch(
+                        this.requestUrl + params
+                    ).then(response => {
+                        return response.json()
+                    }).then(result => {
+                        if (result.success) {
+                            const wrapper = document.createElement('div');
+
+                            result.blocks.forEach(function (block) {
+                                wrapper.innerHTML = block;
+
+                                let $block = wrapper.querySelector('.review-grid-item');
+
+                                $block.classList.add('invisible')
+
+                                document.querySelector(this.gridSelector).appendChild($block);
+
+                                this.grid.addItems($block)
+                                imagesCount += $block.querySelectorAll('img').length;
+                            }.bind(this));
+
+                            if (imagesCount) {
+                                document.querySelectorAll(this.gridSelector + ' img').forEach(img => {
+                                    img.addEventListener('load', () => {
+                                        this.updateGridLayout();
+                                        wrapper.innerHTML = '';
+                                    })
+                                })
+                            } else {
+                                this.updateGridLayout();
+                                wrapper.innerHTML = '';
+                            }
+
+                            this.loaded += result.loaded
+                        } else {
+                            console.error(result.message)
+                        }
+
+                        this.ajaxLoaded = true;
+                    })
+                },
+
+                updateGridLayout: function () {
+                    this.grid.layout(); // update layout after image is loaded
+
+                    document.querySelectorAll(this.gridSelector + ' .review-grid-item').forEach((card) => {
+                        card.classList.remove('invisible');
+                    });
+                }
+            }
+        }
+    </script>
+<?php endif; ?>

@@ -1,0 +1,44 @@
+<?php
+/** @var \Mirasvit\LayeredNavigation\Block\Ajax $block */
+
+if (!$block->isAjaxEnabled()) {
+    return '';
+}
+?>
+
+<script>
+    function initDefaultAjaxToolbar () {
+        const toolbars = document.querySelectorAll('.toolbar.toolbar-products');
+
+        // init ajax toolbar
+        toolbars.forEach(function (toolbar) {
+            let xData = toolbar.getAttribute('x-data');
+            xData = '{...' + xData + ', ...initAjaxToolbar()}';
+
+            toolbar.setAttribute('x-data', xData);
+        });
+
+        // init ajax pager
+        let pagerItems = document.querySelectorAll('.toolbar.toolbar-products .pages-items a');
+
+        pagerItems.forEach(function (item) {
+            item.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                initApplier().apply(item.href);
+            });
+        });
+
+        let horizontalNavOnSearch = document.querySelector('.catalogsearch-result-index .mst-nav__horizontal-bar');
+
+        if (horizontalNavOnSearch) {
+            let nav = horizontalNavOnSearch.cloneNode(true);
+
+            let replacer = document.querySelector('#m-navigation-replacer');
+            replacer.parentNode.insertBefore(nav, replacer.nextSibling);
+
+            horizontalNavOnSearch.parentNode.removeChild(horizontalNavOnSearch);
+        }
+    }
+    initDefaultAjaxToolbar();
+</script>

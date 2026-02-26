@@ -1,0 +1,118 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\HeroiconsSolid;
+use Magento\Framework\Escaper;
+use Magento\LayeredNavigation\Block\Navigation;
+
+// phpcs:disable Generic.Files.LineLength.TooLong
+
+/** @var Navigation $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+/** @var HeroiconsSolid $heroiconsSolid */
+$heroiconsSolid = $viewModels->require(HeroiconsSolid::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+$activeFilterStyle = $block->getActiveStyle();
+$activeIsOpen = $block->getActiveOpen();
+$showFilterInput = $block->getShowInput() !== null ? (bool)$block->getShowInput() : true;
+$showFilterPriceSlider = $block->getShowPriceSlider() !== null ? (bool)$block->getShowPriceSlider() : true;
+$showFilterPriceOptions = $block->getShowPriceOptions() !== null ? (bool)$block->getShowPriceOptions() : false;
+$openFiltersByIds = (array)$block->getOpenByIds() ?: [];
+$maxPriceFallbackValue = (int)$block->getMaxPriceFallbackValue() ?: 1000
+?>
+
+<?php if ($block->canShowBlock()): ?>
+    <div class="pt-7 pb-2 lg:mt-12" role="region" aria-label="<?= $escaper->escapeHtmlAttr(__('Product filters')) ?>"
+        x-data="initLayeredNavigation()" x-defer="intersect" x-bind="eventListeners">
+        <div id="filters-heading" class="block-title">
+            <button type="button" @click="blockOpen = !blockOpen"
+                class="btn btn-secondary gap-2 px-6 py-4 justify-between w-full text-start text-base font-medium md:p-0 border border-black lg:border-0 md:!shadow-none md:!bg-transparent md:!text-current md:text-2xl"
+                aria-controls="filters-content" :aria-expanded="blockOpen" :aria-disabled="!isMobile"
+                :disabled="!isMobile ? '' : null">
+                <span class="md:!hidden"><?= $escaper->escapeHtml(__('Shop By')) ?></span>
+                <?= $heroicons->adjustmentsHtml('md:!hidden', 24, 24, ["x-ref" => "LayeredNavigationMobileToggleIcon", "aria-hidden" => "true"]); ?>
+            </button>
+        </div>
+        <a href="#product-list" class="block sr-only focus:not-sr-only">
+            <span
+                class="block my-2 py-2.5 px-4 bg-black text-white text-center rounded-sm"><?= $escaper->escapeHtml(__('Skip to product list')) ?></span>
+        </a>
+        <div id="filters-content"
+            class="block-content filter-content hidden md:block bg-white rounded-lg shadow-whizzy-header"
+            :class="{ 'hidden': !blockOpen }">
+            <?= $block->getChildBlock('state')->setOpen($activeIsOpen)->setFilterStyle($activeFilterStyle)->toHtml(); ?>
+            <?php foreach ($block->getFilters() as $filter): ?>
+                <?php $isFilterDefaultOpen = in_array($filter->getRequestVar(), $openFiltersByIds); ?>
+                <?php if ($filter->getItemsCount() || ($filter->getRequestVar() === 'price' && $showFilterPriceSlider)): ?>
+                    <details id="<?= $escaper->escapeHtmlAttr($filter->getRequestVar()) ?>" class="filter-option group py-3"
+                        <?= $isFilterDefaultOpen ? 'open' : ''; ?>>
+                        <summary
+                            class="block-title [&::-webkit-details-marker]:hidden py-3 flex items-center justify-between font-medium md:text-lg cursor-pointer outline-offset-2"
+                            aria-label="<?= $escaper->escapeHtml(__('%1 filter', $filter->getName())) ?>">
+                            <div class="uppercase text-heading font-medium"><?= $escaper->escapeHtml(__($filter->getName())) ?>
+                            </div>
+                            <span class="text-black transition-transform transform duration-300 ease-in-out group-open:rotate-180">
+                                <?= $themeIcons->renderHtml('arrow-down', '', 20, 20, ["aria-hidden" => "true"]); ?>
+                            </span>
+                        </summary>
+                        <div class="filter-options-content py-3">
+                            <?php if ($filter->getRequestVar() === 'price' && $showFilterPriceSlider && $block->getChildBlock('renderer-price')): ?>
+                                <?= /* @noEscape */ $block->getChildBlock('renderer-price')
+                                                                                                                                                                                                                                                                                ->setFilterTitle($filter->getName())
+                                                                                                                                                                                                                                                                                ->setFilterId($filter->getRequestVar())
+                                                                                                                                                                                                                                                                                ->setMaxPriceFallbackValue($maxPriceFallbackValue)
+                                                                                                                                                                                                                                                                                ->render($filter); ?>
+                            <?php else: ?>
+                                <?= /* @noEscape */ $block->getChildBlock('renderer')
+                                                                                                                                                                                                                                                                                ->setFilterTitle($filter->getName())
+                                                                                                                                                                                                                                                                                ->setFilterId($filter->getRequestVar())
+                                                                                                                                                                                                                                                                                ->setShowInput($showFilterInput)
+                                                                                                                                                                                                                                                                                ->render($filter); ?>
+                            <?php endif; ?>
+                        </div>
+                    </details>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <script>
+        function initLayeredNavigation() {
+            return {
+                isMobile: false,
+                blockOpen: false,
+                init() {
+                    this.checkIsMobileResolution();
+                },
+                checkIsMobileResolution() {
+                    const mobileElement = this.$refs.LayeredNavigationMobileToggleIcon;
+                    this.isMobile = mobileElement
+                        ? getComputedStyle(mobileElement).display !== "none"
+                        : window.matchMedia('(max-width: 767px)').matches; // Fallback to `md` breakpoint
+                },
+                eventListeners: {
+                    ['@resize.window.debounce']() {
+                        this.checkIsMobileResolution();
+                    },
+                    ['@visibilitychange.window.debounce']() {
+                        this.checkIsMobileResolution();
+                    },
+                },
+            }
+        }
+    </script>
+<?php endif; ?>

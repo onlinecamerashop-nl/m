@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="MgtWizards_Faqs::faqshead" title="FAQs" module="MgtWizards_Faqs" sortOrder="0" parent="mgtwizards_base::core" resource="MgtWizards_Faqs::faqshead"/>
+        <add id="MgtWizards_Faqs::faqs" title="Manage Faqs" module="MgtWizards_Faqs" sortOrder="0" parent="MgtWizards_Faqs::faqshead" action="faqs/faqs" resource="MgtWizards_Faqs::faqs"/>
+        <add id="MgtWizards_Faqs::faq" title="Manage Faqs Items" module="MgtWizards_Faqs" sortOrder="30" parent="MgtWizards_Faqs::faqshead" action="faqs/faq" resource="MgtWizards_Faqs::faq"/>
+    </menu>
+</config>

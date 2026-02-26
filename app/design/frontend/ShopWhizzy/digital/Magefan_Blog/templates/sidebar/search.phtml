@@ -1,0 +1,45 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ */
+?>
+<?php
+/**
+ * Blog sidebar search form template
+ *
+ * @var $block \Magefan\Blog\Block\Sidebar\Search
+ */
+
+/** @var Hyva\Theme\ViewModel\HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(\Hyva\Theme\ViewModel\HeroiconsOutline::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+
+<div class="blog-search mb-2">
+    <div class="title text-xs uppercase font-bold tracking-wider my-6 lg:mt-8 lg:mb-6">
+        <?= $block->escapeHtml(__('Search Posts')) ?>
+    </div>
+    <form class="form blog-search relative" id="blog_search_mini_form"
+        action="<?= $block->escapeUrl($block->getFormUrl()) ?>" method="get" onsubmit="goBlogSearch(event);">
+        <input id="blog_search" type="text" name="q" value="<?= $block->escapeHtml($block->getQuery()) ?>"
+            placeholder="<?= $block->escapeHtml(__('Search')) ?>"
+            class="w-full w-full rounded-lg pl-6 py-3 lg:py-3.5 shadow-whizzy-header border-0 focus:border-0 focus:ring-0 focus:offset-0 focus:outline-none"
+            maxlength="128" role="combobox" aria-haspopup="false" aria-autocomplete="both" autocomplete="off">
+        <span
+            class="absolute top-[5px] lg:top-[7px] right-2 btn bg-whizzy-green hover:bg-whizzy-greendarker flex justify-center transition-all duration-300 lg:text-base p-2 rounded focus:ring-0 cursor-pointer">
+            <?= $themeIcons->renderHtml('search', '', 22, 22) ?>
+        </span>
+    </form>
+    <div class="mt-4 lg:mt-6 h-px bg-whizzy-separator"></div>
+</div>
+<script type="text/javascript">
+    function goBlogSearch(event) {
+        var value = document.getElementById('blog_search').value;
+        if (value) {
+            var a = document.getElementById('blog_search_mini_form').action;
+            window.location = a + (('/' != a.charAt(a.length - 1)) ? '/' : '') + encodeURI(value) + '/';
+        }
+        event.preventDefault();
+    }
+</script>

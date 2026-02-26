@@ -1,0 +1,185 @@
+<?php
+
+declare(strict_types=1);
+
+use Amasty\ShopbyBrand\Block\Widget\BrandSlider;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\Store;
+use Magento\Framework\Escaper;
+
+/** @var BrandSlider $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$storeViewModel = $viewModels->require(Store::class);
+$heroIcons = $viewModels->require(HeroiconsOutline::class);
+
+$title = (string)$block->getTitle();
+$items = $block->getItems() ?? [];
+if (is_object($items) && $items instanceof Iterator)
+{
+    $items = iterator_to_array($items);
+}
+
+if (!$itemCount = count($items))
+{
+    return '';
+}
+
+$isSliderEnabled = (bool)$block->isSliderEnabled();
+$showNavigation = (bool)$block->getData('buttons_show');
+$showPagination = (bool)$block->isPaginationShow();
+
+$imageWidth = (int)($block->getData('image_width') ?: 160);
+$imageHeight = (int)($block->getData('image_height') ?: 0);
+
+$uid = random_int(10000, 99999);
+?>
+
+<script>
+    'use strict';
+
+    function initBrandSlider<?= $uid ?>() {
+        return {
+            active: 0,
+            itemCount: 0,
+            pageSize: 1,
+            pageFillers: 0,
+
+            getSlider() {
+                return this.$root.querySelector('.js_slides');
+            },
+
+            calcPageSize() {
+                const slider = this.getSlider();
+                if (!slider) return;
+
+                const slide = slider.querySelector('.js_slide');
+                if (!slide) return;
+
+                this.itemCount = slider.querySelectorAll('.js_slide').length;
+                this.pageSize = Math.round(slider.offsetWidth / slide.offsetWidth);
+                this.pageFillers =
+                    (this.pageSize * Math.ceil(this.itemCount / this.pageSize)) - this.itemCount;
+            },
+
+            calcActive() {
+                const slider = this.getSlider();
+                if (!slider) return;
+
+                const totalItems = this.itemCount + this.pageFillers;
+                const slideWidth = slider.scrollWidth / totalItems;
+                this.active = Math.round(slider.scrollLeft / slideWidth / this.pageSize) * this.pageSize;
+            },
+
+            scrollTo(idx) {
+                const slider = this.getSlider();
+                if (!slider) return;
+
+                const totalItems = this.itemCount + this.pageFillers;
+                const slideWidth = slider.scrollWidth / totalItems;
+                slider.scrollLeft = Math.floor(slideWidth) * idx;
+                this.active = idx;
+            },
+
+            scrollPrevious() {
+                this.scrollTo(Math.max(0, this.active - this.pageSize));
+            },
+
+            scrollNext() {
+                this.scrollTo(this.active + this.pageSize);
+            }
+        };
+    }
+</script>
+
+<div class="ambrands-slider slider-<?= $uid ?> px-6" x-data="initBrandSlider<?= $uid ?>()" x-init="calcPageSize()"
+    @resize.window.debounce="calcPageSize(); $nextTick(() => calcActive())">
+    <?php if ($title): ?>
+        <div class="mb-12">
+            <div class="text-whizzy-graylighter text-sm font-semibold uppercase mb-3">
+                <?= $escaper->escapeHtml($title) ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($isSliderEnabled): ?>
+        <div class="relative">
+            <div class="relative flex flex-nowrap overflow-x-auto snap js_slides -mx-3 px-3" @scroll.debounce="calcActive">
+                <?php foreach ($items as $brand): ?>
+                    <div class="js_slide shrink-0 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 px-3 snap-start flex items-center">
+                        <a href="<?= $escaper->escapeUrl($brand['url']) ?>" class="block text-center">
+                            <div class="flex items-center justify-center h-[<?= (int)$imageHeight ?: 120 ?>px]">
+                                <?php if (!empty($brand['img'])): ?>
+                                    <img src="<?= $escaper->escapeUrl($brand['img']) ?>"
+                                        alt="<?= $escaper->escapeHtmlAttr($brand['alt']) ?>" loading="lazy"
+                                        class="max-h-full max-w-full object-contain" />
+                                <?php else: ?>
+                                    <span class="text-xl font-bold text-gray-500">
+                                        <?= $escaper->escapeHtml($brand['label'][0]) ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+
+                            <?php if ($block->getData('show_label')): ?>
+                                <div class="mt-2 text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml($brand['label']) ?>
+                                </div>
+                            <?php endif; ?>
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+
+                <!-- Dummy fillers -->
+                <template x-for="i in pageFillers">
+                    <div class="shrink-0 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 px-3"></div>
+                </template>
+            </div>
+
+            <?php if ($showNavigation): ?>
+                <button aria-label="<?= $escaper->escapeHtml(__('Previous')) ?>"
+                    class="flex absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded shadow-whizzy-header items-center justify-center"
+                    :class="{ 'opacity-25 pointer-events-none': active === 0 }" @click="scrollPrevious">
+                    <?= $heroIcons->chevronLeftHtml('w-5 h-5', 24, 24) ?>
+                </button>
+
+                <button aria-label="<?= $escaper->escapeHtml(__('Next')) ?>"
+                    class="flex absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded shadow-whizzy-header items-center justify-center"
+                    :class="{ 'opacity-25 pointer-events-none': active >= itemCount - pageSize }" @click="scrollNext">
+                    <?= $heroIcons->chevronRightHtml('w-5 h-5', 24, 24) ?>
+                </button>
+            <?php endif; ?>
+
+            <?php if ($showPagination): ?>
+                <div class="flex flex-wrap w-full md:w-auto justify-center relative mt-2">
+                    <?php for ($i = 0; $i < $itemCount; $i++): ?>
+                        <span
+                            class="transition-all bg-black shrink-0 block w-2 h-2 m-1 bg-black bg-opacity-25 rounded-full shadow cursor-pointer"
+                            :class="{'bg-opacity-100 w-5': active === <?= (int)$i ?>,'bg-opacity-25': active !== <?= (int)$i ?>,'hidden': (pageSize !== 1 && !!(<?= (int)$i ?> % pageSize))}"
+                            @click="scrollTo(<?= (int)$i ?>)">
+                        </span>
+                    <?php endfor; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+    <?php else: ?>
+        <!-- Grid fallback -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            <?php foreach ($items as $brand): ?>
+                <a href="<?= $escaper->escapeUrl($brand['url']) ?>" class="text-center">
+                    <?php if (!empty($brand['img'])): ?>
+                        <img src="<?= $escaper->escapeUrl($brand['img']) ?>" alt="<?= $escaper->escapeHtmlAttr($brand['alt']) ?>"
+                            loading="lazy" class="mx-auto max-h-24 object-contain" />
+                    <?php endif; ?>
+                    <?php if ($block->getData('show_label')): ?>
+                        <div class="mt-2 text-sm font-semibold">
+                            <?= $escaper->escapeHtml($brand['label']) ?>
+                        </div>
+                    <?php endif; ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>

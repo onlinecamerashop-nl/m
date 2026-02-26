@@ -1,0 +1,86 @@
+<?php
+/** @var \Magento\Framework\View\Element\Template $block */
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+
+<div x-data="popupManager()" x-init="initPopups()">
+    <template x-for="popup in popups" :key="popup.popup_id">
+        <div x-show="popup.visible" x-transition:enter="transition transform duration-300 ease-out"
+            x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0"
+            x-transition:leave="transition transform duration-300 ease-in" x-transition:leave-start="translate-y-0"
+            x-transition:leave-end="translate-y-full" :class="{
+        'fixed inset-0 flex items-center justify-center z-20': popup.position === 'center',
+        'fixed bottom-0 left-0 right-0 flex justify-center z-20': popup.position === 'bottom_center'}">
+            <div class="rounded-xl shadow-lg max-w-[1080px] w-full m-6 flex flex-col lg:flex-row overflow-hidden">
+                <template x-if="popup.image">
+                    <div class="w-full lg:w-5/12 p-0">
+                        <img :src="'/media/' + popup.image" alt="Popup Image"
+                            class="w-full h-full object-cover object-center">
+                    </div>
+                </template>
+                <div class="bg-whizzy-primary-darker w-full lg:w-7/12 p-8 lg:p-14 text-white relative">
+                    <h2 x-text="popup.title" class="text-2xl lg:text-3xl font-bold mb-6"></h2>
+                    <div x-html="popup.content"></div>
+                    <button type="button" aria-label="<?= $escaper->escapeHtmlAttr(__('Close Popup')) ?>"
+                        @click="closePopup(popup.popup_id, popup.cookie_time)"
+                        class="absolute top-2 right-2 flex justify-center items-center bg-white/15 hover:bg-white/25 text-white border-0 transition-all duration-300 p-3 rounded-lg focus:ring-0 shrink-0">
+                        <?= $themeIcons->renderHtml('close', 'text-white', 18, 18, ['aria-hidden' => true]) ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+<?php $jsonHelper = $this->helper(\Magento\Framework\Json\Helper\Data::class); ?>
+<script>
+    function popupManager() {
+        return {
+            popups: [],
+            cookieBaseName: '<?= $block->escapeJs($block->getCookieBase()) ?>',
+            initPopups() {
+                const rawPopups = <?= $jsonHelper->jsonEncode($block->getPopups()) ?> || [];
+                this.popups = Array.isArray(rawPopups) ? rawPopups.map(popup => ({
+                    ...popup,
+                    visible: false // Initialize all popups as hidden
+                })) : [];
+                this.popups.forEach(popup => {
+                    console.log(`Popup ${popup.popup_id}: position=${popup.position}, display_mode=${popup.display_mode}, delay_time=${popup.delay_time}`);
+                    if (this.shouldShowPopup(popup)) {
+                        if (popup.display_mode === 'delayed' && popup.delay_time) {
+                            setTimeout(() => {
+                                console.log(`Showing delayed popup ${popup.popup_id}`);
+                                popup.visible = true;
+                            }, popup.delay_time);
+                        } else {
+                            console.log(`Showing popup ${popup.popup_id} immediately`);
+                            popup.visible = true;
+                        }
+                    }
+                });
+            },
+            shouldShowPopup(popup) {
+                const cookieName = `${this.cookieBaseName}_${popup.popup_id}`;
+                return !this.getCookie(cookieName);
+            },
+            closePopup(popupId, cookieTime) {
+                const popup = this.popups.find(p => p.popup_id === popupId);
+                if (popup) {
+                    popup.visible = false;
+                    const cookieName = `${this.cookieBaseName}_${popupId}`;
+                    this.setCookie(cookieName, 'closed', cookieTime);
+                }
+            },
+            setCookie(name, value, seconds) {
+                const date = new Date();
+                date.setTime(date.getTime() + (seconds * 1000));
+                document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+            },
+            getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            }
+        };
+    }
+</script>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="page.top">
+			<block class="MgtWizards\SlideBannerHyva\Block\Slider" name="slidebanner" as="slideshow" after="catalog.topnav">
+				<arguments>
+					<argument name="slider_id" xsi:type="string">home</argument>
+				</arguments>
+			</block>
+        </referenceContainer>
+    </body>
+</page>

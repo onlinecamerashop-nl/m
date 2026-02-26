@@ -1,0 +1,27 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\StoreConfig;
+use Magento\Framework\Escaper;
+use Magento\Theme\Block\Html\Footer;
+
+/** @var ViewModelRegistry $viewModels */
+/** @var Footer $block */
+/** @var Escaper $escaper */
+/** @var StoreConfig $storeConfig */
+
+$storeConfig = $viewModels->require(StoreConfig::class);
+
+$disclaimer = $storeConfig->getStoreConfig('digitaltheme_settings/footer/footer_disclaimer');
+?>
+<?php if ($disclaimer): ?>
+    <div class="disclaimer text-xs text-whizzy-body text-start mb-4">
+        <?= $disclaimer ?>
+    </div>
+<?php endif; ?>

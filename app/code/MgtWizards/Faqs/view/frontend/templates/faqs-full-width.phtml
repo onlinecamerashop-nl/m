@@ -1,0 +1,63 @@
+<?php
+
+// @codingStandardsIgnoreFile
+if ($faqscollection = $block->getFaqsCollection()):
+    $themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+    $faqs = $block->getFaqs();
+    $faqsId = $block->getFaqsId();
+    $faqssettings = $faqs->getFaqsSetting();
+    ?>
+
+    <div class="min-w-full">
+        <div>
+            <ul class="list-none">
+                <?php $y = 1; ?>
+                <?php foreach ($faqscollection as $faq): ?>
+                    <?php if ($text = $faq->getFaqAnswer())
+                    { ?>
+                        <li class="faq relative bg-whizzy-artic rounded-lg mb-3" x-data="{selected:null}">
+                            <button type="button" class="w-full text-left px-4 lg:px-6 py-4 lg:py-6"
+                                @click="selected !== 1 ? selected = 1 : selected = null">
+                                <div class="flex items-center justify-between text-base lg:text-lg font-medium transition-all hover:text-whizzy-graylighter"
+                                    :class="{'hover:text-whizzy-body': selected, 'hover:text-whizzy-graylighter': !selected}">
+                                    <span><?= $faq->getFaqQuestion() ?></span>
+                                    <span class="flex items-center justify-center w-10 h-10 bg-white rounded-full">
+                                        <?= $themeIcons->renderHtml('arrow-faq', 'transition-transform duration-300 ease-in-out transform rotate-180', 20, 20, ['aria-hidden' => 'true', ":class" => "{ 'rotate-180': selected, 'rotate-0': !selected }"]) ?>
+                                    </span>
+                                </div>
+                            </button>
+                            <div class="relative overflow-hidden transition-all max-h-0 duration-700" x-ref="container1"
+                                x-bind:style="selected == 1 ? 'max-height: ' + $refs.container1.scrollHeight + 'px' : ''">
+                                <div
+                                    class="pb-4 lg:pb-6 px-4 lg:px-6 text-base [&_a]:text-whizzy-primary [&_a:hover]:text-whizzy-primary">
+                                    <?= $block->getContentText($text); ?>
+                                </div>
+                            </div>
+                        </li>
+                        <?php $y++; ?>
+                    <?php } ?>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+
+    <?php if ($faqssettings['schema'] == '1'): ?>
+        <?php $schema = '<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[' ?>
+        <?php $sh = 1 ?>
+        <?php foreach ($faqscollection as $faq): ?>
+            <?php if ($sh > 1)
+            {
+                $schema .= ',';
+            } ?>
+            <?php $schema .= '{"@type":"Question","name":' ?>
+            <?php $schema .= json_encode($faq->getFaqQuestion()) ?>
+            <?php $schema .= ',"acceptedAnswer":{"@type":"Answer","text":"' ?>
+            <?php $schema .= preg_replace("/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags($faq->getFaqAnswer())))) ?>
+            <?php $schema .= '"}}' ?>
+            <?php $sh++ ?>
+        <?php endforeach; ?>
+        <?php $schema .= ']}</script>' ?>
+        <?= $schema ?>
+    <?php endif; ?>
+
+<?php endif; ?>

@@ -1,0 +1,120 @@
+<svg width="164" height="16" viewBox="16 0 164 16" xmlns="http://www.w3.org/2000/svg">
+  <style type="text/css">
+    :root {
+      all: initial;
+      fill: white;
+      font-family: sans-serif;
+      font-size: 13px;
+      bezier: cubic-bezier(.37,-0.59,.56,1.48);
+    }
+
+    @keyframes popup {
+      0% {
+        cx: 101px;
+        r: 0px;
+      }
+      20% {
+        r: 2.8px;
+      }
+      60% {
+        r: 2.8px;
+      }
+      80% {
+        cx: 101px;
+        r: 2.8px;
+      }
+      100% {
+        cx: 161px;
+        r: 2.8px;
+      }
+    }
+    @keyframes slideinbol {
+      0% {
+        transform: translate(-2px, -15px);
+      }
+      30% {
+        transform: translate(-2px, -15px);
+      }
+      60% {
+        transform: translate(-60px, -15px);
+      }
+      80% {
+        transform: translate(-60px, -15px);
+      }
+      100% {
+        transform: translate(0px, -15px);
+      }
+    }
+    @keyframes slideinText {
+      0% {
+        transform: translate(100px, 0px);
+        -moz-transform: translate(100px, 4px);
+      }
+      75% {
+        transform: translate(100px, 0px);
+        -moz-transform: translate(100px, 4px);
+      }
+      80%{
+        transform: translate(0px, 0px);
+        -moz-transform: translate(0px, 4px);
+      }
+      100% {
+        transform: translate(0px, 0px);
+	    -moz-transform: translate(0px, 4px);
+      }
+    }
+    @keyframes maskBolAni {
+      0% {
+        transform: translate(-60px, 0px);
+      }
+      30% {
+        transform: translate(-60px, 0px);
+      }
+      60% {
+        transform: translate(-60px, 0px);
+      }
+      80% {
+        transform: translate(-60px, 0px);
+      }
+      100% {
+        transform: translateX(0%);
+      }
+    }
+    .button-text {
+      animation: slideinText 2s;
+      transition-timing-function: var(--bezier);
+      animation-fill-mode: forwards;
+      font-family: Graphik, arial, sans-serif;
+    }
+    .bol-text-wordmark {
+      animation: slideinbol 2s ;
+      transition-timing-function: var(--bezier);
+      animation-fill-mode: forwards;
+    }
+    .bol-dot-wordmark {
+      animation: popup 2s;
+      transition-timing-function: var(--bezier);
+      animation-fill-mode: forwards;
+      transform: translateY(1px);
+    }
+    mask > rect {
+      animation: maskBolAni 2s;
+      transition-timing-function: var(--bezier);
+    }
+  </style>
+  <g mask="url(#maskButtonText)">
+    <text class="button-text" dx="34px" dy="10px" alignment-baseline="middle">Checkout via </text>
+  </g>
+
+  <g mask="url(#maskBolText)">
+    <path class="bol-text-wordmark" fill-rule="evenodd" clip-rule="evenodd" d="M126.812 15.1045H122.285V30.6861H129.668C133.874 30.6861 135.722 27.442 135.722 24.7002C135.722 21.0676 133.14 18.4173 129.579 18.4173C128.621 18.4173 127.702 18.5774 126.812 18.92V15.1045ZM128.547 26.9847C128.097 26.9847 127.42 26.9354 126.812 26.8198V22.611C127.443 22.4029 128.119 22.3238 128.683 22.3238C130.214 22.3238 131.273 23.2436 131.273 24.6543C131.273 26.0649 130.192 26.9847 128.547 26.9847ZM151.187 15.1045H155.715V30.6861H151.187V15.1045ZM143.346 18.4215C148.354 18.4217 150.268 21.7344 150.268 24.6585C150.268 27.8571 148.064 30.8955 143.39 30.8955C138.382 30.8955 136.424 27.6055 136.424 24.6585C136.424 21.5514 138.494 18.4215 143.346 18.4215ZM143.345 26.989C144.761 26.989 145.735 26.0294 145.735 24.6585C145.735 23.2876 144.761 22.3281 143.345 22.3281C141.93 22.3281 140.956 23.2876 140.956 24.6585C140.956 26.0294 141.93 26.989 143.345 26.989Z" />
+  </g>
+  <g mask="url(#maskBolDot)">
+    <circle class="bol-dot-wordmark" cx="0" cy="12" r="2.8" />
+  </g>
+  <defs>
+    <mask id="maskButtonText"><rect x="0" y="0" width="120px" height="100%" fill="white" /></mask>
+    <mask id="maskBolText"><rect x="100" y="0" width="58" height="100%" fill="white" /></mask>
+    <mask id="maskBolDot"><rect x="150" y="0" width="20" height="100%" fill="white" /></mask>
+  </defs>
+</svg>

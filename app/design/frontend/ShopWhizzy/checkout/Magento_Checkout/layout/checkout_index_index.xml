@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="checkout" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <remove src="ShipperHQ_Shipper::css/shipperhq-checkout.css"/>
+        <remove src="ShipperHQ_Shipper::css/featherlight.min.css"/>
+        <remove src="ShipperHQ_Shipper::css/featherlight.gallery.min.css"/>
+    </head>
+    <body>
+		<referenceContainer name="content">
+            <referenceBlock name="checkout.root">
+                <arguments>
+                    <argument name="jsLayout" xsi:type="array">
+                        <item name="components" xsi:type="array">
+                            <item name="checkout" xsi:type="array">
+                                <item name="children" xsi:type="array">
+									<item name="progressBar" xsi:type="array">
+                                        <item name="config" xsi:type="array">
+                                            <item name="componentDisabled" xsi:type="boolean">false</item>
+                                        </item>
+                                    </item>
+									<item name="estimation" xsi:type="array">
+                                        <item name="config" xsi:type="array">
+                                            <item name="componentDisabled" xsi:type="boolean">true</item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </argument>
+                </arguments>
+            </referenceBlock>
+            <block class="Magento\Cms\Block\Block" name="payments_logo_checkout" after="checkout.root">
+                <arguments>
+                    <argument name="block_id" xsi:type="string">payments-logo-checkout</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Framework\View\Element\Template" name="checkout.cart.go.back" before="-" template="Magento_Checkout::goback.phtml"/>
+            <!--<block class="Magento\Framework\View\Element\Template" name="checkout.cart.skeleton" after="-" template="Magento_Checkout::skeleton_default.phtml"/>-->
+            <block class="Magento\Framework\View\Element\Template" name="checkout.cart.skeleton.amasty" after="-" template="Magento_Checkout::skeleton_amasty.phtml"/>
+        </referenceContainer>
+        <referenceContainer name="header.container" remove="true" />
+        <referenceContainer name="footer" remove="true" />
+        <referenceBlock name="copyright" remove="true"/>
+    </body>
+</page>

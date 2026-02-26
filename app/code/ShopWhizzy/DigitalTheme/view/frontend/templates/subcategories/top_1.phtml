@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @var $block \ShopWhizzy\DigitalTheme\Block\SubCategories
+ */
+
+use Magento\Framework\Escaper;
+
+/** @var Escaper $escaper */
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$mediaUrl = $objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+$category = $objectManager->get('Magento\Framework\Registry')->registry('current_category');
+?>
+
+<?php if ($category->getShowSubcats()): ?>
+    <?php $subcategories = $category->getChildrenCategories(); ?>
+    <?php $_helper = $this->helper('Magento\Catalog\Helper\Output'); ?>
+    <?php if (count($subcategories) > 0): ?>
+        <section class="block w-full mb-2 px-6">
+            <div class="flex flex-col gap-2">
+                <div class="flex flex-col">
+                    <div class="text-whizzy-graylighter text-sm font-semibold uppercase">
+                        <?= __("Subcategories") ?>
+                    </div>
+                </div>
+
+                <ol class="flex flex-wrap">
+                    <?php
+                    $i = 1;
+                    $total = count($category->getChildrenCategories());
+                    ?>
+                    <?php foreach ($category->getChildrenCategories() as $subcategory): ?>
+                        <?php $subcategory = $objectManager->create('Magento\Catalog\Model\Category')->load($subcategory->getId()); ?>
+                        <li class="item flex items-center">
+                            <a class="block py-2 font-semibold text-sm whitespace-nowrap hover:text-whizzy-primary flex gap-1 items-center"
+                                href="<?= $subcategory->getUrl() ?>">
+                                <span><?= $subcategory->getName() ?></span>
+                                <?= $themeIcons->renderHtml('link', '', 14, 14, ['aria-hidden' => 'true']) ?>
+                            </a>
+                            <?php if ($i != $total): ?>
+                                <?= $themeIcons->renderHtml('circle-solid-rounded', 'text-whizzy-graylighter mx-3', 6, 6, ['aria-hidden' => 'true']) ?>
+                            <?php endif ?>
+                        </li>
+                        <?php $i++; ?>
+                    <?php endforeach; ?>
+                </ol>
+            </div>
+        </section>
+    <?php endif; ?>
+<?php endif; ?>

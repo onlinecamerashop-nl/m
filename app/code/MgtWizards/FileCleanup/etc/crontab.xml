@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="mgtwizards_file_cleanup" instance="MgtWizards\FileCleanup\Cron\Cleanup" method="execute">
+            <schedule>0 0 * * *</schedule>
+        </job>
+        <job name="mgtwizards_weekly_cache_cleanup" instance="MgtWizards\FileCleanup\Cron\WeeklyCleanup" method="execute">
+            <schedule>0 0 * * 1</schedule>
+        </job>
+    </group>
+</config>

@@ -1,0 +1,36 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ */
+?>
+<?php
+/**
+ * Blog post list template
+ *
+ * @var $block \Magefan\Blog\Block\Post\PostList
+ */
+?>
+<?php
+$_postCollection = $block->getPostCollection();
+
+if (!$_postCollection->count())
+{ ?>
+    <div class="message info empty">
+        <?= $block->escapeHtml(__('We can\'t find posts matching the selection.')) ?>
+    </div>
+<?php }
+else
+{ ?>
+    <?= $block->getAdditionalHtml() ?>
+    <div class="post-list-wrapper mt-6 lg:mt-12">
+        <?php $iterator = 1; ?>
+        <ol class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 post-list mb-4 lg:mb-6 lg:pr-10">
+            <?php foreach ($_postCollection as $_post): ?>
+                <?= $block->getPostHtml($_post) ?>
+            <?php endforeach; ?>
+        </ol>
+    </div>
+
+    <?= $block->getToolbarHtml() ?>
+<?php } ?>

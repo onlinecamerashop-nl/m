@@ -1,0 +1,44 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Customer\Block\Account\Customer;
+use Magento\Framework\Escaper;
+
+/** @var Customer $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$menu_text_color = (($menu_text_color_value = $whizzyHelper->getConfigValue('header/menu_text_color')) ? 'text-[' . $menu_text_color_value . ']' : 'text-whizzy-body');
+$menu_text_color_hover = (($menu_text_color_hover_value = $whizzyHelper->getConfigValue('header/menu_text_color_hover')) ? 'hover:text-[' . $menu_text_color_hover_value . ']' : 'hover:text-whizzy-graylighter');
+?>
+<div class="relative inline-block" x-data="{ open: false }" @keyup.escape="open = false" @click.outside="open = false">
+    <button type="button" id="customer-menu" class="block p-[13px] lg:p-2.5" @click="open = !open"
+        :aria-expanded="open ? 'true' : 'false'" aria-label="<?= $escaper->escapeHtmlAttr(__('My Account')) ?>"
+        aria-haspopup="true">
+        <?= $themeIcons->renderHtml('user', "text-black hover:text-black lg:w-6 lg:h-6", 18, 18, ['aria-hidden' => 'true']) ?>
+    </button>
+
+    <nav class="absolute right-0 z-10 w-56 -mr-4 overflow-auto origin-top-right shadow-whizzy-header lg:mt-3 p-4 lg:py-4 lg:px-4 card rounded-md text-whizzy-body z-20"
+        x-cloak x-show="open" x-transition aria-labelledby="customer-menu">
+        <?php if ($block->customerLoggedIn()): ?>
+            <?= $block->getChildHtml('header.customer.logged.in.links') ?>
+        <?php else: ?>
+            <?= $block->getChildHtml('header.customer.logged.out.links') ?>
+        <?php endif; ?>
+    </nav>
+</div>

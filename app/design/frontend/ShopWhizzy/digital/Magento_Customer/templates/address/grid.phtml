@@ -1,0 +1,147 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Customer\Block\Address\Grid;
+use Magento\Framework\Escaper;
+
+/** @var Grid $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+?>
+<div>
+    <div class="block block-addresses-list mb-6">
+        <div class="text-2xl mb-6 text-heading"><?= $escaper->escapeHtml(__('Address Book')) ?></div>
+        <div class="flex flex-col lg:flex-row gap-y-6 lg:gap-y-0 gap-x-4 lg:gap-x-6">
+            <div class="flex flex-col gap-y-6 w-full">
+                <div class="block-content w-full" x-data="initAddresses()">
+                    <?php if ($additionalAddresses = $block->getAdditionalAddresses()): ?>
+                        <div
+                            class="grid grid-cols-3 lg:grid-cols-6 items-center p-4 lg:p-6 bg-white shadow-whizzy-header rounded-lg">
+                            <div class="hidden lg:block font-medium text-base text-whizzy-body pb-2 lg:pb-4 text-start">
+                                <?= $escaper->escapeHtml(__('Company')) ?>
+                            </div>
+                            <div class="font-medium text-base text-whizzy-body pb-2 lg:pb-4 text-start">
+                                <?= $escaper->escapeHtml(__('Name')) ?>
+                            </div>
+                            <div class="font-medium text-base text-whizzy-body pb-2 lg:pb-4 text-start">
+                                <?= $escaper->escapeHtml(__('Address')) ?>
+                            </div>
+                            <div class="hidden lg:block font-medium text-base text-whizzy-body pb-2 lg:pb-4 text-start">
+                                <?= $escaper->escapeHtml(__('City')) ?>
+                            </div>
+                            <div class="hidden lg:block font-medium text-base text-whizzy-body pb-2 lg:pb-4 text-start">
+                                <?= $escaper->escapeHtml(__('Country')) ?>
+                            </div>
+                            <div class="font-medium text-base text-whizzy-body pb-2 lg:pb-4 text-end">
+                                <?= $escaper->escapeHtml(__('Actions')) ?>
+                            </div>
+
+                            <?php $i = 0; ?>
+                            <?php foreach ($additionalAddresses as $address): ?>
+                                <?php $i++ ?>
+                                <div
+                                    class="hidden lg:flex py-2 lg:py-3 text-sm break-words items-center <?= $i % 2 === 0 ? '' : 'border-y border-whizzy-separator h-full' ?>">
+                                    <?= $escaper->escapeHtml($address->getCompany()) ?>
+                                </div>
+                                <div
+                                    class="py-2 lg:py-3 text-xs lg:text-sm break-words flex items-center <?= $i % 2 === 0 ? '' : 'border-y border-whizzy-separator h-full' ?>">
+                                    <?= $escaper->escapeHtml($address->getFirstname()) ?>
+                                    <?= $escaper->escapeHtml($address->getLastname()) ?>
+                                </div>
+                                <div
+                                    class="py-2 lg:py-3 text-xs lg:text-sm break-words flex items-center <?= $i % 2 === 0 ? '' : 'border-y border-whizzy-separator h-full' ?>">
+                                    <?= $escaper->escapeHtml($block->getStreetAddress($address)) ?>
+                                </div>
+                                <div
+                                    class="hidden lg:flex py-2 lg:py-3 text-sm break-words items-center <?= $i % 2 === 0 ? '' : 'border-y border-whizzy-separator h-full' ?>">
+                                    <?= $escaper->escapeHtml($address->getCity()) ?>
+                                </div>
+                                <div
+                                    class="hidden lg:flex py-2 lg:py-3 text-sm break-words flex items-center <?= $i % 2 === 0 ? '' : 'border-y border-whizzy-separator h-full' ?>">
+                                    <?= $escaper->escapeHtml($block->getCountryByCode($address->getCountryId())) ?>
+                                </div>
+                                <div
+                                    class="py-2 lg:py-3 text-xs lg:text-sm break-words flex justify-end items-center <?= $i % 2 === 0 ? '' : 'border-y border-whizzy-separator h-full' ?>">
+                                    <div class="flex flex-col lg:flex-row gap-3">
+                                        <a class="action edit text-whizzy-body bg-whizzy-primary-lighter hover:bg-whizzy-separator transition-all duration-200 p-3 rounded-lg"
+                                            title="<?= $escaper->escapeHtmlAttr(__('Edit')) ?>" href="<?= $escaper->escapeUrl(
+                                              $block->getUrl(
+                                              'customer/address/edit',
+                                              ['id' => $address->getId()]
+                                              )
+                                              ) ?>">
+                                            <?= $themeIcons->renderHtml('edit-01', '', 20, 20, ['aria-hidden' => 'true']); ?>
+                                        </a>
+                                        <a class="action delete text-whizzy-body bg-whizzy-primary-lighter hover:bg-whizzy-separator transition-all duration-200 p-3 rounded-lg"
+                                            title="<?= $escaper->escapeHtmlAttr(__('Delete')) ?>"
+                                            @click.prevent="deleteAddressById(<?= $escaper->escapeJs($address->getId()) ?>)"
+                                            href="#">
+                                            <?= $themeIcons->renderHtml('delete-02', '', 20, 20, ['aria-hidden' => 'true']); ?>
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="pt-4">
+                            <?php if ($block->getChildHtml('pager')): ?>
+                                <div class="customer-addresses-toolbar toolbar bottom">
+                                    <?= $block->getChildHtml('pager') ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-base text-start text-whizzy-body font-medium">
+                            <?= $escaper->escapeHtml(__('You have no other address entries in your address book.')) ?>
+                        </p>
+                    <?php endif ?>
+                    <div class="lg:border-t lg:border-whizzy-separator mt-4">
+                        <div
+                            class="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-y-4 lg:gap-0 py-6 lg:py-4">
+                            <a href="<?= $escaper->escapeUrl($block->getUrl('customer/address/new')) ?>"
+                                class="btn btn-primary" title="<?= $escaper->escapeHtmlAttr(__('Add new Address')) ?>">
+                                <span><?= $escaper->escapeHtml(__('Add new Address')) ?></span>
+                            </a>
+                            <a href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>"
+                                class="action back flex lg:order-1 w-full lg:w-auto justify-center lg:justify-self-auto text-base text-whizzy-body underline font-medium">
+                                <span><?= $escaper->escapeHtml(__('Go back')) ?></span>
+                            </a>
+                        </div>
+                    </div>
+                    <script>
+                        function initAddresses() {
+                            return {
+                                deleteAddressById(id) {
+                                    if (window.confirm(
+                                        '<?= $escaper->escapeJs(__('Are you sure you want to delete this address?')) ?>'
+                                    )) {
+                                        hyva.postForm(
+                                            {
+                                                "action": '<?= $escaper->escapeJs($block->getDeleteUrl()) ?>',
+                                                "data": {
+                                                    "id": id
+                                                }
+                                            }
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

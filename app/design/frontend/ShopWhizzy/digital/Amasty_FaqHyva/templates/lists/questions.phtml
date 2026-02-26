@@ -1,0 +1,104 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package FAQ and Product Questions Hyva
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Amasty\Faq\Block\Lists\QuestionsList;
+use Amasty\Faq\Block\Rating\Rating;
+use Magento\Framework\Escaper;
+
+/** @var QuestionsList $block */
+/** @var Rating $rating */
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+$rating = $block->getChildBlock('amasty_faq_rating');
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+// phpcs:disable Generic.Files.LineLength.TooLong
+?>
+<div class="amfaq_questions widget">
+    <?php if ($block->hasBlockTitle()): ?>
+        <div class="amfaq-title">
+            <?= $escaper->escapeHtml((string)$block->getBlockTitle()) ?>
+        </div>
+    <?php endif ?>
+    <?php if ($questions = $block->getQuestions()): ?>
+        <?php foreach ($questions as $question): ?>
+            <?php $uniqueId = '_' . uniqid() ?>
+            <div class="amquestion-wrapper relative bg-whizzy-artic rounded-lg mb-3 w-full" x-data="{selected: null}">
+                <button class="amquestion-title w-full text-left px-4 lg:px-6 py-4 lg:py-6"
+                    :class="{'opened-question': selected === 1}" type="button"
+                    @click="selected !== 1 ? selected = 1 : selected = null;
+                            $dispatch('click-accordion', { qid: <?= /** @noEscape */ (int)$question->getQuestionId() ?> })"
+                    aria-controls="questionid<?= $escaper->escapeHtmlAttr($uniqueId) ?>"
+                    :aria-expanded="[selected === 1 ? 'true' : 'false']">
+                    <div class="flex items-center justify-between text-base lg:text-lg font-medium transition-all hover:text-whizzy-graylighter"
+                        :class="{'hover:text-whizzy-body': selected, 'hover:text-whizzy-graylighter': !selected}">
+                        <span class="question-text">
+                            <?= /** @noEscape */ $block->highlight($escaper->escapeHtml($question->getTitle())) ?>
+                        </span>
+                        <span class="flex items-center justify-center w-10 h-10 bg-white rounded-full">
+                            <?= $themeIcons->renderHtml('arrow-faq', 'transition-transform duration-300 ease-in-out transform rotate-180', 20, 20, ['aria-hidden' => 'true', ":class" => "{ 'rotate-180': selected, 'rotate-0': !selected }"]) ?>
+                        </span>
+                    </div>
+                </button>
+                <div class="amquestion-content text-base relative overflow-hidden transition-all duration-300 pb-4 lg:pb-6 px-4 lg:px-6 text-base [&_a]:text-whizzy-primary [&_a:hover]:text-whizzy-primary"
+                    id="questionid<?= $escaper->escapeHtmlAttr($uniqueId) ?>"
+                    x-ref="container<?= $escaper->escapeHtmlAttr($uniqueId) ?>" :tabindex="selected == 1 ? '': '-1'"
+                    x-show="selected == 1" x-cloak>
+                    <div class="amfaq-short-answer-container mt-2">
+                        <?= /** @noEscape */ $block->highlight($block->getShortAnswer($question)) ?>
+                    </div>
+                    <div>
+                        <?php if (!$question->isShowFullAnswer()): ?>
+                            <div>
+                                <a href="<?= $escaper->escapeUrl($block->getQuestionLink($question)) ?>"
+                                    class="text-blue-600 hover:underline text-sm">
+                                    <?= $escaper->escapeHtml(__('Read More')) ?>
+                                    <span class="sr-only">
+                                        <?= $escaper->escapeHtml($question->getTitle()); ?>
+                                    </span>
+                                </a>
+                            </div>
+                        <?php endif ?>
+
+                        <?php if ($rating): ?>
+                            <div class="mt-4 flex">
+                                <?php $rating->ratingItemHtml((int)$question->getQuestionId()) ?>
+                                <?= /** @noEscape */ $rating->toHtml() ?>
+                            </div>
+                        <?php endif ?>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach ?>
+
+        <?php if ($pager = $block->getPagerHtml()): ?>
+            <div class="amfaq-pager"><?= /** @noEscape */ $pager ?></div>
+        <?php endif ?>
+
+    <?php else: ?>
+        <div class="am-no-items">
+            <?= $escaper->escapeHtml($block->getNoItemsLabel()) ?>
+        </div>
+    <?php endif ?>
+</div>
+
+<?php if ($block->isShowQuestionForm()): ?>
+    <?= /** @noEscape */ $block->getChildHtml('amasty_faq_ask_question_form') ?>
+<?php endif ?>
+
+<?php if ($block->isAddStructuredData()): ?>
+    <?= /** @noEscape */ $block->getQuestionsStructuredDataHtml() ?>
+<?php endif ?>
+
+<?= /** @noEscape */ $block->getChildHtml('amasty_faq_product_url') ?>

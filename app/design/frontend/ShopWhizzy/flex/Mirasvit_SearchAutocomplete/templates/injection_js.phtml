@@ -1,0 +1,463 @@
+<?php
+
+/**
+ * Mirasvit - Search Autocomplete Compatability Module
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var SearchHelper $helper */
+
+/** @var \Mirasvit\SearchAutocomplete\Block\Injection $block */
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magento\Search\Helper\Data as SearchHelper;
+
+$config = $block->getJsConfig();
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundHelper
+
+$helper = $this->helper(SearchHelper::class);
+$col2 = $config['layout'] == "2columns";
+$titleCSS = 'font-semibold text-xl lg:text-3xl transition appearance-none items-center';
+$titleNumberCSS = 'items-total w-8 h-8 bg-whizzy-artic leading-5 flex items-center justify-center text-xs rounded-full font-normal';
+
+$itemCSS = 'flex flex-wrap gap-3';
+$itemCSSBlog = 'flex flex-nowrap items-center gap-2';
+$itemNameCSS = 'transform transition duration-500 text-sm leading-loose cursor-pointer';
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+$popup_transition = 'x-transition.origin.top.left';
+$popup_classes = 'absolute z-30 top-full left-0 mx-6 lg:mx-0 w-[calc(100%-48px)] lg:w-full h-fit flex flex-col overflow-y-auto overflow-x-hidden bg-white shadow-whizzy-submenu rounded-lg p-6';
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$product_image_background = (($whizzyHelper->getConfigValue('general/product_image_background')) ? 'bg-whizzy-artic' : '');
+$product_image_background_custom = (($product_image_background_custom_value = $whizzyHelper->getConfigValue('general/product_image_background_custom')) ? "style=\"background-color:{$product_image_background_custom_value}\";" : '');
+$product_image_background_mixblend = ($whizzyHelper->getConfigValue('general/product_image_background_mixblend') ? 'mix-blend-multiply' : '');
+$product_image_padding = ($whizzyHelper->getConfigValue('general/product_image_padding') ? 'p-1.5 lg:p-3' : '');
+$product_image_square = ($whizzyHelper->getConfigValue('general/product_image_square') ? 'aspect-square object-center object-contain' : 'object-cover');
+
+$header_layout = $whizzyHelper->getConfigValue('header/header_layout');
+if ($header_layout === 'header_3')
+{
+    $popup_transition = '';
+    $popup_classes = 'mx-6 lg:mx-0 lg:w-full h-fit flex flex-col overflow-y-auto overflow-x-hidden pt-6';
+}
+?>
+
+<?php /** Main Search Area */ ?>
+<div class="relative" x-data="initMirasvitSearch()" @click.away="closeSearch">
+    <form class="form minisearch flex w-full justify-center lg:justify-start px-6 lg:px-0" id="search_mini_form"
+        action="<?= $escaper->escapeUrl($helper->getResultUrl()) ?>" method="get" autocomplete="off">
+        <label class="hidden" for="search" data-role="minisearch-label">
+            <span class="hidden"><?= $escaper->escapeHtml(__('Search')) ?></span>
+        </label>
+        <div class="flex flex-col gap-y-2 w-full relative my-3 lg:my-0">
+            <input id="search" x-ref="searchInput" type="search"
+                name="<?= $escaper->escapeHtmlAttr($helper->getQueryParamName()) ?>"
+                value="<?= $escaper->escapeHtmlAttr($helper->getEscapedQueryText()) ?>"
+                placeholder="<?= $escaper->escapeHtmlAttr(__('Search')) ?>"
+                maxlength="<?= $escaper->escapeHtmlAttr($helper->getMaxQueryLength()) ?>"
+                class="form-input w-full pl-4 py-3 lg:py-4 shadow-whizzy-header border-0 focus:border-0 focus:ring-0 focus:offset-0 focus:outline-none rounded-lg text-sm lg:text-base"
+                x-on:keyup.debounce.300="doSearch($refs.searchInput.value)" x-on:click.debounce.150="openSearch"
+                x-on:keydown.debounce.100="startSearch($refs.searchInput.value)" />
+            <button type="submit" title="<?= $escaper->escapeHtmlAttr(__('Search')) ?>"
+                class="absolute top-1/2 right-2 lg:right-2.5 -translate-y-1/2 btn border-0 bg-white hover:bg-whizzy-artic flex justify-center transition-all duration-300 lg:text-base p-1.5 rounded focus:ring-0 cursor-pointer"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Search')) ?>">
+                <?= $themeIcons->renderHtml('search', 'text-black', 22, 22, ["aria-hidden" => "true"]) ?>
+            </button>
+        </div>
+    </form>
+
+    <div x-cloak x-show="isOpen" id="mirasvitSearchResults" <?= $popup_transition ?> class="<?= $popup_classes ?>">
+        <?= $block->getChildHtml('loading.search') ?>
+
+        <template x-if="hotSearch">
+            <?php if ($config['popularSearches']): ?>
+                <div class="flex flex-col">
+                    <div class="<?= $titleCSS ?> items-left mb-6">
+                        <?= __('Hot Searches') ?>
+                    </div>
+                    <div class="flex flex-wrap gap-4">
+                        <?php foreach ($config['popularSearches'] as $search): ?>
+                            <span x-on:click="hotSearchClickEvent"
+                                class="w-fit flex justify-between items-center gap-2 tracking-wide transition-all duration-200 text-black hover:text-whizzy-blue cursor-pointer text-sm lg:text-base"><?= $escaper->escapeHtml(__($search)) ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </template>
+
+        <template x-if="searchResults">
+            <div class="<?= $col2 ? 'grid gap-4 lg:grid-cols-12' : '' ?>">
+                <?php if ($col2): ?>
+                    <div class="col-span-12 lg:col-span-8 lg:order-1">
+                    <?php endif; ?>
+
+                    <div class="flex justify-between items-end mb-6">
+                        <div class="inline-flex gap-2 items-center <?= $titleCSS ?>">
+                            <span><?= __('Products') ?></span>
+                            <template x-if="searchProducts != ''">
+                                <span class="<?= $titleNumberCSS ?>"><span x-html="searchProductsTotal"></span></span>
+                            </template>
+                        </div>
+
+                        <a class="text-base lg:text-center text-whizzy-body hover:text-whizzy-graylighter transition-all duration-100 underline"
+                            x-bind:href="numberResultsUrl">
+                            <span class=""><?= __('See all results') ?></span>
+                        </a>
+                    </div>
+
+                    <div id="search-form-scroll"
+                        class="grid grid-cols-2 gap-4 overflow-y-auto max-h-[435px] pr-1 lg:pr-2 -mr-3 lg:-mr-4">
+                        <template x-for="item in searchProducts">
+                            <div
+                                class="w-full flex transform transition duration-500 flex-wrap overflow-hidden flex-col">
+                                <a x-bind:href="`${item.url}`">
+                                    <?php if ($config['isShowImage']): ?>
+                                        <div class="w-full px-2 lg:px-4 rounded-lg bg-whizzy-artic <?= $product_image_padding ?>"
+                                            <?= $product_image_background_custom ?>>
+                                            <img x-bind:src="`${item.imageUrl}`"
+                                                class="mx-auto <?= $product_image_background_mixblend ?> <?= $product_image_square ?>" />
+                                        </div>
+                                    <?php endif ?>
+                                </a>
+                                <div class="w-full flex grow flex-wrap flex-col product-info">
+                                    <div class="mt-2 mb-1 items-center font-medium text-sm lg:text-base tracking-tight">
+                                        <a x-bind:href="`${item.url}`" x-html="item.name"></a>
+                                    </div>
+
+                                    <?php if ($config['isShowPrice']): ?>
+                                        <div>
+                                            <span class="text-sm" x-html="item.price"></span>
+                                        </div>
+                                    <?php endif ?>
+                                </div>
+                            </div>
+                        </template>
+                        <template x-if="searchProducts == ''">
+                            <p><?= $escaper->escapeHtml(__('No results found.')) ?></p>
+                        </template>
+                    </div>
+                    <?php if ($col2): ?>
+                    </div>
+                    <div class="col-span-12 lg:col-span-4">
+                    <?php endif; ?>
+
+                    <template x-if="searchCategories != ''">
+                        <div>
+                            <div class="inline-flex gap-2 items-center mb-4 <?= $titleCSS ?>">
+                                <span><?= __('Categories') ?></span>
+                                <small class="<?= $titleNumberCSS ?>"><span
+                                        x-html="searchCategoriesTotal"></span></small>
+                            </div>
+                            <div class="pt-6">
+                                <template x-for="category in searchCategories">
+                                    <a x-bind:href="`${category.url}`">
+                                        <div class="<?= $itemCSS ?>">
+                                            <span class="<?= $itemNameCSS ?>" x-html="category.name"></span>
+                                        </div>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template x-if="searchPages != ''">
+                        <div class="mt-6 pt-6 border-t">
+                            <div class="inline-flex gap-2 items-center mb-4 <?= $titleCSS ?>">
+                                <span><?= __('Pages') ?></span>
+                                <small class="<?= $titleNumberCSS ?>"><span x-html="searchPagesTotal"></span></small>
+                            </div>
+                            <div class="px-2">
+                                <template x-for="page in searchPages">
+                                    <a x-bind:href="`${page.url}`">
+                                        <div class="<?= $itemCSS ?>">
+                                            <span class="<?= $itemNameCSS ?>" x-html="page.name"></span>
+                                        </div>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template x-if="searchMagefanBlogPost != ''">
+                        <div class="mt-6 pt-6 border-t">
+                            <div class="inline-flex gap-2 items-center mb-4 <?= $titleCSS ?>">
+                                <span><?= __('Posts') ?></span>
+                                <small class="<?= $titleNumberCSS ?>"><span
+                                        x-html="searchMagefanBlogPostTotal"></span></small>
+                            </div>
+                            <div>
+                                <template x-for="item in searchMagefanBlogPost">
+                                    <a x-bind:href="`${item.url}`">
+                                        <div class="<?= $itemCSSBlog ?>">
+                                            <?= $themeIcons->renderHtml('link', '', 16, 16, ["aria-hidden" => "true"]) ?>
+                                            <span class="<?= $itemNameCSS ?>" x-html="item.name"></span>
+                                        </div>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template x-if="searchMirasvitBlogPost != ''">
+                        <div class="mt-6 pt-6 border-t">
+                            <div class="inline-flex gap-2 items-center mb-4 <?= $titleCSS ?>">
+                                <span><?= __('Posts') ?></span>
+                                <small class="<?= $titleNumberCSS ?>"><span
+                                        x-html="searchMirasvitBlogPostTotal"></span></small>
+                            </div>
+                            <div class="px-2">
+                                <template x-for="item in searchMirasvitBlogPost">
+                                    <a x-bind:href="`${item.url}`">
+                                        <div class="<?= $itemCSS ?>">
+                                            <span class="<?= $itemNameCSS ?>" x-html="item.name"></span>
+                                        </div>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template x-if="searchMirasvitKbArticle != ''">
+                        <div class="mt-6 pt-6 border-t">
+                            <div class="inline-flex gap-2 items-center mb-4 <?= $titleCSS ?>">
+                                <span><?= __('Articles') ?></span>
+                                <small class="<?= $titleNumberCSS ?>"><span
+                                        x-html="searchMirasvitKbArticleTotal"></span></small>
+                            </div>
+                            <div class="px-2">
+                                <template x-for="item in searchMirasvitKbArticle">
+                                    <a x-bind:href="`${item.url}`">
+                                        <div class="<?= $itemCSS ?>">
+                                            <span class="<?= $itemNameCSS ?>" x-html="item.name"></span>
+                                        </div>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    <?php if ($col2): ?>
+                    </div>
+                <?php endif; ?>
+
+            </div>
+        </template>
+
+        <template x-if="noResults">
+            <div class="pt-6">
+                <p class="leading-normal transition appearance-none text-whizzy-body text-base" x-html="noResultsText">
+                </p>
+            </div>
+        </template>
+    </div>
+</div>
+<style>
+    i {
+        margin: 5px;
+    }
+</style>
+<script>
+    function initMirasvitSearch() {
+        return {
+            //initialize Variables
+            hotSearch: false,
+            searchResults: false,
+            noResults: false,
+            isLoading: false,
+            isOpen: false,
+            blockConfig: <?= json_encode($config); ?>,
+            xhttp: false,
+            noResultsText: '',
+            numberResults: '',
+            numberResultsUrl: '',
+
+            searchProductsTotal: '',
+            searchCategoriesTotal: '',
+            searchPagesTotal: '',
+            searchMirasvitKbArticleTotal: '',
+            searchMirasvitBlogPostTotal: '',
+            searchMagefanBlogPostTotal: '',
+
+            searchProducts: [],
+            searchCategories: [],
+            searchPages: [],
+            searchMagefanBlogPost: [],
+            searchMirasvitBlogPost: [],
+            searchMirasvitKbArticle: [],
+
+            searchMap: {
+                'magento_cms_page': 'Pages',
+                'magento_catalog_category': 'Categories',
+                'magento_catalog_product': 'Products',
+                'magefan_blog_post': 'MagefanBlogPost',
+                'mirasvit_blog_post': 'MirasvitBlogPost',
+                'mirasvit_kb_article': 'MirasvitKbArticle'
+            },
+
+            hotSearchClickEvent: function (ev) {
+                var hotSearchClick = event.currentTarget.innerText;
+                document.getElementById("search").value = hotSearchClick;
+
+                this.doSearch(hotSearchClick);
+            },
+
+            openSearch: function () {
+                this.isOpen = true;
+                searchValue = document.getElementById("search").value.length;
+
+                if (searchValue >= this.blockConfig.minSearchLength) {
+                    this.hideHotSearch();
+                } else {
+                    this.showHotSearch();
+                    this.hideSearchResults();
+                }
+            },
+
+            startSearch: function (e) {
+                if (e) {
+                    this.isOpen = true;
+                }
+            },
+
+            closeSearch: function () {
+                this.isOpen = false;
+            },
+
+            showHotSearch: function () {
+                this.hotSearch = true;
+            },
+
+            hideHotSearch: function () {
+                this.hotSearch = false;
+            },
+
+            showSearchResults: function () {
+                this.searchResults = true;
+            },
+
+            hideSearchResults: function () {
+                this.searchResults = false;
+            },
+
+            showNoResults: function () {
+                this.noResults = true;
+            },
+
+            hideNoResults: function () {
+                this.noResults = false;
+            },
+
+            setNoResultsText(text) {
+                if (!text) {
+                    return;
+                }
+
+                this.noResultsText = text;
+            },
+
+            setNumberResults(text) {
+                this.numberResults = text;
+            },
+
+            setNumberResultsUrl(text) {
+                this.numberResultsUrl = text;
+            },
+
+            resetSearchData: function () {
+                // Reinitialize Variables to avoid wrong search results.
+
+                this.searchPagesTotal = 0;
+                this.searchCategoriesTotal = 0;
+                this.searchProductsTotal = 0;
+                this.searchMirasvitKbArticleTotal = 0;
+                this.searchMirasvitBlogPostTotal = 0;
+                this.searchMagefanBlogPostTotal = 0;
+
+                this.searchProducts = [];
+                this.searchPages = [];
+                this.searchCategories = [];
+                this.searchMirasvitKbArticle = [];
+                this.searchMirasvitBlogPost = [];
+                this.searchMagefanBlogPost = [];
+            },
+
+            doSearch: function (query) {
+                var self = this;
+                // Min search length
+                if (query.length < this.blockConfig.minSearchLength) {
+                    this.showHotSearch();
+                    this.isLoading = false;
+                    this.hideSearchResults();
+                    this.hideNoResults();
+
+                    return;
+                } else {
+                    this.hideHotSearch();
+                    this.isLoading = true;
+                    this.showSearchResults();
+                    this.hideNoResults();
+                }
+
+                // AJAX for searchautocomplete/ajax/suggest/
+                if (this.xhttp) {
+                    try {
+                        this.xhttp.abort();
+                    } catch {
+
+                    }
+                }
+                this.xhttp = new XMLHttpRequest();
+                var xhttp = this.xhttp;
+
+                var queryEncoded = encodeURIComponent(query);
+                var url = this.blockConfig.url.replace(/\/$/, "") + "/?q=" + queryEncoded + "&store_id=" + this.blockConfig.storeId + "&cat=false";
+
+                xhttp.open("GET", url, true);
+                xhttp.setRequestHeader("Content-Type", "application/json");
+
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                        // Response from ajax call in JSON.
+                        var response = JSON.parse(this.responseText);
+
+                        self.resetSearchData();
+
+                        // Product Search Results
+                        for (index in response.indexes) {
+
+                            if (response.indexes[index].items.length > 0) {
+                                var res = response.indexes[index];
+                                var map = null;
+
+                                if (self.searchMap[res.identifier]) {
+                                    map = self.searchMap[res.identifier];
+                                    self['search' + map] = res.items;
+                                    self['search' + map + 'Total'] = res.totalItems;
+                                }
+                            }
+                        }
+
+                        self.isLoading = false;
+                        self.hideNoResults();
+                        self.setNumberResults(response.textAll);
+                        self.setNumberResultsUrl(response.urlAll);
+
+                        if (response.noResults) {
+                            self.setNoResultsText(response.textEmpty);
+                            self.hideSearchResults();
+                            self.showNoResults();
+                        }
+                    }
+                };
+                xhttp.send();
+            }
+        }
+    }
+</script>

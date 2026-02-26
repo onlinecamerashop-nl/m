@@ -11,22 +11,90 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "laminas/laminas-dependency-plugin": true,
             "magento/*": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "tbachert/spi": true
         },
         "preferred-install": "dist",
         "sort-packages": true
     },
     "version": "2.4.8-p2",
     "require": {
-        "magento/product-community-edition": "2.4.8-p2",
+        "amasty/module-ai-content-generator-pro": "^3.0",
+        "amasty/module-ai-mass-actions-content-generator": "^1.0",
+        "amasty/module-checkout-thank-you-page-hyva-compatibility": "^1.0",
+        "amasty/module-custom-form-hyva": "^1.1",
+        "amasty/module-custom-forms-lite": "^1.21",
+        "amasty/module-custom-forms-lite-subscription-package": "^1.21",
+        "amasty/module-faq-hyva": "^1.0",
+        "amasty/module-faq-subscription-package": "^2.13",
+        "amasty/module-free-gift-lite-package": "^1.6",
+        "amasty/module-one-step-checkout-pro-package": "^2.2",
+        "amasty/module-product-status-suite-lite": "^2.3",
+        "amasty/module-shop-by-brand-hyva-compatibility": "^1.1",
+        "amasty/module-stockstatus-hyva-compatibility": "^1.0",
+        "amasty/module-stockstatus-subscription-package": "^2.7",
+        "basecom/magento2-disable-customer-address-file-upload": "^1.0",
+        "bcncommerce/json-stream": "^0.4.1",
+        "dhlparcel/magento2-plugin": "^1.0",
+        "ethanyehuda/magento2-cronjobmanager": "^2.2",
+        "fooman/pdfcustomiser-m2": "^8.13",
+        "geissweb/module-euvat": "^1.24",
+        "google/apiclient": "^2.0",
+        "hyva-themes/magento2-amasty-promo": "dev-main",
+        "hyva-themes/magento2-cms-tailwind-jit": "^1.1",
+        "hyva-themes/magento2-compat-module-fallback": "^1.1",
+        "hyva-themes/magento2-default-theme": "^1.3",
+        "hyva-themes/magento2-luma-checkout": "^1.1",
+        "hyva-themes/magento2-mageworx-downloads": "^1.0",
+        "hyva-themes/magento2-mageworx-seomarkup": "^1.0",
+        "hyva-themes/magento2-mirasvit-related": "*",
+        "hyva-themes/magento2-payment-icons": "^2.0",
+        "hyva-themes/magento2-phpro-translations": "^1.0",
+        "laminas/laminas-mime": "^2.12",
+        "league/oauth2-client": "^2.4",
+        "m2epro/magento2-extension": "^1.78",
+        "mage-os/module-newsletter-coupon": "^1.0",
+        "magefan/hyva-theme-blog": "^2.0",
+        "magefan/module-blog": "^2.12",
+        "magefan/module-product-grid-inline": "^2.3",
         "magento/composer-dependency-version-audit-plugin": "~0.1",
-        "magento/composer-root-update-plugin": "^2.0.4"
+        "magento/composer-root-update-plugin": "^2.0.4",
+        "magento/product-community-edition": "2.4.8-p2",
+        "magento/quality-patches": "^1.1",
+        "mageplaza/magento-2-dutch-language-pack": "dev-master",
+        "mageplaza/module-delete-orders": "^4.0",
+        "mageplaza/module-smtp": "^4.7",
+        "magestyapps/module-web-images": "^1.2",
+        "mageworx/module-downloadsmeta": "^3.2",
+        "mageworx/module-ordersgridmeta": "^1.5",
+        "mageworx/module-seosuiteultimate": "^2.40",
+        "magmodules/magento2-channable": "^1.22",
+        "microsoft/microsoft-graph": "^1.25",
+        "mirasvit/module-feed": "*",
+        "mirasvit/module-gtm": "*",
+        "mirasvit/module-gtm-hyva": "*",
+        "mirasvit/module-navigation": "*",
+        "mirasvit/module-navigation-hyva": "*",
+        "mirasvit/module-product-kit": "^1.2",
+        "mirasvit/module-product-kit-hyva": "^0.1.2",
+        "mirasvit/module-related": "*",
+        "mirasvit/module-search-ultimate": "^2.6",
+        "mirasvit/module-search-ultimate-hyva": "^1.1",
+        "multisafepay/magento2": "^3.11",
+        "openspout/openspout": "^4.2",
+        "phpro/mage2-module-translations": "^1.6",
+        "salsify/json-streaming-parser": "~8.0",
+        "tcdent/php-restclient": "^0.1.7",
+        "tig/postnl-magento2": "^1.20",
+        "tmwk/client-prestashop-api": "^1.0",
+        "yireo/magento2-disable-csp": "^1.0",
+        "yireo/magento2-webp2": "^0.14.3"
     },
     "autoload": {
         "exclude-from-classmap": [
             "**/dev/**",
             "**/update/**",
-            "*/*/Test/**/*Test"
+            "**/Test/**"
         ],
         "files": [
             "app/etc/NonComposerComponentRegistration.php"
@@ -42,19 +110,20 @@
         }
     },
     "require-dev": {
-        "allure-framework/allure-phpunit": "^3.1",
-        "carlos-mg89/oauth": "^0.8.17",
+        "allure-framework/allure-phpunit": "^2",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "dg/bypass-finals": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.22",
+        "hyva-themes/hyva-ui": "^2.5",
+        "lusitanian/oauth": "^0.8",
         "magento/magento-coding-standard": "*",
-        "magento/magento2-functional-testing-framework": "^5.0",
-        "pdepend/pdepend": "3.x-dev",
-        "phpmd/phpmd": "3.x-dev",
+        "magento/magento2-functional-testing-framework": "^4.7",
+        "pdepend/pdepend": "^2.10",
+        "phpmd/phpmd": "^2.12",
         "phpstan/phpstan": "^1.9",
-        "phpunit/phpunit": "^10.5",
-        "symfony/finder": "^6.4",
-        "magento/magento-allure-phpunit": "^3.0.2"
+        "phpunit/phpunit": "^9.5",
+        "sebastian/phpcpd": "^6.0",
+        "symfony/finder": "^6.4"
     },
     "conflict": {
         "gene/bluefoot": "*"
@@ -73,12 +142,28 @@
     "prefer-stable": true,
     "repositories": [
         {
+            "name": "amasty_ocs",
             "type": "composer",
-            "url": "https://repo.magento.com/"
+            "url": "https://composer.amasty.com/community/"
+        },
+        {
+            "name": "geissweb",
+            "type": "composer",
+            "url": "https://packages.geissweb.de"
+        },
+        {
+            "name": "fooman",
+            "type": "composer",
+            "url": "https://customer-repos.fooman.co.nz/www.onlinecamerashop.nl-ff642dab7923788e5de065d8db9b08d10c7fb147"
+        },
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/",
+            "canonical": false,
+            "exclude": ["magefan/module-blog", "mageplaza/module-smtp"]
         }
     ],
     "extra": {
         "magento-force": "override"
     }
 }
-

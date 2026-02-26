@@ -1,0 +1,336 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Shop By Brand Compatibility with Hyva for Magento 2
+ */
+
+use Amasty\ShopbyBrand\Block\Widget\BrandList;
+use Amasty\ShopByBrandHyvaCompatibility\ViewModel\BrandsList;
+use Amasty\ShopByBrandHyvaCompatibility\ViewModel\BrandsListGraphQlQuery;
+use Hyva\GraphqlViewModel\ViewModel\GraphqlViewModel;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\Store as StoreViewModel;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Amasty\ShopByBaseHyvaCompatibility\ViewModel\Tooltip;
+
+use Amasty\ShopbyBase\Block\Product\AttributeIcon;
+use Magento\Framework\Escaper;
+
+/** @var BrandList $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+/** @var AttributeIcon $attributeIconBlock */
+
+$tooltipViewModel = $viewModels->require(Tooltip::class);
+
+/** @var BrandsListGraphQlQuery $brandsListGraphQlViewModel */
+$brandsListGraphQlViewModel = $viewModels->require(BrandsListGraphQlQuery::class);
+/** @var GraphqlViewModel $viewModelGraphQl */
+$viewModelGraphQl = $viewModels->require(GraphqlViewModel::class);
+/** @var StoreViewModel $viewModelStore */
+$viewModelStore = $viewModels->require(StoreViewModel::class);
+/** @var BrandsList $brandsListViewModel */
+$brandsListViewModel = $viewModels->require(BrandsList::class);
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+$uniqId = uniqid();
+// phpcs:disable Generic.Files.LineLength.TooLong
+?>
+
+<div class="ambrands-brandlist-widget" x-data="{...amBrandsListWidget<?=$escaper->escapeHtmlAttr($uniqId) ?>(), ...amBrandLetters_<?= $escaper->escapeHtml($uniqId) ?>()}"
+     x-init="brandsListInit()" @resize.window.debounce="checkIsMobileResolution()" @visibilitychange.window.debounce="checkIsMobileResolution()">
+    <template x-if="letters && letters.length > 0">
+        <div class="flex flex-col my-10">
+            <template x-if="showSearch">
+                <div class="am-brand-search-wrapper mb-4 block sm:w-96 w-full relative box-border bg-white rounded-lg border border-gray-400 flex items-center"
+                     role="search"
+                     title="<?= $escaper->escapeHtml(__('Search for a brand')) ?>"
+                     aria-labelledby="am-brand-search-id-<?=$escaper->escapeHtmlAttr($uniqId) ?>"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor"
+                         class="ml-2 opacity-50 w-6 h-6 md:h-6 md:w-6 hover:text-black absolute"
+                         width="25" height="25">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <label class="sr-only" for="am-brand-search-id-<?=$escaper->escapeHtmlAttr($uniqId) ?>">
+                        <?= $escaper->escapeHtml(__('Search for a brand')) ?>
+                    </label>
+                    <input type="search"
+                           id="am-brand-search-id-<?=$escaper->escapeHtmlAttr($uniqId) ?>"
+                           class="font-normal outline-0 w-full rounded-lg border-0 pl-9"
+                           placeholder="<?= $escaper->escapeHtml(__('Search brand here...')) ?>"
+                           x-ref="searchField"
+                           x-model="query"
+                           x-on:keydown.window.prevent.slash="$refs.searchField.focus()" />
+
+                    <div class="absolute overflow-hidden rounded-lg w-full bg-white shadow-lg top-full left-0 mt-1 z-10"
+                         x-transition
+                         x-show="query.length >= 1 && filteredRows().length >= 1">
+                        <template x-for="item in filteredRows()" :key="item.label">
+                            <div class="row w-full">
+                                <a :href="item.url" x-html="item.label"
+                                   class="block row w-full hover:bg-gray-200 p-4 cursor-pointer"></a>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="showFilters">
+                <div class="ambrands-letters-filter flex flex-wrap mb-4">
+                    <button type="button" class="ambrands-letters-filter-item font-normal bg-white border border-gray-400 rounded-md px-3 py-2 mx-1 mb-2 hover:shadow-md hover:border-gray-600"
+                            title="<?= $escaper->escapeHtmlAttr(__('All Brands')) ?>"
+                            @click="clearSelected()"
+                            :class="{'bg-blue-100 border-blue-900 text-blue-900': selected === null}">
+                        <?= $escaper->escapeHtml(__('All Brands')) ?>
+                    </button>
+                    <template x-for="letter in letters">
+                        <button type="button"
+                                @click="filterCurrentLetter(letter.letter)"
+                                class="ambrands-letters-filter-item font-normal bg-white border border-gray-400 rounded-md px-3 py-2 mx-1 mb-2 hover:shadow-md hover:border-gray-600"
+                                :class="{
+                                'ambrands-letter-disabled bg-gray-100 text-gray-700 cursor-default pointer-events-none': letter.brands.length === 0 || !isEmptyBrands(letter.brands),
+                                'bg-blue-100 border-blue-500 text-blue-500': selected === letter.letter
+                                }"
+                                x-text="letter.letter">
+                        </button>
+                    </template>
+                </div>
+            </template>
+            <div class="ambrands-letters-list grid gap-x-4 gap-y-4 grid-cols-2" :style="getColumnCount()">
+                <template x-for="letter in filteredLetters">
+                    <div class="ambrands-letter flex flex-col mb-10"
+                         x-show="showSelectedLetter(letter.letter)">
+                        <h3 class="ambrands-title text-4xl mb-4 font-bold" x-text="letter.letter"></h3>
+                        <div class="ambrands-content flex flex-wrap">
+                            <template x-for="brand in letter.brands">
+                                <div class="ambrands-brand-item flex justify-center mb-2 shadow rounded-md border hover:border-black w-full"
+                                    @mouseover.prevent.stop="brand.showTooltip = true"
+                                    @mouseleave.prevent.stop="brand.showTooltip = false">
+                                    <a :href="constructFullUrl(brand.url)"
+                                       class="ambrands-inner relative flex flex-col w-full h-full cursor-pointer box-border text-center uppercase text-sm py-4 px-2"
+                                       :title="brand.label">
+                                        <template x-if="showBrandLogo && brand.image">
+                                            <span class="ambrands-image-block flex flex-col justify-center text-center py-2">
+                                               <img :src="brand.image"
+                                                    :style="`max-width: ${imageWidth ? imageWidth + 'px' : 'unset'}; max-height: ${imageHeight ? imageHeight + 'px' : 'unset'}`"
+                                                    :alt="brand.alt ? brand.alt : brand.label"
+                                                    class="ambrands-image mx-auto" />
+                                             </span>
+                                        </template>
+                                        <template x-if="showBrandLogo && !brand.image">
+                                            <span class="ambrands-image-block">
+                                                <span class="block mx-auto py-3 uppercase text-4xl text-slate-600" x-text="brand.label.charAt(0)"></span>
+                                            </span>
+                                        </template>
+
+                                        <span class="ambrands-label mt-auto block"
+                                              :style="`min-width: ${imageWidth}px`"
+                                        >
+                                            <span class="!text-black" x-html="brand.label"></span>
+                                            <span class="ambrands-count text-slate-600" x-cloak x-show="showCount">
+                                                (<span x-text="brand.cnt"></span>)
+                                            </span>
+                                        </span>
+
+                                        <template x-if="brand.tooltip_content && brand.tooltip_content.length > 0">
+                                            <div class="absolute top-0 left-full z-10 w-64 p-2 -mt-6 text-sm leading-tight text-black transform
+                    -translate-x-full md:-translate-x-1/3 -translate-y-full bg-white rounded-lg shadow-xl p-4" x-cloak x-show="brand.showTooltip">
+                                                <span class="subtitle text-base" x-html="brand.tooltip_content"></span>
+                                                <svg class="absolute -bottom-14 left-10 - z-10 w-8 h-8 text-white transform -translate-x-full
+                    -translate-y-8 fill-current stroke-current" width="12" height="12">
+                                                    <rect x="12" y="-12" width="12" height="12" transform="rotate(45)" class="shadow-xl" />
+                                                </svg>
+                                            </div>
+                                        </template>
+                                    </a>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </template>
+    <script>
+        function amBrandLetters_<?= $escaper->escapeHtml($uniqId) ?>() {
+            return {
+                selected: null,
+                /**
+                 * @description
+                 * @param letter
+                 */
+                filterCurrentLetter(letter) {
+                    if (this.selected !== letter) {
+                        this.selected = letter;
+                    }
+                },
+                /**
+                 *
+                 * @param letter
+                 * @returns {boolean}
+                 */
+                showSelectedLetter(letter){
+                    return !this.selected || this.selected === letter;
+                },
+                /**
+                 * @description clear all filters
+                 */
+                clearSelected() {
+                    this.selected = null;
+                }
+            }
+        }
+
+        function amBrandsListWidget<?= $escaper->escapeHtmlAttr($uniqId) ?>() {
+            let letters = [
+                "A","B","C","D",
+                "E","F","G","H","I","J","K","L","M",
+                "N","O","P","Q","R","S","T","U","V","W","X","Y","Z","#"
+            ];
+
+            return {
+                letters: [],
+                showCount: null,
+                showFilters: null,
+                showBrandLogo: true,
+                showSearch: null,
+                imageWidth: 50,
+                imageHeight: 50,
+                filterDisplayAll: false,
+                columns: 4,
+                displayZero: false,
+                query: '',
+                showTooltip: false,
+                searchField: '',
+                isMobile: false,
+
+                checkIsMobileResolution() {
+                    this.isMobile = window.matchMedia('(max-width: 768px)').matches;
+                },
+
+                getColumnCount() {
+                    if (this.isMobile) {
+                        return '';
+                    } else {
+                        return `grid-template-columns: repeat(${this.columns}, minmax(0, 1fr));`;
+                    }
+                },
+
+                filteredRows() {
+                    if (this.query === "") {
+                        return [];
+                    }
+
+                    const query = this.query.toLowerCase();
+
+                    return this.rawItems.filter(
+                        row => row.label.toLowerCase().includes(query)
+                    );
+                },
+
+                getMediaUrl(path) {
+                    const baseUrl = BASE_URL.replace('index.php/', '');
+
+                    return path.includes(baseUrl) ? path : baseUrl + path;
+                },
+
+                isEmptyBrands(brands) {
+                    let isEmpty = true;
+                    if (!this.displayZero) {
+                        isEmpty = false;
+                        brands.forEach((brand) => {
+                            if (brand.cnt > 0) {
+                                isEmpty = true;
+                            }
+                        })
+                    }
+                    return isEmpty;
+                },
+
+                brandsListInit() {
+                    const configData = <?= /** @noEscape  */ json_encode($brandsListViewModel->convertToJSParams($block->getData())) ?>;
+                    for (let config in configData) {
+                        this[config] = configData[config];
+                    }
+
+                    this.checkIsMobileResolution();
+
+                    this.sendRequest().then(result => {
+                        const data = result.data?.ambrandlist;
+
+                        if (!this.filterDisplayAll) {
+                            letters = data.all_letters.split(',');
+                        }
+
+                        const items = data.items.map(brand => {
+                            if (brand.img) {
+                                brand.image = this.getMediaUrl(brand.img);
+                                return brand;
+                            } else if (brand.image) {
+                                brand.image = this.getMediaUrl(brand.image);
+                                return brand;
+                            } else {
+                                return brand;
+                            }
+                        });
+
+                        this.letters = letters.map(letter => ({
+                            letter: letter,
+                            brands: items.filter(row => row.letter === letter),
+                        }));
+
+                        this.filteredLetters =  letters.map(letter => ({
+                            letter: letter,
+                            brands: items.filter((row) => {
+                                if (this.displayZero) {
+                                    return row.letter === letter;
+                                }
+                                return row.letter === letter && row.cnt !== 0;
+                            }),
+                        })).filter(row => row.brands.length > 0)
+
+                        this.rawItems = items;
+                    });
+                },
+
+                getQuery() {
+                    return <?= /** @noEscape */ json_encode($viewModelGraphQl->query('brands_list_query', "query BrandsListQuery { {$brandsListGraphQlViewModel->queryString()} }")); ?>
+                },
+
+                sendRequest() {
+                    return fetch('<?= $escaper->escapeUrl($block->getBaseUrl()) ?>graphql', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Store': '<?= /* @noEscape */ $viewModelStore->getStoreCode() ?>'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({query: this.getQuery(), variables: {}})
+                    }).then(
+                        response => response.json()
+                    );
+                },
+
+                convertHtml(text) {
+                    let textField = document.createElement("textarea");
+                    textField.innerHTML = text;
+                    return textField.value;
+                },
+
+                constructFullUrl(path) {
+                    let url = new URL(window.location.href);
+                    const encodedPath = path.split('/').map(segment => encodeURIComponent(segment)).join('/');
+                    const basePath = url.pathname.replace(/\/$/, '').split('/').slice(0, -1).join('/');
+                    url.pathname = `${basePath}/${encodedPath}`;
+                    return url.toString();
+                }
+            }
+        }
+    </script>
+</div>

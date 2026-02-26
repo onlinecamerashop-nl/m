@@ -1,0 +1,63 @@
+<?php
+declare(strict_types=1);
+
+namespace MgtWizards\ReviewGeoIp\Setup;
+
+use Magento\Framework\Setup\InstallDataInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\DB\Ddl\Table;
+
+class InstallData implements InstallDataInterface
+{
+    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    {
+        $connection = $setup->getConnection();
+        $table = $setup->getTable('review_detail');
+
+        // Add ip_address column
+        if (!$connection->tableColumnExists($table, 'ip_address'))
+        {
+            $connection->addColumn(
+                $table,
+                'ip_address',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 45,
+                    'nullable' => true,
+                    'comment' => 'User IP Address'
+                ]
+            );
+        }
+
+        // Add city column
+        if (!$connection->tableColumnExists($table, 'city'))
+        {
+            $connection->addColumn(
+                $table,
+                'city',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 255,
+                    'nullable' => true,
+                    'comment' => 'User City'
+                ]
+            );
+        }
+
+        // Add country column
+        if (!$connection->tableColumnExists($table, 'country'))
+        {
+            $connection->addColumn(
+                $table,
+                'country',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 255,
+                    'nullable' => true,
+                    'comment' => 'User Country'
+                ]
+            );
+        }
+    }
+}

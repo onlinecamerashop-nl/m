@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\Store;
+use Hyva\Theme\ViewModel\StoreSwitcher;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magento\Store\ViewModel\SwitcherUrlProvider;
+
+// phpcs:disable Generic.Files.LineLength.TooLong
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+/** @var SwitcherUrlProvider $switcherUrlProvider */
+$switcherUrlProvider = $viewModels->require(SwitcherUrlProvider::class);
+
+/** @var Store $storeViewModel */
+$storeViewModel = $viewModels->require(Store::class);
+
+/** @var StoreSwitcher $storeSwitcherViewModel */
+$storeSwitcherViewModel = $viewModels->require(StoreSwitcher::class);
+
+$currentStore = $storeSwitcherViewModel->getStore();
+?>
+<?php if (count($storeSwitcherViewModel->getStores()) > 1): ?>
+    <div x-data="{ open: false }" class="w-full sm:w-1/2 md:w-full">
+        <div class="relative inline-block">
+            <div>
+                <button @click.prevent="open = !open" @click.away="open = false" @keydown.window.escape="open=false"
+                    type="button"
+                    class="inline-flex justify-center items-center w-full border-0 px-2 transparent rounded-none focus:outline-none hover:border-0 focus:border-0 hover:transparent"
+                    aria-haspopup="true" aria-expanded="true" title="<?= $escaper->escapeHtml($currentStore->getName()) ?>">
+                    <span><?= $escaper->escapeHtml($currentStore->getName()) ?></span>
+                    <?= $heroicons->chevronUpHtml('hidden ml-1', 14, 14, [":class" => "{ 'hidden' : !open, 'block': open }"]); ?>
+                    <?= $heroicons->chevronDownHtml('ml-1', 14, 14, [":class" => "{ 'hidden' : open, 'block': !open }"]); ?>
+                </button>
+            </div>
+            <nav x-cloak="" x-show="open"
+                class="absolute right-0 bottom-full z-20 w-13 p-3 mb-2 overflow-auto origin-bottom-right drop-shadow-xl bg-white rounded-md">
+                <div role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                    <?php foreach ($storeSwitcherViewModel->getStores() as $lang): ?>
+                        <?php if ($lang->getId() != $storeViewModel->getStoreId()): ?>
+                            <a href="<?= $escaper->escapeUrl($switcherUrlProvider->getTargetStoreRedirectUrl($lang)) ?>"
+                                class="block px-2 py-1 hover:opacity-70" title="<?= $escaper->escapeHtml($lang->getName()) ?>">
+                                <span><?= $escaper->escapeHtml($lang->getName()) ?></span>
+                            </a>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            </nav>
+        </div>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,33 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\StoreConfig;
+use Magento\Framework\Escaper;
+use Magento\Theme\Block\Html\Footer;
+
+/** @var ViewModelRegistry $viewModels */
+/** @var Footer $block */
+/** @var Escaper $escaper */
+/** @var StoreConfig $storeConfig */
+
+$storeConfig = $viewModels->require(StoreConfig::class);
+
+$customCopyright = $storeConfig->getStoreConfig('digitaltheme_settings/footer/footer_copyright');
+
+if (!$customCopyright)
+{
+    $customCopyright = '© {YEAR} Copyright Digital Theme (Hyva) by ShopWhizzy.com';
+}
+
+$copyrightText = str_replace('{YEAR}', date('Y'), $customCopyright);
+?>
+
+<small class="text-sm text-whizzy-body">
+    <?= $copyrightText ?>
+</small>

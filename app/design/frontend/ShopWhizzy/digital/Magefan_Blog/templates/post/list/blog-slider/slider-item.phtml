@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+// The item to render is set on the block before the template is rendered:
+
+$_post = $block->getData('item');
+$_postUrl = $escaper->escapeUrl($_post->getPostUrl());
+$_postName = $escaper->escapeHtml($_post->getTitle());
+$featuredImage = $_post->getFeaturedListImage() ?: $_post->getFeaturedImage();
+$_postContent = $escaper->escapeUrl($_post->getContent());
+
+$_author = $_post->getAuthor();
+$_authorName = $_author->getTitle();
+$_publishDate = $_post->getPublishDate();
+$featuredAuthorImage = $_author->getFeaturedListImage() ?: $_author->getFeaturedImage();
+$_categoriesCount = $_post->getCategoriesCount();
+
+?>
+<div class="grid grid-cols-1 md:grid-cols-3 items-center gap-4 lg:gap-8">
+    <a href="<?= /*@noEscape*/ $_postUrl ?>" class="col-span-2 overflow-hidden rounded-lg">
+        <div class="rounded-lg block w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-300 cursor-pointer min-h-40 lg:min-h-96 p-10"
+            style="background-image: url('<?= $escaper->escapeUrl($featuredImage) ?>')">
+        </div>
+    </a>
+    <div class="text-balance md:mx-3 flex flex-col justify-between h-full">
+
+        <div class="flex flex-col gap-4">
+            <div class="item post-categories">
+                <span class="blog-post-meta-cats flex flex-wrap">
+                    <?php $n = 0; ?>
+                    <?php foreach ($_post->getParentCategories() as $ct) { ?>
+                        <?php $n++; ?>
+                        <a title="<?= $block->escapeHtml($ct->getTitle()) ?>"
+                            href="<?= $block->escapeUrl($ct->getCategoryUrl()) ?>"
+                            class="w-fit tracking-wide transition-all duration-200 bg-whizzy-artic data-[has-current]:bg-whizzy-artic hover:bg-whizzy-separator rounded py-1.5 px-2.5 me-2 cursor-pointer text-xs lg:text-sm font-medium text-whizzy-graylighter hover:text-whizzy-body transition-all duration-200">
+                            <?= $block->escapeHtml($ct->getTitle()) ?>
+                        </a>
+                        <?= /*@noEscape*/ ($n != $_categoriesCount) ? ',' : '' ?>
+                    <?php } ?>
+                </span>
+            </div>
+
+            <h2
+                class="font-semibold leading-wide text-xl lg:text-3xl text-whizzy-body hover:text-whizzy-graylighter transition-all duration-200">
+                <a class="post-item-link" href="<?= /*@noEscape*/ $_postUrl ?>">
+                    <?= /*@noEscape*/ $_postName ?>
+                </a>
+            </h2>
+        </div>
+
+        <div class="flex flex-row gap-3 items-center font-semibold mt-4 lg:mt-0">
+            <div class="w-fit">
+                <img class="h-12 w-12 rounded-full" src="<?= $featuredAuthorImage ?>"
+                    alt="<?= $block->escapeHtml($_author->getName()) ?>" />
+            </div>
+            <div>
+                <?= $block->escapeHtml($_author->getTitle()) ?>
+                <div class="text-whizzy-graylighter text-xs lg:text-sm">
+                    <span><?= __('Updated on') ?></span>
+                    <span class="value"><?= $escaper->escapeHtml($_post->getPublishDate()) ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

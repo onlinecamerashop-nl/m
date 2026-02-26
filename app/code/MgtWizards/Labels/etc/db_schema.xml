@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author MgtWizards Team
+ * @copyright Copyright (c) MgtWizards (https://shopwhizzy.com/)
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="mgtwizards_label" resource="default" engine="innodb" comment="MgtWizards product label">
+        <column xsi:type="int" name="label_id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Entity ID"/>
+        <column xsi:type="varchar" name="name" nullable="true" length="255" comment="Name"/>
+        <column xsi:type="text" name="description" nullable="true" comment="Description"/>
+        <column xsi:type="smallint" name="is_active" padding="6" unsigned="false" nullable="false" identity="false"
+                default="0" comment="Is Active"/>
+        <column xsi:type="mediumtext" name="conditions_serialized" nullable="true" comment="Conditions Serialized"/>
+        <column xsi:type="mediumtext" name="actions_serialized" nullable="true" comment="Actions Serialized"/>
+        <column xsi:type="smallint" name="stop_rules_processing" padding="6" unsigned="false" nullable="false"
+                identity="false" default="1" comment="Stop Rules Processing"/>
+        <column xsi:type="int" name="sort_order" padding="10" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Sort Order"/>
+        <column xsi:type="varchar" name="label" nullable="true" length="255" comment="Label"/>
+        <column xsi:type="varchar" name="css_class" nullable="true" length="255" comment="CSS Class"/>
+        <column xsi:type="varchar" name="color" nullable="true" length="255" comment="Hex value"/>
+        <column xsi:type="varchar" name="label_image" nullable="true" length="255" comment="Image"/>
+        <column xsi:type="int" name="minimum_amount" nullable="true" comment="Minimum amount to show label"/>
+        <column xsi:type="int" name="new_product_days" nullable="true" comment="Days to Consider as New"/>
+        <column xsi:type="varchar" name="icon_name" nullable="true" length="255" comment="Icon Name"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="label_id"/>
+        </constraint>
+    </table>
+</schema>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © MgtWizards. All rights reserved.
+ * See MS-LICENSE.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+<group id="default">
+    <job name="bestsellers_update_category"
+         instance="MgtWizards\Bestsellers\Cron\UpdateBestsellersCategory"
+         method="execute">
+        <schedule>0 0 1 1 *</schedule>
+    </job>
+</group>
+</config>

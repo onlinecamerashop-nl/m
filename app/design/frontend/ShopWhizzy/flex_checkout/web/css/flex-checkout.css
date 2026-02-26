@@ -1,0 +1,12 @@
+/* shopwhizzy flex checkout */
+
+button.action.primary.checkout.amasty {
+    background: #00B900;
+    border-color: #00B900;
+}
+
+button.action.primary.checkout.amasty:hover {
+    background: #007a00;
+    border-color: #007a00;
+    color: #fff;
+}

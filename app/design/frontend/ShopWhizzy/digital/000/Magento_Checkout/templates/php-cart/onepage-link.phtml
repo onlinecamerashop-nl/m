@@ -1,0 +1,27 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Magento\Checkout\Block\Onepage\Link;
+use Magento\Framework\Escaper;
+
+/** @var Escaper $escaper */
+/** @var Link $block */
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+?>
+<?php if ($block->isPossibleOnepageCheckout()): ?>
+    <a @click.prevent.stop="$dispatch('toggle-authentication',
+        {url: '<?= $escaper->escapeHtmlAttr($escaper->escapeUrl($block->getCheckoutUrl())) ?>'});"
+        href="<?= $escaper->escapeHtmlAttr($escaper->escapeUrl($block->getCheckoutUrl())) ?>"
+        title="<?= $escaper->escapeHtmlAttr(__('Proceed to Secure Checkout')) ?>"
+        class="group btn btn-primary checkout w-full text-sm lg:text-base py-3.5 mt-4 uppercase" id="checkout-link-button">
+        <?= $escaper->escapeHtml(__('Secure Checkout')) ?>
+        <?= $themeIcons->renderHtml('cart-secure', 'text-white group-hover:text-black ml-2', 24, 24) ?>
+    </a>
+<?php endif ?>

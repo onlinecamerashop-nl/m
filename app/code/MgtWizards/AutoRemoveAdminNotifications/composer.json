@@ -1,0 +1,22 @@
+{
+    "name": "mgtwizards/module-autoremoveadminnotifications",
+    "description": "MgtWizards_AutoRemoveAdminNotifications",
+    "type": "magento2-module",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "ShopWhizzy",
+            "email": "info@shopwhizzy.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MgtWizards\\AutoRemoveAdminNotifications\\": ""
+        }
+    }
+}

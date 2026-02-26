@@ -1,0 +1,72 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ */
+?>
+<?php
+/**
+ * Blog sidebar categories template
+ *
+ * @var $block \Magefan\Blog\Block\Sidebar\Categories
+ */
+?>
+
+<?php $items = $block->getGroupedChilds(); ?>
+
+<?php
+/** @var Hyva\Theme\ViewModel\HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(\Hyva\Theme\ViewModel\HeroiconsOutline::class);
+?>
+
+<?php if (count($items))
+{ ?>
+    <div class="block-categories mb-2">
+        <div class="title text-xs uppercase font-bold tracking-wider my-6 lg:mt-8 lg:mb-6">
+            <?= $block->escapeHtml(__('Explore Categories')) ?>
+        </div>
+
+        <ul class="accordion font-semibold flex flex-wrap gap-2">
+            <?php
+            $level = 0;
+            $first = true;
+            foreach ($items as $item)
+            {
+                $newLevel = $item->getLevel();
+
+                if ($level == $newLevel && !$first)
+                {
+                    echo '</li>';
+                }
+
+                if ($level < $newLevel)
+                {
+                    echo '<ul>';
+                }
+
+                if ($level > $newLevel)
+                {
+                    for ($i = $level; $i > $newLevel; $i--)
+                    {
+                        echo '</ul></li>';
+                    }
+                }
+                ?>
+                <li class="<?= ($newLevel > 0) ? 'hidden' : 'block' ?>">
+                    <a class="w-fit text-sm flex justify-between items-center gap-2 tracking-wide transition-all duration-200 bg-whizzy-artic hover:bg-whizzy-separator rounded-md py-1.5 px-2.5"
+                        href="<?= $block->escapeUrl($item->getCategoryUrl()) ?>">
+                        <?= $block->escapeHtml($item->getTitle()) ?>
+                        <?php if ($block->showPostsCount())
+                        { ?>
+                            <!--<span>(<?= $block->escapeHtml($item->getPostsCount()) ?>)</span>-->
+                        <?php } ?>
+                    </a>
+                    <?php
+                    $level = $newLevel;
+                    $first = false;
+            }
+            ?>
+        </ul>
+        <div class="mt-4 lg:mt-6 h-px bg-whizzy-separator"></div>
+    </div>
+<?php } ?>

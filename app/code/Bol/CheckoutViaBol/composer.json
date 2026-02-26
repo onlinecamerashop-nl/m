@@ -1,0 +1,28 @@
+{
+    "name": "bol/magento2-module-checkoutviabol",
+    "version": "1.0.1",
+    "description": "Allows for checkout integration with bol. Provides payment method and account fill in options",
+    "type": "magento2-module",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "BolDevGarage"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=8.2",
+        "magento/framework": "*",
+        "magento/module-sales": "*",
+        "magento/module-payment": "*",
+        "laminas/laminas-http": "^2.15"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Bol\\CheckoutViaBol\\": ""
+        }
+    }
+}

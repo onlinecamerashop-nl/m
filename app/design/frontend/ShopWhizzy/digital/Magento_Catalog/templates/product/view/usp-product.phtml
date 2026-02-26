@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$product_usps = (($whizzyHelper->getConfigValue('product/product_usps')) ? $whizzyHelper->getConfigValue('product/product_usps') : '');
+$product_usps_decoded = json_decode($product_usps, true);
+
+?>
+
+<?php if (is_array($product_usps_decoded) && count($product_usps_decoded) > 0): ?>
+
+    <section class="mt-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <?php foreach ($product_usps_decoded as $usps): ?>
+                <div class="w-full flex-auto inline-flex items-center gap-4 lg:gap-6">
+                    <div
+                        class="bg-white rounded-lg w-16 h-16 flex items-center justify-center shadow-whizzy-header aspect-square">
+                        <?php if ($usps['icon']): ?>
+                            <?= $themeIcons->renderHtml($usps['icon'], 'text-whizzy-primary', 28, 28, ['aria-hidden' => 'true']) ?>
+                        <?php else: ?>
+                            <?= $themeIcons->renderHtml('checkmark', 'text-whizzy-primary', 28, 28, ['aria-hidden' => 'true']) ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="flex flex-col gap-y-2">
+                        <div class="text-base lg:text-lg font-semibold tracking-tight">
+                            <?= $escaper->escapeHtmlAttr($usps['title']) ?>
+                        </div>
+                        <div class="text-xs lg:text-sm text-whizzy-graylighter">
+                            <?= $escaper->escapeHtmlAttr($usps['text']) ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </section>
+
+<?php endif; ?>

@@ -1,0 +1,53 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+?>
+
+<nav aria-label="<?= $escaper->escapeUrl($escaper->escapeHtmlAttr('Customer Service')) ?>">
+    <ul class="flex flex-col gap-y-2 text-whizzy-graylighter pb-4 lg:pb-0">
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('customer-service')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Customer Service')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('contact')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Contact Us')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('free-shipping-kratom')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Free Shipping')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('customer/account/')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('My Account')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('find-a-store')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Find Location')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('sales/guest/form')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Track Order')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('sales/guest/form')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Returns')) ?></a>
+        </li>
+        <li>
+            <a href="<?= $escaper->escapeUrl($block->getUrl('faq')) ?>"
+                class="hover:text-whizzy-body hover:font-medium"><?= $escaper->escapeHtml(__('Faq')) ?></a>
+        </li>
+    </ul>
+</nav>

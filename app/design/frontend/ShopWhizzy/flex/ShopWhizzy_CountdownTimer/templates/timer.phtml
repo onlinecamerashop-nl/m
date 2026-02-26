@@ -1,0 +1,132 @@
+<?php
+/**
+ * ShopWhizzy Countdown Timer Module
+ *
+ * This file is part of the ShopWhizzy Countdown Timer module.
+ * It displays a countdown timer for next day delivery options.
+ *
+ * @package   ShopWhizzy_CountdownTimer
+ * @license   Open Software License (OSL 3.0)
+ */
+
+declare(strict_types=1);
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+<?php if ($block->returnEnabled() && $block->isApplicable())
+{ ?>
+    <section class="mt-10 relative">
+        <div
+            class="absolute w-full h-full blur-lg opacity-40 rounded-lg bg-gradient-to-br from-whizzy-primary-lighter via-whizzy-primary to-whizzy-primary-lighter animate-tilt">
+        </div>
+        <div
+            class="relative z-10 rounded-lg bg-white p-6 flex gap-6 justify-center items-center border-2 border-whizzy-primary-lighter">
+            <div class="bg-whizzy-primary-lighter rounded-lg w-16 h-16 flex items-center justify-center">
+                <?= $themeIcons->renderHtml('truck-delivery', 'text-whizzy-primary', 28, 28, ['aria-hidden' => 'true']) ?>
+            </div>
+            <div class="flex-1" id="cd_text"></div>
+        </div>
+    </section>
+
+    <script>
+        var global_time_offset;
+        const div = document.getElementById("cd_text");
+
+        function CountDownTimer(id, dt, dn) {
+
+            var end = new Date(dt);
+            var _second = 1000;
+            var _minute = _second * 60;
+            var _hour = _minute * 60;
+            var _day = _hour * 24;
+            var timer;
+            var server_now = new Date(dn);
+            var client_now = new Date();
+            var clock = document.getElementById(id);
+            global_time_offset = server_now - client_now;
+
+            function showRemaining() {
+                <?php //setting up translations
+                    echo "var days_text = ' " . __('days') . " ';";
+                    echo "var days_text_singular = ' " . __('day') . " ';";
+                    echo "var hours_text = ' " . __('hours') . " ';";
+                    echo "var hours_text_singular = ' " . __('hour') . " ';";
+                    echo "var minutes_text = ' " . __('minutes') . " ';";
+                    echo "var minutes_text_singular = ' " . __('minute') . " ';";
+                    echo "var seconds_text = ' " . __('seconds') . "';";
+                    echo "var seconds_text_singular = ' " . __('second') . "';";
+                    ?>
+
+                var now = new Date();
+                now.setTime(now.getTime() + global_time_offset);
+                var distance = end - now;
+                if (distance < 0) {
+                    clearInterval(timer);
+                    div.innerHTML = "<?= __('Please refresh the page in 1 minute to see the next delivery time.') ?>";
+                    return;
+                }
+                var days = Math.floor(distance / _day);
+                var hours = Math.floor((distance % _day) / _hour);
+                var minutes = Math.floor((distance % _hour) / _minute);
+                var seconds = Math.floor((distance % _minute) / _second);
+
+                if (days == 1) days_text = days_text_singular;
+                if (hours == 1) hours_text = hours_text_singular;
+                if (minutes == 1) minutes_text = minutes_text_singular;
+                if (seconds == 1) seconds_text = seconds_text_singular;
+
+                var outstring = "";
+                if (days != 0) { outstring = days + days_text; }
+                if (hours != 0) { outstring += hours + hours_text; }
+                outstring += minutes + minutes_text;
+                outstring += '<span>' + seconds + seconds_text + '</span>';
+                clock.innerHTML = outstring;
+            }
+            timer = setInterval(showRemaining, 1000);
+        }
+
+        function getCountdownDeliveryTimes() {
+            return fetch(`${BASE_URL}countdowntimer/index/index`, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    console.warn("GET request failed", response);
+                }
+            }).then(data => {
+                if (data) {
+                    return data;
+                }
+            });
+        }
+
+        function TriggerCountdownTimer() {
+            // set defaults
+            var replaceTimer = '<?= "<span class=\"font-bold\" id=\"dynamicCountdown\">" . " 00 " . __("hours") . " 00 " . __("minutes") . " 00 " . __("seconds") . "</span>"; ?>';
+            var tokenTimer = "{{TIMERS}}";
+            var tokenDate = "{{DATE}}";
+            //var countdown_text = 'Order in {{TIMERS}} to get this item on <span class="font-bold underline">{{DATE}}</span> when selected next day at checkout.';
+            var countdown_text = '<?= $block->returnCountdownText(); ?>';
+            (async () => {
+                // grab delivery data
+                var data = await getCountdownDeliveryTimes();
+
+                // format our display
+                var startStr = countdown_text.replace(tokenTimer, replaceTimer);
+                var finalStr = startStr.replace(tokenDate, data.delivery_date);
+
+                // set display
+                div.innerHTML = ('' + finalStr + '');
+
+                CountDownTimer('dynamicCountdown', data.cutoff, data.now);
+            })();
+        }
+
+        // trigger countdown display
+        TriggerCountdownTimer();
+    </script>
+<?php } ?>

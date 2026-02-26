@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <remove src="https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css"/>
+    </head>
+    <body>  
+        <referenceContainer name="product.info">
+            <block
+                class="Alma\MonthlyPayments\Block\Catalog\Product\View"
+                name="catalog.product.view.before.addtocart.alma.widget"
+                template="Alma_MonthlyPayments::catalog/product/view.phtml"
+            />
+        </referenceContainer>
+
+        <referenceContainer name="product.info.main">
+            <block
+            class="Alma\MonthlyPayments\Block\Catalog\Product\Insurance"
+            name="catalog.product.view.insurance"
+            as="alma_insurance_product"
+            template="Alma_MonthlyPayments::catalog/product/insurance.phtml"
+            before="product.info"
+            />
+        </referenceContainer>
+    </body>
+</page>

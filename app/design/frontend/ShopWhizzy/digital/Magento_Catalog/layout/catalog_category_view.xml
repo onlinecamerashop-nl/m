@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+		<referenceContainer name="category.view.container">
+            <container name="category.view.container.wrapper" htmlTag="div" htmlClass="lg:flex flex-col lg:flex-row flex-wrap gap-6 lg:gap-12 w-full items-start" before="-">
+            	<container name="category.view.container.child.l" htmlTag="div" htmlClass="flex-1" before="-"></container>
+            	<container name="category.view.container.child.r" htmlTag="div" htmlClass="flex-1" after="-"></container>
+			</container>
+        </referenceContainer>
+
+		<referenceBlock name="category.products.list">
+            <arguments>
+                <argument name="hide_rating_summary" xsi:type="boolean">false</argument>
+            </arguments>
+        </referenceBlock>
+
+		<move element="category.image" destination="category.view.container.child.r" />
+		<move element="page.main.title" destination="category.view.container.child.l" before="-"/>
+		<move element="category.description" destination="category.view.container.child.l" after="page.main.title"/>
+
+		<referenceContainer name="sidebar.main">
+			<block class="Magento\Cms\Block\Block" name="sidebar_additional_block">
+				<arguments>
+					<argument name="block_id" xsi:type="string">sidebar_additional_block</argument>
+				</arguments>
+			</block>
+		</referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,144 @@
+<?php
+/**
+ * @var $block \Mirasvit\LayeredNavigation\Block\Renderer\LabelRenderer
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+$attributeCode = $block->getAttributeCode();
+$cacheKey = rand(100000, 1000000);
+$filterAccessor = $attributeCode . 'A' . $cacheKey . 'A';
+$filter = $block->getFilter();
+
+$isMultiselect = (int)$block->isMultiselectEnabled();
+$useAlphabeticalIndex = strpos(get_class($filter), 'AttributeFilter') !== false && $filter->isUseAlphabeticalIndex();
+
+$checkedItemsCount = 0;
+
+$letter = '';
+?>
+
+<div data-attribute-code="<?= $block->escapeHtmlAttr($attributeCode) ?>" data-is-multiselect="<?= $block->escapeHtmlAttr($isMultiselect) ?>" data-mst-nav-filter="<?= $filterAccessor ?>" data-mst-nav-cache-key="<?= $cacheKey ?>" data-mst-attribute="<?= $attributeCode ?>" class="mst-nav__label" x-data="initLabelRenderer()">
+    <?= $block->getSearchBoxElement($filterAccessor) ?>
+    <div
+        data-holder="alphabetical"
+        x-data="initAlphabeticalIndex(<?= (int)($useAlphabeticalIndex && $filter->isAlphabeticalIndexAllowedByLimit()) ?>, <?= $filter->getAlphabeticalLimit() ?>)"
+        x-init="init()"
+    ></div>
+
+    <ol class="items" role="list" aria-label="<?= $escaper->escapeHtmlAttr(__('Filter options')) ?>">
+        <?php foreach ($block->getFilterItems() as $key => $filterItem): ?>
+            <?php
+            $label = $filterItem->getData('label');
+            $numberOfResults = $filterItem->getData('count');
+
+            $isItemChecked = $block->isFilterItemChecked($filterItem, true);
+
+            $imageUrl = $block->getImageUrl($filterItem);
+            $isFullWidthImage = $block->isFullWidthImage($filterItem);
+
+            if ($isItemChecked) {
+                $checkedItemsCount++;
+            }
+
+            $linkMode = $block->getFilterItemDisplayMode($attributeCode);
+            ?>
+
+            <?php if (
+            $useAlphabeticalIndex
+            && $filter->isSortByLabel()
+            && $letter !== $block->getFirstLetter($label)
+            ):
+                $letter = $block->getFirstLetter($label);
+                ?>
+            <li class="mst-nav__letter mst-nav__label-item py-1 leading-6"
+                data-letter="<?= $letter ?>"
+                data-element ="filter"
+                role="listitem"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Letter %1', $letter)) ?>"
+                tabindex="0"
+            >
+                    <b><?= $letter ?></b>
+                </li>
+            <?php endif ?>
+
+            <li data-element ="filter"
+                data-hidden="false"
+                data-search-hidden="false"
+                data-letter-hidden="false"
+                class="item mst-nav__label-item py-1 leading-6<?= $isItemChecked ? ' _checked' : '' ?><?= $block->isHighlightEnabled() && $isItemChecked ? ' _highlight' : '' ?>"
+                data-value="<?= $filterItem->getValueString() ?>"
+                role="listitem"
+                @click="handleClick"
+                tabindex="0"
+                <?= $useAlphabeticalIndex ? 'data-letter="' .  $block->getFirstLetter($label) . '"' : '' ?>
+            >
+                <?php if ($numberOfResults >= 0): ?>
+                    <?php
+                    $url = $isItemChecked ? $filterItem->getRemoveUrl() : $filterItem->getUrl();
+                    $id = $block->getItemId($filterItem);
+                    ?>
+                    <a href="<?= $escaper->escapeUrl($url) ?>"
+                       rel="<?= $block->getRelAttributeValue() ?>"
+                       aria-label="<?= $escaper->escapeHtmlAttr($isItemChecked ? __('Remove filter: %1', strip_tags($label)) : __('Filter by %1', strip_tags($label))) ?>"
+                       class="flex items-center"
+                       role="checkbox"
+                       aria-checked="<?= $isItemChecked ? 'true' : 'false' ?>"
+                       tabindex="-1"
+                    >
+                        <?php if ($imageUrl): ?>
+                            <div class="swatch-option image cursor-pointer hover:cursor-pointer w-6 h-6" style="background: url(<?= $imageUrl ?>) no-repeat center;  background-size: auto 100%;"></div>
+                        <?php endif ?>
+
+                        <input id="<?= $id ?>"
+                               type="checkbox"
+                               class="
+                               <?php if ($linkMode == 'link' || $imageUrl) {
+                                   echo 'hidden';
+                               } elseif ($linkMode == 'checkbox' || $linkMode == 'circle') {
+                                   echo 'checked:bg-none checked:bg-inherit checked:border checked:border-gray-300 checked:hover:border-gray-300 checked:hover:bg-inherit checked:focus:border-gray-300 checked:focus:bg-inherit '
+                                       . ' relative appearance-none bg-container-lighter w-6 h-6 min-w-6 min-h-6 inline-block border border-gray-300 cursor-pointer '
+                                       . ' checked:before:absolute checked:before:inline-block checked:before:w-3.5 checked:before:h-3.5 before:m-auto before:top-0 before:bottom-0 before:right-0 before:left-0 before:bg-primary ';
+
+                                   if ($linkMode == 'checkbox') {
+                                       echo ' rounded before:rounded ';
+                                   }
+
+                                   if ($linkMode == 'circle') {
+                                       echo ' rounded-full before:rounded-full ';
+                                   }
+                               }
+                               ?>"
+                               <?= $isItemChecked ? 'checked' : '' ?> />
+
+                        <label 
+                            for="<?= $id ?>" 
+                            class="ml-2 flex justify-between items-center grow cursor-pointer hover:cursor-pointer overflow-hidden"
+                            title="<?= strip_tags($label)?>"
+                        >
+                            <span class="mst-nav__label-item__label pr-4 overflow-hidden text-ellipsis"><?= $label ?></span>
+                            <?php if ($block->getCountElement($filterItem)): ?>
+                                <span
+                                    class="count text-primary cursor-pointer hover:cursor-pointer text-xs text-gray-400">(<?= $filterItem->getData('count') ?>)</span>
+                            <?php endif; ?>
+                        </label>
+                    </a>
+                <?php else: ?>
+                    <span class="mst-nav__label-item__label pr-4"><?= $label ?></span>
+                    <?php if ($block->getCountElement($filterItem)): ?>
+                        <span class="count text-primary text-xs text-gray-400">(<?= $filterItem->getData('count') ?>)</span>
+                    <?php endif; ?>
+                <?php endif ?>
+            </li>
+        <?php endforeach ?>
+
+        <?= $block->getSizeLimiterElement($filterAccessor) ?>
+    </ol>
+
+    <div class="hidden mst-clear-options-link" data-checked-count="<?= $checkedItemsCount ?>">
+        <div class="mst-nav__checked-counter__wrapper font-normal flex items-center mx-2">
+            <div class="mst-nav__checked-counter rounded px-2 bg-gray-200 mr-1"><?= $checkedItemsCount ?></div>
+            <a class="hover:underline text-2xl opacity-50" rel="<?= $block->escapeHtmlAttr($block->getRelAttributeValue()) ?>"
+                href="<?= $block->getAttributeClearUrl($attributeCode) ?>" data-element = filter aria-label="<?= $block->escapeHtmlAttr(__('Clear all %1 filters', $block->getFilter()->getName())) ?>" aria-label="Clear filter">&#10005;</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+.product-item {
+    .price-box {
+        @apply text-left relative flex gap-2 items-center;
+
+        .price-container {
+            @apply block;
+
+            .price {
+                @apply text-base font-normal;
+            }
+
+            .price-label {
+                @apply hidden;
+            }
+        }
+
+        .special-price .price-container .price-label {
+            @apply hidden;
+        }
+
+        .old-price .price-container {
+            @apply text-gray-500;
+
+            .price {
+                @apply font-normal text-base line-through;
+            }
+        }
+
+        .minimal-price .price-label {
+            @apply absolute -top-3 w-full left-0 text-xs text-gray-500 whitespace-nowrap;
+        }
+
+        .price-from .price:after {
+            content: '\2194';
+            @apply ml-2 text-xs text-gray-500;
+        }
+    }
+
+    &.price-green {
+        .price-box {
+            .price-container {
+                .price {
+                    @apply text-green-800 font-semibold;
+                }
+            }
+
+            .old-price .price-container {
+                .price {
+                    @apply font-normal text-sm line-through text-gray-500;
+                }
+            }
+        }
+    }
+}

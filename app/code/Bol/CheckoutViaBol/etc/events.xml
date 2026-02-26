@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <event name="admin_system_config_save">
+        <observer name="cvb_validate_merchant_config" instance="Bol\CheckoutViaBol\Observer\ValidateMerchantConfigObserver"/>
+    </event>
+    <event name="sales_order_shipment_save_after">
+        <observer name="cvb_send_order_shipped" instance="Bol\CheckoutViaBol\Observer\SendOrderShippedEvent"/>
+    </event>
+    <event name="payment_method_is_active">
+        <observer name="is_cvb_available" instance="Bol\CheckoutViaBol\Observer\IsCvbAvailableObserver"/>
+    </event>
+    <event name="sales_model_service_quote_submit_success">
+        <observer name="register_cvb_order" instance="Bol\CheckoutViaBol\Observer\RegisterCvbOrderObserver"/>
+    </event>
+
+    <event name="bol_token_obtained">
+        <observer name="refresh_cvb_resources" instance="Bol\CheckoutViaBol\Observer\RefreshCvbResourcesObserver"/>
+    </event>
+
+</config>
+

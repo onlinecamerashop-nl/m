@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <event name="shortcut_buttons_container">
+        <observer name="add_cvb_button_to_minicart" instance="Bol\CheckoutViaBol\Observer\AddCheckoutViaBolToMinicart"/>
+    </event>
+
+</config>

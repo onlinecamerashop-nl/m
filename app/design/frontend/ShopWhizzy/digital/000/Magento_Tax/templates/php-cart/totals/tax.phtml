@@ -1,0 +1,58 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+/**
+ * The AlpineJS scope of this file is the method `initCartTotals()` in Magento_Checkout::php-cart/totals.phtml
+ */
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+?>
+<template x-if="segment.code === 'tax' && (segment.value > 0 || checkoutConfig.isZeroTaxDisplayed)">
+    <div>
+        <template x-if="!(segment.value > 0 && checkoutConfig.isFullTaxSummaryDisplayed)">
+            <div
+                class="flex pb-2 my-2 border-b text-sm lg:text-base font-medium md:grid md:grid-cols-2 md:w-full border-whizzy-separator">
+                <div class="w-7/12 text-left md:w-auto" x-html="segment.title"></div>
+                <div class="w-5/12 text-right md:w-auto" x-text="hyva.formatPrice(segment.value)"></div>
+            </div>
+        </template>
+
+        <template x-if="segment.value > 0 && checkoutConfig.isFullTaxSummaryDisplayed">
+            <div class="block pb-1.5 border-b text-sm lg:text-base font-medium w-full border-whizzy-separator cursor-pointer"
+                @click="taxSummaryIsOpen = !taxSummaryIsOpen">
+                <div class="inline-flex justify-between w-full">
+                    <span class="w-7/12 text-left md:w-auto items-center" x-html="segment.title"></span>
+                    <span class="w-full lg:w-5/12 text-right justify-end items-center gap-2 md:w-auto flex">
+                        <span x-text="hyva.formatPrice(segment.value)"></span>
+
+                        <span :class="{ 'rotate-180' : taxSummaryIsOpen}" class="block transform rotate-180">
+                            <?= $themeIcons->renderHtml('arrow-down', '', 18, 18) ?>
+                        </span>
+
+                    </span>
+                </div>
+                <div x-show="taxSummaryIsOpen" class="lg:col-span-2 border-t border-whizzy-separator mt-1">
+                    <template x-for="(taxItem, index) in segment.extension_attributes.tax_grandtotal_details"
+                        :key="index">
+                        <div
+                            class="flex mt-1 py-1.5 border-b last:border-b-0 text-xs font-medium md:grid md:grid-cols-2 md:w-full border-whizzy-separator">
+                            <div class="w-7/12 text-left md:w-auto">
+                                <template x-for="(taxRate, index) in taxItem.rates">
+                                    <div x-html="`${taxRate.title} (${taxRate.percent}%)`"></div>
+                                </template>
+                            </div>
+                            <div class="w-5/12 text-right md:w-auto" x-text="hyva.formatPrice(taxItem.amount)"></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+
+</template>

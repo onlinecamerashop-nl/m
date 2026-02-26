@@ -1,0 +1,26 @@
+<?php
+
+use Bol\CheckoutViaBol\Block\Checkout\Link;
+use Magento\Framework\Escaper;
+
+/**
+ * @var Link $block
+ * @var Escaper $escaper
+ */
+?>
+<?php if ($block->isMethodAllowed()): ?>
+    <div class="cvb-link">
+        <cvb-checkout-button
+            type="cart"
+            font-url="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl("Bol_CheckoutViaBol::fonts/Graphik-Regular.ttf")) ?>"
+            label-url="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl("Bol_CheckoutViaBol::images/button_checkout_via_bol.svg")) ?>"
+            info="<?= $block->getButtonDescription() ?>"
+            label="<?= $block->getButtonLabel() ?>"
+            data-mage-init='{
+                "Bol_CheckoutViaBol/js/redirect-to-session":{
+                    "createSessionUrl":"/cvb/session/create"
+                }
+            }'
+        />
+    </div>
+<?php endif ?>

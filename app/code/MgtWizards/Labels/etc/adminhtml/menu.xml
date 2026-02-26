@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="MgtWizards_Labels::labels" title="Labels" translate="title" module="MgtWizards_Labels" sortOrder="100" parent="mgtwizards_base::core" resource="MgtWizards_Labels::labels"/>
+        <add id="MgtWizards_Labels::config" title="Items" translate="title" module="MgtWizards_Labels" sortOrder="10" parent="MgtWizards_Labels::labels" action="mgtwizards_labels/index/index" resource="MgtWizards_Labels::labels"/>
+    </menu>
+</config>

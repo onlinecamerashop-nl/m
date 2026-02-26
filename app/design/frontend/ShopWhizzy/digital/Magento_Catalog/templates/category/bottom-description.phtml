@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+
+/**
+ * Category view template
+ *
+ * @var $block \Magento\Catalog\Block\Category\View
+ */
+?>
+<?php
+$isFirstpage = true;
+if ($this->getRequest()->getParam('p'))
+{
+    $isFirstpage = false;
+}
+?>
+<?php if ($isFirstpage): ?>
+    <?php if ($_description = $block->getCurrentCategory()->getDescriptionBottom()): ?>
+        <div class="container">
+            <div class="category-description category-description-bottom">
+                <?= $_description ?>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>

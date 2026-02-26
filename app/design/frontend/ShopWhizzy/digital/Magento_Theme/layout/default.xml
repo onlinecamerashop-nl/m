@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<page
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd"
+>
+    <body>
+        <referenceBlock name="header-content">
+            <!-- Choose Header layout -->
+			<action method="setTemplate">
+				<argument name="template" xsi:type="helper" helper="ShopWhizzy\DigitalTheme\Helper\UpdaterTemplate::setHeaderLayout"/>
+			</action>
+
+            <block name="header-usps" template="Magento_Theme::html/header/usps.phtml"/>
+            <block name="top-links" template="Magento_Theme::html/header/menu/top-links.phtml"/>
+            <!--block name="header-notification" template="Magento_Theme::html/header/notification.phtml"/-->
+        </referenceBlock>
+
+        <referenceBlock name="footer-content">
+            <!-- Choose Footer layout -->
+			<action method="setTemplate">
+				<argument name="template" xsi:type="helper" helper="ShopWhizzy\DigitalTheme\Helper\UpdaterTemplate::setFooterLayout"/>
+			</action>
+            
+            <block name="store-switcher" template="Magento_Store::switch/stores.phtml"/>
+            <block name="store-language-switcher" template="Magento_Store::switch/languages.phtml"/>
+        </referenceBlock>
+
+        <referenceBlock name="top-links">
+            <arguments>
+                <argument name="open_top_level_menu_on_hover" xsi:type="boolean">true</argument> <!-- Also open on hover (true/false)-->
+                <argument name="show_top_level_all_link" xsi:type="boolean">false</argument> <!-- Show view all link for top level (true/false) -->
+                <argument name="top_menu_cta_item" xsi:type="string" translate="true">Sale</argument> <!-- Top Menu Item to Highlight -->
+            </arguments>
+        </referenceBlock>
+
+        <move element="topmenu_mobile" destination="header-content" after="-"/>
+        <move element="topmenu_desktop" destination="header-content" after="-"/>
+
+        <referenceBlock name="topmenu_desktop">
+            <arguments>
+                <argument name="open_top_level_menu_on_hover" xsi:type="boolean">true</argument> <!-- Also open on hover (true/false)-->
+                <argument name="show_top_level_all_link" xsi:type="boolean">false</argument> <!-- Show view all link for top level (true/false) -->
+                <argument name="top_menu_cta_item" xsi:type="string" translate="true">Sale</argument> <!-- Top Menu Item to Highlight -->
+                <argument name="max_level" xsi:type="number">4</argument> <!-- Max Menu depth to show -->
+            </arguments>
+            <action method="setTemplate">
+				<argument name="template" xsi:type="helper" helper="ShopWhizzy\DigitalTheme\Helper\UpdaterTemplate::setMenuDesktopVersion"/>
+			</action>
+        </referenceBlock>
+
+        <referenceBlock name="cart-drawer">
+            <arguments>
+                <argument name="show_sku" xsi:type="boolean">true</argument> <!-- Show sku in product options (true/false) -->
+                <argument name="qty_style" xsi:type="string">incrementor</argument> <!-- Qty style (text/input/select/incrementor) -->
+            </arguments>
+        </referenceBlock>
+
+        <referenceContainer name="before.body.end">
+            <block name="scroll.to.top" template="Magento_Theme::scroll-to-top.phtml">
+                <arguments>
+                    <argument name="position" xsi:type="string">end</argument> <!-- Button position (start/center/end) -->
+                    <argument name="visible_offset" xsi:type="number">200</argument> <!-- Offset before showing the button -->
+                    <argument name="visible_only_to_top" xsi:type="boolean">false</argument> <!-- Only show when scrolling to top (true/false) -->
+                    <argument name="hide_on_inactivity" xsi:type="number">5000</argument> <!-- Hide after x ms -->
+                </arguments>
+            </block>
+            <block class="Magento\Framework\View\Element\Template" name="purge.flex.extra.classes" template="Magento_Theme::html/flex-purge.phtml" />
+        </referenceContainer>
+
+        <referenceBlock name="script-alpine-js">
+            <block name="alpine-plugin-ajax-cart" template="Magento_Theme::page/js/plugins/ajax-cart.phtml">
+                <arguments>
+                    <argument name="delay" xsi:type="number">500</argument> <!-- Extra delay in milliseconds added to the loader (true/false) -->
+                    <argument name="show_sku" xsi:type="boolean">true</argument> <!-- Show Sku (true/false) -->
+                    <argument name="display_on_success" xsi:type="string">modal</argument> <!-- What to show on success (false/minicart/modal) -->
+                </arguments>
+            </block>
+        </referenceBlock>
+
+        <referenceBlock name="sale.reorder.sidebar" remove="true"/>
+
+        <referenceBlock name="top.container">
+            <block name="header-usps-menu" template="Magento_Theme::html/header/usps-menu.phtml" before="-"/>
+        </referenceBlock>
+    </body>
+</page>

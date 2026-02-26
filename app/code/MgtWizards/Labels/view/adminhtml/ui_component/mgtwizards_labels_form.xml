@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author MgtWizards Team
+ * @copyright Copyright (c) MgtWizards (https://shopwhizzy.com/)
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">mgtwizards_labels_form.mgtwizards_labels_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Product Label</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <!--<button name="delete" class="Magento\CatalogRule\Block\Adminhtml\Edit\DeleteButton"/>
+            <button name="save_and_apply" class="Magento\CatalogRule\Block\Adminhtml\Edit\SaveAndApplyButton"/>
+            <button name="save_and_continue" class="Magento\CatalogRule\Block\Adminhtml\Edit\SaveAndContinueButton"/>
+            <button name="reset" class="Magento\CatalogRule\Block\Adminhtml\Edit\ResetButton"/>-->
+            <button name="save" class="MgtWizards\Labels\Block\Adminhtml\Edit\SaveButton"/>
+            <button name="back">
+                <url path="*/*/"/>
+                <class>back</class>
+                <label translate="true">Back</label>
+            </button>
+        </buttons>
+        <namespace>mgtwizards_labels_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>mgtwizards_labels_form.mgtwizards_labels_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="mgtwizards_labels_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="mgtwizards_labels/index/save"/>
+        </settings>
+        <dataProvider class="MgtWizards\Labels\Model\DataProvider" name="mgtwizards_labels_form_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>label_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="label_information" sortOrder="10">
+        <settings>
+            <collapsible>true</collapsible>
+            <opened>true</opened>
+            <label translate="true">Label Information</label>
+        </settings>
+        <field name="label_id" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <dataScope>label_id</dataScope>
+            </settings>
+        </field>
+        <field name="name" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Label Name</label>
+                <visible>true</visible>
+                <dataScope>name</dataScope>
+            </settings>
+        </field>
+        <field name="description" formElement="textarea">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Description</label>
+                <visible>true</visible>
+                <dataScope>description</dataScope>
+            </settings>
+        </field>
+        <field name="is_active" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                    <item name="default" xsi:type="number">0</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>boolean</dataType>
+                <label translate="true">Active</label>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+        <field name="sort_order" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Priority</label>
+                <dataScope>sort_order</dataScope>
+            </settings>
+        </field>
+        <field name="minimum_amount" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                    <item name="default" xsi:type="number">0</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>int</dataType>
+                <label translate="true">Minimum amount/percentage to show</label>
+                <dataScope>minimum_amount</dataScope>
+            </settings>
+        </field>
+        <field name="new_product_days" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>number</dataType>
+                <label translate="true">Days to Consider as New</label>
+                <dataScope>new_product_days</dataScope>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                    <rule name="less-than-equals-to" xsi:type="number">365</rule>
+                    <rule name="greater-than-equals-to" xsi:type="number">0</rule>
+                </validation>
+                <notice translate="true">Enter the number of days since product creation to consider it new (e.g., 90). Overrides news_from_date and news_to_date if set.</notice>
+            </settings>
+        </field>
+        <field name="icon_name" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Icon Name</label>
+                <dataScope>icon_name</dataScope>
+                <notice translate="true">Enter the icon name to be used in the frontend (e.g., 'star', 'bolt'). Leave empty for no icon.</notice>
+            </settings>
+        </field>
+    </fieldset>
+    <fieldset name="actions" sortOrder="30">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Actions</label>
+        </settings>
+        <field name="label" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                </item>
+            </argument>
+            <settings>
+                <notice translate="true">Available placeholders: {{regular_price}}  {{final_price}} {{discount_amount}} {{discount_percent}}</notice>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Label</label>
+                <dataScope>label</dataScope>
+            </settings>
+        </field>
+        <field name="css_class" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">CSS class</label>
+                <dataScope>css_class</dataScope>
+            </settings>
+        </field>
+        <colorPicker name="color" class="Magento\Ui\Component\Form\Element\ColorPicker" component="Magento_Ui/js/form/element/color-picker">
+            <settings>
+                <label translate="true">Color</label>
+                <elementTmpl>ui/form/element/color-picker</elementTmpl>
+                <colorFormat>hex</colorFormat>
+                <colorPickerMode>full</colorPickerMode>
+                <dataScope>color</dataScope>
+            </settings>
+        </colorPicker>
+        <field name="label_image" sortOrder="60" formElement="imageUploader">
+            <settings>
+                <elementTmpl>ui/form/element/uploader/image</elementTmpl>
+                <componentType>imageUploader</componentType>
+                <label translate="true">Label Image</label>
+            </settings>
+            <formElements>
+                <imageUploader>
+                    <settings>
+                        <allowedExtensions>jpg jpeg gif png</allowedExtensions>
+                        <uploaderConfig>
+                            <param xsi:type="string" name="url">mgtwizards_labels/image/upload</param>
+                        </uploaderConfig>
+                        <openDialogTitle>Label Image</openDialogTitle>
+                        <previewTmpl>Magento_Catalog/image-preview</previewTmpl>
+                    </settings>
+                </imageUploader>
+            </formElements>
+        </field>
+        <field name="stop_rules_processing" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="fieldGroup" xsi:type="string">bool</item>
+                    <item name="value" xsi:type="string">0</item>
+                    <item name="source" xsi:type="string">mgtwizards_label</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>number</dataType>
+                <label translate="true">Discard subsequent rules</label>
+                <dataScope>stop_rules_processing</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options>
+                            <option name="0" xsi:type="array">
+                                <item name="value" xsi:type="number">1</item>
+                                <item name="label" xsi:type="string" translate="true">Yes</item>
+                            </option>
+                            <option name="1" xsi:type="array">
+                                <item name="value" xsi:type="number">0</item>
+                                <item name="label" xsi:type="string" translate="true">No</item>
+                            </option>
+                        </options>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+    </fieldset>
+    <htmlContent name="block_mgtwizards_labels_edit_tab_conditions" sortOrder="20">
+        <argument name="data" xsi:type="array">
+            <item name="wrapper" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Conditions</item>
+                <item name="collapsible" xsi:type="boolean">true</item>
+                <item name="opened" xsi:type="boolean">false</item>
+            </item>
+        </argument>
+        <settings>
+            <wrapper>
+                <canShow>true</canShow>
+                <componentType>fieldset</componentType>
+            </wrapper>
+        </settings>
+        <block class="MgtWizards\Labels\Block\Adminhtml\Edit\Tab\Conditions" name="mgtwizards_labels_edit_tab"/>
+    </htmlContent>
+</form>

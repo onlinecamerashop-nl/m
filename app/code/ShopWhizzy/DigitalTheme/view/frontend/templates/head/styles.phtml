@@ -1,0 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$developer_css = $whizzyHelper->getConfigValue('developer/css');
+
+?>
+<?php if ($developer_css): ?>
+    <style>
+        <?= $developer_css ?>
+    </style>
+<?php endif; ?>

@@ -1,0 +1,22 @@
+{
+    "bol_cvb_order": {
+        "column": {
+            "entity_id": true,
+            "order_id": true,
+            "cvb_order_reference": true,
+            "cvb_session_id": true,
+            "created_at": true,
+            "shipment_event_status": true,
+            "shipment_event_tries": true,
+            "try_shipment_event_again_at": true,
+            "is_fill_in_session": true
+        },
+        "index": {
+            "BOL_CVB_ORDER_CVB_ORDER_REFERENCE": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "BOL_CVB_ORDER_ORDER_ID_SALES_ORDER_ENTITY_ID": true
+        }
+    }
+}

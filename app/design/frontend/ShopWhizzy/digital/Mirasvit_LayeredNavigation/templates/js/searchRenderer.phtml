@@ -1,0 +1,204 @@
+<script>
+    function initSearchRenderer() {
+        const searchFilter = document.querySelector('#mst-nav__search')
+            .closest('.filter-option');
+
+        searchFilter.classList.add('relative');
+
+        let searchTitle = searchFilter.querySelector('.filter-options-title');
+
+        let isInHorizontalNav = false;
+
+        if (document.querySelector('#mst-nav__search').closest('.mst-nav__horizontal-bar')) {
+            isInHorizontalNav = true;
+        }
+
+        if (!isInHorizontalNav) {
+            searchTitle.parentNode.removeChild(searchTitle);
+        }
+
+        return {
+            suggest: function (suggestionContainer, value) {
+                suggestionContainer.innerHTML = '';
+
+                if (!value) {
+                    suggestionContainer.style.display = 'none';
+                    return;
+                }
+
+                value = value.toLowerCase();
+
+                let filters = document.querySelector('.sidebar-main').querySelectorAll('.filter-option');
+
+                filters.forEach(function (item, idx) {
+                    if (idx === 0) {
+                        return;
+                    }
+
+                    let filter = item.cloneNode(true);
+
+                    if (filter.querySelectorAll('.filter-options-content').length) {
+                        let opened = filter.querySelector('.filter-options-content');
+                        opened.parentNode.removeChild(opened);
+                    }
+
+                    filter.setAttribute('x-data', "{open: true}");
+                    filter.classList.remove('my-4');
+                    let expander = filter.querySelector('.filter-options-title span:last-child');
+                    expander.parentNode.removeChild(expander);
+
+                    let templateContent = filter.querySelector('template').content;
+
+                    filter.appendChild(templateContent);
+                    filter.removeChild(filter.querySelector('template'));
+
+                    // remove search filter
+                    if (filter.querySelectorAll('[data-element="search"]').length) {
+                        let filterSearch = filter.querySelector('[data-element="search"]');
+                        filterSearch.parentNode.removeChild(filterSearch);
+                    }
+
+                    // remove alphabetical index
+                    if (filter.querySelectorAll('[data-holder="alphabetical"]').length) {
+                        let alphabetical = filter.querySelector('[data-holder="alphabetical"]');
+                        alphabetical.parentNode.removeChild(alphabetical);
+                    }
+
+                    if (filter.querySelectorAll('.mst-nav__sizeLimiter').length) {
+                        let sizeLimiter = filter.querySelector('.mst-nav__sizeLimiter');
+                        let parent = sizeLimiter.parentNode;
+                        parent.removeChild(sizeLimiter);
+                        if (parent.querySelector('style')) {
+                            parent.removeChild(parent.querySelector('style'));
+                        }
+                    }
+
+                    let optionsCount = filter.querySelectorAll('[data-element=filter][data-value]').length;
+                    let clonedFilter = filter.cloneNode(true);
+
+                    // check options match
+                    filter.querySelectorAll('[data-element=filter]').forEach(function (option, i) {
+                        if (!option.getAttribute('data-value')) {
+                            option.parentNode.removeChild(option);
+                            return;
+                        }
+
+                        option.classList.remove('_parent', 'ml-7');
+
+                        if (!option.classList.contains('swatch-option')) {
+                            option.classList.add('w-full');
+                        }
+
+                        option.parentNode.classList.remove('pl-6');
+
+                        const label = option.tagName === 'A'
+                            ? option.getAttribute('aria-label')
+                            : option.querySelector('a').getAttribute('aria-label');
+
+                        if (label.toLowerCase().indexOf(value.toLowerCase()) < 0 || option.querySelectorAll('input:disabled').length) {
+                            option.parentNode.removeChild(option);
+                            optionsCount--;
+                        }
+                    });
+
+                    // check filter label if no option match
+                    if (!optionsCount) {
+                        let title = filter.querySelector('span.title').innerText;
+                        title = title.trim();
+
+                        if (title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+                            filter = clonedFilter;
+                            optionsCount = 1;
+                        }
+                    }
+
+                    // highlight match
+                    filter.querySelectorAll('span.title, span.mst-nav__label-item__label').forEach(function (titleNode) {
+                        let start = titleNode.innerText.toLowerCase().indexOf(value.toLowerCase());
+
+                        if (start >= 0) {
+                            let match = titleNode.innerText.substr(start, value.length);
+                            let regexp = new RegExp(match, 'g');
+
+                            if (titleNode.closest('.items')) {
+                                titleNode.closest('.items').classList.remove('hidden');
+                            }
+
+                            titleNode.innerHTML = titleNode.innerText.replace(regexp, '<span class="mst-nav__suggest-match bg-secondary">' + match + '</span>');
+                        }
+                    })
+
+                    if (optionsCount) {
+                        suggestionContainer.appendChild(filter);
+                    }
+                });
+
+                if (suggestionContainer.children.length) {
+                    suggestionContainer.style.display = 'block';
+                } else {
+                    suggestionContainer.style.display = 'none';
+                }
+
+                document.addEventListener('click', function(e) {
+                    suggestionContainer.style.display = 'none';
+                });
+            },
+
+            prepareSearch: function (e, url, origQuery, param, value) {
+                if (e.keyCode === 13) {
+                    document.querySelector('#mst-nav__search-apply').click();
+                }
+
+                let query = '';
+
+                if (!origQuery) {
+                    query = '?' + param + '=' + value;
+                } else if (origQuery.indexOf(param) >= 0) {
+                    origQuery = origQuery.replace('?', '');
+
+                    let queryArray = origQuery.split('&');
+
+                    queryArray.forEach(function (item, key) {
+                        if (item.indexOf(param) >= 0) {
+                            let itemArray   = item.split('=');
+                            itemArray[1]    += ',' + value;
+                            item            = itemArray.join('=');
+                            queryArray[key] = item;
+                        }
+                    });
+
+                    query = '?' + queryArray.join('&');
+                } else {
+                    query = origQuery + '&' + param + '=' + value;
+                }
+
+                document.querySelector('#mst-nav__search-apply').setAttribute('href', url + query);
+            },
+
+            initSearch: function () {
+                let param     = document.querySelector('#mst-nav__search-filter').name;
+                let url       = location.href;
+                let origQuery = location.search;
+
+                let suggestionContainer = document.querySelector('#mst-nav__search-suggestion');
+
+                url = url.replace(origQuery, '');
+
+                ['keyup', 'change'].forEach(function(event) {
+                    document.querySelector('#mst-nav__search-filter').addEventListener(event, function (e) {
+                        let value = e.target.value;
+
+                        if (this.config.isSearchFilterOptions()) {
+                            this.suggest(suggestionContainer, value);
+                        }
+
+                        if (this.config.isSearchFilterFulltext()) {
+                            this.prepareSearch(e, url, origQuery, param, value);
+                        }
+                    }.bind(this));
+                }.bind(this));
+                
+            },
+        }
+    }
+</script>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+	<default>
+		<countdowntimer>
+			<wiz_shipping_settings>
+				<delivery_days>3</delivery_days>
+				<processing_days>3</processing_days>
+				<available_days>1,2,3,4,5</available_days>
+				<countdown_time><![CDATA[Order in {{TIMERS}} to get this item on <span class="font-bold underline">{{DATE}}</span>.]]></countdown_time>
+			</wiz_shipping_settings>
+		</countdowntimer>
+	</default>
+</config>

@@ -1,0 +1,22 @@
+{
+    "name": "mgtwizards/module-amasty",
+    "description": "MgtWizards_Amasty",
+    "type": "magento2-module",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "MgtWizards",
+            "email": "info@mgt-wizards.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MgtWizards\\Amasty\\": ""
+        }
+    }
+}

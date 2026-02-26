@@ -1,0 +1,69 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Theme\Block\Html\Title;
+
+/** @var Escaper $escaper */
+/** @var Title $block */
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$request = $objectManager->get('Magento\Framework\App\Action\Context')->getRequest();
+
+$textSizeCssClass = $block->getCssClass() ? ' ' . $block->getCssClass() : ' text-2xl lg:text-4xl';
+$titleContainerClasses = $block->getData('maybe_purged_tailwind_section_classes')
+    ?? 'container flex flex-col md:flex-row mb-3 lg:mb-6 font-semibold lg:pt-8 text-start h-fit';
+$titleHtml = '';
+
+$isAccount = false;
+$account_areas = [
+    'customer',
+    'sales',
+    'helpdesk',
+    'gowiz',
+    'newsletter',
+    'vault',
+    'stripe_payments'
+];
+if (in_array($request->getRouteName(), $account_areas))
+{
+    $isAccount = true;
+}
+
+if (trim((string)$block->getPageHeading()))
+{
+    $titleHtml = '<span class="base" data-ui-id="page-title-wrapper" '
+        . $block->getAddBaseAttribute()
+        . '>'
+        . $escaper->escapeHtml($block->getPageHeading())
+        . '</span>';
+}
+
+if ($request->getFullActionName() == 'catalog_category_view')
+{
+    $titleContainerClasses = $block->getData('maybe_purged_tailwind_section_classes')
+    ?? 'container flex flex-col md:flex-row my-3 lg:my-6 font-semibold text-start h-fit';
+}
+
+if ($request->getFullActionName() == 'faq_question_view')
+{
+    $titleContainerClasses = $block->getData('maybe_purged_tailwind_section_classes')
+    ?? 'container flex flex-col md:flex-row mb-3 lg:mb-6 font-semibold text-start h-fit px-0';
+}
+?>
+<?php if ($titleHtml): ?>
+    <div class="<?= $escaper->escapeHtmlAttr($titleContainerClasses . $textSizeCssClass) ?>">
+        <h1 class="text-whizzy-body page-title text-category-title" <?php if ($block->getId()): ?>
+                id="<?= $escaper->escapeHtmlAttr($block->getId()) ?>" <?php endif; ?>>
+            <?= /* @noEscape */ $titleHtml ?>
+        </h1>
+        <?= $block->getChildHtml() ?>
+    </div>
+<?php endif; ?>

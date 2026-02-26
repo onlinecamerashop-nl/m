@@ -1,0 +1,23 @@
+.order-items > div:nth-child(even) {
+  @apply bg-white;
+}
+
+.order-links {
+  @apply block items-center bg-white p-4 mb-4 lg:mb-8 rounded-lg shadow-whizzy-base text-whizzy-graylighter font-medium;
+}
+
+.order-links li {
+  @apply inline-block py-2 px-4 cursor-pointer whitespace-nowrap text-whizzy-graylighter font-medium;
+}
+
+.order-links li.current {
+  @apply flex-grow text-whizzy-body font-medium;
+}
+
+.order-links li a {
+  @apply hover:text-whizzy-body font-medium;
+}
+
+.order-date {
+  @apply text-sm;
+}

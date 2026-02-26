@@ -1,0 +1,46 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\StoreConfig;
+use Magento\Framework\Escaper;
+
+/** @var ViewModelRegistry $viewModels */
+/** @var Escaper $escaper */
+
+$storeConfig = $viewModels->require(StoreConfig::class);
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+$storePhoneNumber = $storeConfig->getStoreConfig('general/store_information/phone') ?? '';
+$storeEmail = $storeConfig->getStoreConfig('trans_email/ident_general/email') ?? '';
+
+// Whizzy Helper
+$whizzyHelper = $this->helper('ShopWhizzy\DigitalTheme\Helper\Data');
+$map_iframe = $whizzyHelper->getConfigValue('contact_us/map_iframe');
+?>
+<div class="contact-details">
+    <?php if ($map_iframe): ?>
+        <div class="mb-12">
+            <div class="flex flex-col gap-3 font-bold mb-4">
+                <div class="text-sm uppercase text-whizzy-graylighter">
+                    <?= $escaper->escapeHtml(__('Map')) ?>
+                </div>
+                <div class="text-3xl lg:text-4xl text-whizzy-body">
+                    <?= $escaper->escapeHtml(__('Our Location')) ?>
+                </div>
+            </div>
+            <div class="rounded-lg overflow-hidden shadow-lg">
+                <?= $map_iframe ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?= $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('contact_us_left_section')->toHtml(); ?>
+</div>

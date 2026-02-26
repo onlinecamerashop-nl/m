@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<body>
+		<referenceContainer name="category.view.container.child.l">
+			<block class="ShopWhizzy\DigitalTheme\Block\SubCategories" name="subcategories_top" after="-">
+				<action method="setTemplate">
+					<argument name="template" xsi:type="helper" helper="ShopWhizzy\DigitalTheme\Helper\UpdaterTemplate::setSubCategoriesTopLayout"/>
+				</action>
+			</block>
+		</referenceContainer>
+		<referenceContainer name="category.description.bottom.container">
+			<block class="ShopWhizzy\DigitalTheme\Block\SubCategories" name="subcategories_bottom" after="-">
+				<action method="setTemplate">
+					<argument name="template" xsi:type="helper" helper="ShopWhizzy\DigitalTheme\Helper\UpdaterTemplate::setSubCategoriesBottomLayout"/>
+				</action>
+			</block>
+        </referenceContainer>
+	</body>
+</page>

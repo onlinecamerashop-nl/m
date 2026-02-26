@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author MgtWizards Team
+ * @copyright Copyright (c) 2018 MgtWizards (http://shopwhizzy.com/)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <mgtwizards_shipping_bar>
+            <design>
+                <show_progress_text>1</show_progress_text>
+                <show_progress_graph>1</show_progress_graph>
+                <show_in_catalog>1</show_in_catalog>
+                <show_on_product_pages>1</show_on_product_pages>
+                <show_on_cms_pages>0</show_on_cms_pages>
+                <hide_if_empty>0</hide_if_empty>
+                <use_min_amt>0</use_min_amt>
+            </design>
+        </mgtwizards_shipping_bar>
+    </default>
+</config>

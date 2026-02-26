@@ -1,0 +1,75 @@
+<?php
+/**
+ * @package     Hyva_PlumrocketCookieConsent
+ * @copyright   Copyright (c) 2024 Plumrocket Inc. (https://plumrocket.com)
+ * @license     https://plumrocket.com/license   End-user License Agreement
+ */
+
+/** @var \Plumrocket\CookieConsent\Block\Settings $block */
+/** @var \Hyva\Theme\Model\ViewModelRegistry $viewModels */
+/** @var \Hyva\Theme\ViewModel\Modal $modalViewModel */
+$modalViewModel = $viewModels->require(\Hyva\Theme\ViewModel\Modal::class);
+/** @var \Hyva\PlumrocketCookieConsent\ViewModel\ConsentSettings $consentSettingsViewModel */
+$consentSettingsViewModel = $viewModels->require(\Hyva\PlumrocketCookieConsent\ViewModel\ConsentSettings::class);
+?>
+
+<?php // TODO: remove ?>
+<style>
+    .pr-cookie-setting-bar-overlay,
+    .pr-cookie-setting-bar-container {
+        z-index: 999999999999999;
+    }
+</style>
+
+<script>
+    'use strict';
+    var prCookieSettingBar = {
+        config: <?= $consentSettingsViewModel->prepareJsComponentConfig($block->getJsComponentConfig()); ?>,
+        show: function () { },
+        hide: function () { },
+        syncCategoriesDataWithConsent: function () {
+            this.config.categories = this.config.categories.map(category => {
+                category.is_allowed = prCookieConsentApi.isAllowedCategory(category.key);
+                return category;
+            });
+        },
+        allowAll: function () {
+            prCookieConsentApi.consent.allowAllCategories();
+            this.syncCategoriesDataWithConsent();
+            window.prCookieSettingBar.hide();
+        },
+        declineAll: function () {
+            prCookieConsentApi.consent.declineAll();
+            this.syncCategoriesDataWithConsent();
+            window.prCookieSettingBar.hide();
+        },
+        confirm: function () {
+            var allowedCategories = [...prCookieConsentApi.config.essentialCategoryKeys];
+            this.config.categories.forEach((category) => {
+                if (allowedCategories.includes(category.key) || !category.is_allowed) {
+                    return;
+                }
+
+                allowedCategories.push(category.key);
+            });
+
+            prCookieConsentApi.consent.set(allowedCategories);
+            this.syncCategoriesDataWithConsent();
+            window.prCookieSettingBar.hide();
+        }
+    };
+</script>
+
+<div x-data="{...hyva.modal(), init() {
+            window.prCookieSettingBar.show = this.show.bind(this, 'pr-cookie-setting-bar', event);
+            window.prCookieSettingBar.hide = this.hide.bind(this);
+    }}" x-init="init()">
+    <?=
+    $modalViewModel->createModal()
+        ->withDialogRefName('pr-cookie-setting-bar')
+        ->addOverlayClass('pr-cookie-setting-bar-overlay')
+        ->addContainerClass('pr-cookie-setting-bar-container')
+        ->addDialogClass('pr-cookie-setting-bar', 'rounded-none', 'px-0', 'py-0', 'fixed', 'top-0', 'bottom-0', 'left-0', 'w-[400px]', 'max-w-full')
+        ->withTemplate('Hyva_PlumrocketCookieConsent::settings/modal_content.phtml');
+    ?>
+</div>

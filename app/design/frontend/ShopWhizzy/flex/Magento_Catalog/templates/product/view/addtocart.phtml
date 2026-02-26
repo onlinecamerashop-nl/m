@@ -1,0 +1,35 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+
+<button type="submit" form="product_addtocart_form" title="<?= $escaper->escapeHtmlAttr(__('Add to Cart')) ?>"
+    class="btn btn-primary flex justify-center items-center bg-[#00B900] hover:bg-[#007a00] border-0 transition-all duration-300 text-white text-sm lg:text-base px-4 py-2.5 lg:py-3 rounded-md focus:ring-0 w-full"
+    id="product-addtocart-button" data-addto="cart">
+    <div class="flex flex-row gap-x-3 text-center items-center">
+        <?= $block->getData('is_cart_configure') ?
+            $escaper->escapeHtml(__('Update item')) :
+            $escaper->escapeHtml(__('Add to Cart')) ?>
+        <?= $themeIcons->renderHtml('cart', 'text-white', 20, 20) ?>
+    </div>
+</button>
+<?= $block->getChildHtml('', true) ?>

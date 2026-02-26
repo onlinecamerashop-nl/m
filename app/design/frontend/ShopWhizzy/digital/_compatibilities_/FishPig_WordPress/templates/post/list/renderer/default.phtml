@@ -1,0 +1,70 @@
+<?php
+/**
+ * @category FishPig
+ * @package FishPig_WordPress
+ * @notes This template is used when there post/list.phtml doesn't have a child block called 'renderer'
+ * @notes This happens when post/list.phtml is called in via PHP rather than via the default layout handles
+ */
+// phpcs:ignoreFile -- long lines (todo)
+
+/** @var ViewModelRegistry $viewModels */
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+<?php if ($post = $block->getPost()): ?>
+    <div class="post-list-item bg-white rounded-lg shadow-whizzy-header h-full relative group">
+        <div class="mb-4 lg:mb-6 relative">
+            <?php if (!$post->isViewableForVisitor()): ?>
+                    <?= $block->getPasswordProtectHtml() ?>
+            <?php else: ?>
+                <div class="post-entry h-52 lg:h-[250px] overflow-hidden rounded-t-lg">
+                    <?php if ($image = $post->getImage()): ?>
+                        <?php $imageUrl = $image->getResizer()
+                                ? $image->getResizer()->constrainOnly(true)
+                                    ->keepFrame(false)
+                                    ->keepAspectRatio(true)
+                                    ->resize(600, null)
+                                : $image->getImageUrl(['large', 'medium']) ?>
+                        <a href="<?= $block->escapeUrl($post->getUrl()) ?>" title="<?= $block->escapeHtml($post->getName()) ?>">
+                            <img src="<?= $block->escapeUrl($imageUrl) ?>" class="h-full w-full object-cover hover:scale-110 transition-transform duration-300 cursor-pointer" alt="<?= $block->escapeHtml($post->getName()) ?>"/>
+                        </a>
+                    <?php else: ?>
+                        <a href="<?= $block->escapeUrl($post->getUrl()) ?>" title="<?= $block->escapeHtml($post->getName()) ?>">
+                            <img src="<?= $this->getBaseUrl() . 'media/placeholder-blog.jpg' ?>" class="h-full w-full object-cover hover:scale-110 transition-transform duration-300 cursor-pointer" alt="<?= __('Placeholder Image Atomik') ?>">
+                        </a>
+                    <?php endif; ?>
+                    <div class="post-excerpt"><?= /* @noEscape */ $post->getExcerpt(60) ?></div>
+                </div>
+            <?php endif; ?>
+            <div class="post-meta absolute bottom-4 left-4 lg:left-8">
+                <div class="flex flex-col gap-2 lg:gap-4 text-white">
+                    <?php if ($categoryString = $post->getTermCollectionAsString('category')): ?>
+                        <div class="post-categories post-meta-item">
+                            <div class="inline-flex items-center gap-2 bg-white py-2 px-3 lg:py-3 lg:px-4 rounded-lg transition-all duration-300 text-xs lg:text-base capitalize !no-underline">
+                                <span><?= $themeIcons->renderHtml('tag', '', 22, 22) ?></span> 
+                                <span><?= $block->escapeHtml($categoryString, ['a']) ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($tagString = $post->getTermCollectionAsString('post_tag')): ?>
+                        <div class="post-tags post-meta-item">
+                            <div class="inline-flex items-center gap-2 bg-white py-2 px-3 lg:py-3 lg:px-4 rounded-lg transition-all duration-300 text-xs lg:text-base capitalize !no-underline">
+                                <span><?= $themeIcons->renderHtml('news', '', 22, 22) ?></span>
+                                <span><?= $block->escapeHtml($tagString, ['a']) ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="pb-4 px-4 lg:pb-6 lg:px-6 pt-0 flex flex-col gap-4">
+            <h2>
+                <a href="<?= $block->escapeUrl($post->getUrl()) ?>" title="<?= $block->escapeHtmlAttr($post->getName()) ?>" class="text-heading uppercase font-semibold text-xl lg:text-2xl pb-2">
+                    <?= $block->escapeHtml($post->getName()) ?>
+                </a>
+            </h2>
+            <a href="<?= $block->escapeUrl($post->getUrl()) ?>" class="btn bg-black hover:bg-transparent transition-all duration-300 lg:text-base py-2 px-4 rounded focus:ring-0 cursor-pointer text-white hover:text-black">
+                <?= __('See post') ?>
+            </a>
+        </div>
+    </div>
+<?php endif; ?>

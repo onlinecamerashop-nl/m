@@ -1,0 +1,104 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Magento\Customer\Block\Account\Dashboard\Info;
+use Magento\Framework\Escaper;
+
+/** @var Info $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+?>
+<div class="text-sm lg:text-base">
+    <div class="flex flex-col lg:flex-row justify-between gap-6 mb-6">
+        <div class="w-full lg:1/2">
+            <div
+                class="flex flex-col lg:flex-row gap-x-3 lg:gap-x-4 py-6 px-4 lg:py-8 lg:px-6 bg-white shadow-whizzy-header rounded-lg h-full">
+                <div class="inline-flex gap-x-4 items-start mb-3 lg:mb-0">
+                    <div
+                        class="flex items-center justify-center align-middle shrink-0 w-14 h-14 rounded-full bg-whizzy-primary-lighter text-whizzy-body lg:min-h-max">
+                        <?= $themeIcons->renderHtml('user', '', 24, 24); ?>
+                    </div>
+                    <div class="lg:hidden text-2xl text-heading">
+                        <span><?= $escaper->escapeHtml(__('Contact Information')) ?></span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-y-2 lg:gap-y-4 w-full text-base text-start text-whizzy-body pt-2 lg:pt-0">
+                    <div class="hidden lg:block text-2xl text-heading">
+                        <span><?= $escaper->escapeHtml(__('Contact Information')) ?></span>
+                    </div>
+                    <div class="flex flex-col gap-y-0.5 font-medium text-whizzy-graylighter">
+                        <span>
+                            <?= $escaper->escapeHtml($block->getName()) ?>
+                        </span>
+                        <span>
+                            <?= $escaper->escapeHtml($block->getCustomer()->getEmail()) ?>
+                        </span>
+                    </div>
+                    <?= $block->getChildHtml('customer.account.dashboard.info.extra'); ?>
+                    <div class="flex flex-col gap-y-0.5">
+                        <a class="inline-flex items-center w-full text-sm text-whizzy-body hover:text-whizzy-primary transition-all duration-100"
+                            href="<?= $escaper->escapeUrl($block->getUrl('customer/account/edit')) ?>"
+                            aria-label="<?= $escaper->escapeHtml(__('Edit contact information')) ?>">
+                            <span><?= $escaper->escapeHtml(__('Edit')) ?></span>
+                            <?= $heroicons->arrowRightHtml('ml-2', 16, 16, ['aria-hidden' => 'true']); ?>
+                        </a>
+                        <a class="inline-flex items-center w-full text-sm text-whizzy-body hover:text-whizzy-primary transition-all duration-100"
+                            href="<?= $escaper->escapeUrl($block->getChangePasswordUrl()) ?>">
+                            <?= $escaper->escapeHtml(__('Change Password')) ?>
+                            <?= $heroicons->arrowRightHtml('ml-2', 16, 16, ['aria-hidden' => 'true']); ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php if ($block->isNewsletterEnabled()): ?>
+            <div class="w-full lg:1/2">
+                <div
+                    class="flex flex-col lg:flex-row gap-x-3 lg:gap-x-4 py-6 px-4 lg:py-8 lg:px-6 bg-white shadow-whizzy-header rounded-lg h-full">
+                    <div class="inline-flex gap-x-4 items-start mb-3 lg:mb-0">
+                        <div
+                            class="flex items-center justify-center align-middle shrink-0 w-14 h-14 rounded-full bg-whizzy-primary-lighter text-whizzy-body lg:min-h-max">
+                            <?= $themeIcons->renderHtml('mail-edit-02', '', 26, 26); ?>
+                        </div>
+                        <div class="lg:hidden text-2xl text-heading">
+                            <span><?= $escaper->escapeHtml(__('Newsletters')) ?></span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-y-2 lg:gap-y-4 w-full text-base text-start text-whizzy-body">
+                        <div class="hidden lg:block text-2xl text-heading">
+                            <span><?= $escaper->escapeHtml(__('Newsletters')) ?></span>
+                        </div>
+                        <div class="flex flex-col gap-y-0.5 font-medium text-whizzy-graylighter">
+                            <?php if ($block->getIsSubscribed()): ?>
+                                <?= $escaper->escapeHtml(__('You are subscribed to "General Subscription".')) ?>
+                            <?php else: ?>
+                                <?= $escaper->escapeHtml(__('You aren\'t subscribed to our newsletter.')) ?>
+                            <?php endif; ?>
+                        </div>
+                        <?= $block->getChildHtml('customer.account.dashboard.info.extra'); ?>
+                        <a class="inline-flex items-center w-full text-sm text-whizzy-body hover:text-whizzy-primary transition-all duration-100"
+                            href="<?= $escaper->escapeUrl($block->getUrl('newsletter/manage')) ?>"
+                            aria-label="<?= $escaper->escapeHtml(__('Edit newsletters')) ?>">
+                            <span><?= $escaper->escapeHtml(__('Edit')) ?></span>
+                            <?= $heroicons->arrowRightHtml('ml-2', 16, 16, ['aria-hidden' => 'true']); ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+    <?= $block->getChildHtml('additional_blocks'); ?>
+</div>

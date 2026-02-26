@@ -1,0 +1,190 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\HeroiconsOutline;
+use Hyva\Theme\ViewModel\Store;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Hyva\Theme\ViewModel\ProductListItem;
+use Hyva\Theme\ViewModel\ProductPage;
+use Magento\Catalog\Block\Product\ReviewRendererInterface;
+
+// phpcs:disable Generic.Files.LineLength.TooLong
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+/** @var Store $viewModelStore */
+$viewModelStore = $viewModels->require(Store::class);
+
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $viewModels->require(HeroiconsOutline::class);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+$title = (string)$block->getTitle();
+$items = $block->getItems() ?? [];
+if (is_object($items) && $items instanceof Iterator)
+{
+	$items = iterator_to_array($items);
+}
+if (!$itemCount = count($items))
+{
+	return '';
+}
+
+$productViewModel = $viewModels->require(ProductPage::class);
+$productListItemViewModel = $viewModels->require(ProductListItem::class);
+
+$sliderItemRenderer = $block->getLayout()->getBlock('product_list_item')
+ ?: $block->getChildBlock('slider.item.template')
+ ?: $block->getLayout()->createBlock(Template::class);
+
+// The slider item renderer block is often a shared instance.
+// If a specific item template is set for this slider, the previously set template must be reset later
+// so the item template is only replaced for the one slider it is specified on.
+$sharedItemRendererTemplate = null;
+$isSharedItemRenderer = $sliderItemRenderer !== $block->getChildBlock('slider.item.template');
+
+if ($isSharedItemRenderer && $block->getChildBlock('slider.item.template'))
+{
+	$sharedItemRendererTemplate = $sliderItemRenderer->getTemplate();
+	$sliderSpecificItemTemplate = $block->getChildBlock('slider.item.template')->getTemplate();
+	$sliderItemRenderer->setTemplate($sliderSpecificItemTemplate);
+}
+
+$showNavigation = true;
+$showPagination = false;
+$rdn = rand(10000, 99999);
+
+?>
+<script>
+	'use strict';
+
+	function initSliderComponent<?= $rdn ?>() {
+		return {
+			active: 0,
+			itemCount: 0,
+			getSlider() {
+				return this.$root.querySelector('.slider-<?= $rdn ?> .js_slides');
+			},
+			pageSize: 4,
+			pageFillers: 0,
+			calcPageSize() {
+				const slider = this.getSlider();
+				if (slider) {
+					this.itemCount = slider.querySelectorAll('.js_slide').length;
+					this.pageSize = Math.round(slider.offsetWidth / slider.querySelector('.js_slide').offsetWidth);
+					this.pageFillers = (
+						this.pageSize * Math.ceil(this.itemCount / this.pageSize)
+					) - this.itemCount;
+				}
+			},
+			calcActive() {
+				const slider = this.getSlider();
+				if (slider) {
+					const sliderItems = this.itemCount + this.pageFillers;
+					const calculatedActiveSlide = slider.scrollLeft / (slider.scrollWidth / sliderItems);
+					this.active = Math.round(calculatedActiveSlide / this.pageSize) * this.pageSize;
+				}
+			},
+			scrollPrevious() {
+				this.scrollTo(this.active - this.pageSize);
+			},
+			scrollNext() {
+				this.scrollTo(this.active + this.pageSize);
+			},
+			scrollTo(idx) {
+				const slider = this.getSlider();
+				if (slider) {
+					const slideWidth = slider.scrollWidth / (this.itemCount + this.pageFillers);
+					slider.scrollLeft = Math.floor(slideWidth) * idx;
+					this.active = idx;
+				}
+			}
+		}
+	}
+</script>
+<?php
+$type = 'widget-product-carousel';
+$mode = 'grid';
+$image = 'category_page_grid';
+$templateType = ReviewRendererInterface::SHORT_VIEW;
+$description = false;
+?>
+
+<div class="slider-<?= $rdn ?> h-full <?=
+   $escaper->escapeHtmlAttr($block->getData('maybe_purged_tailwind_section_classes'))
+   ?: '';
+   ?>" x-data="initSliderComponent<?= $rdn ?>()" x-init="calcPageSize();"
+	@resize.window.debounce="calcPageSize(); $nextTick( function() { calcActive() })">
+	<?php if ($items): ?>
+		<div class="relative w-full h-full">
+			<div class="relative flex flex-nowrap w-[calc(100%+24px)] h-full overflow-auto js_slides -mx-3 snap"
+				@scroll.debounce="calcActive">
+				<?php foreach ($items as $item): ?>
+					<div class="flex shrink-0 w-full js_slide px-3 md:w-1/2 lg:w-1/3">
+						<div class="w-full h-full text-left">
+							<?= $productListItemViewModel->getItemHtmlWithRenderer($sliderItemRenderer, $item, $block, $mode, $templateType, $image, $description) ?>
+						</div>
+					</div>
+				<?php endforeach; ?>
+				<div :class="{
+						'js_dummy_slide w-full px-3 md:w-1/2 lg:w-1/3 flex-none py-1' : pageFillers > 0
+						}"></div>
+				<div :class="{
+						'js_dummy_slide w-full px-3 md:w-1/2 lg:w-1/3 flex-none py-1' : pageFillers > 1
+						}"></div>
+				<div :class="{
+						'js_dummy_slide w-full px-3 md:w-1/2 lg:w-1/3 flex-none py-1' : pageFillers > 2
+						}"></div>
+			</div>
+			<div class="w-full">
+				<template x-if="itemCount > pageSize">
+					<div class="flex gap-3 items-center justify-center absolute -top-14 right-0 z-10">
+						<?php if ($showNavigation): ?>
+							<button aria-label="<?= $escaper->escapeHtml(__('Previous')) ?>" tabindex="-1"
+								class="block bg-white w-11 h-11 text-black rounded-lg outline-none focus:outline-none z-20 cursor-pointer shadow-whizzy-header"
+								:class="{ 'opacity-25 pointer-events-none' : active === 0 }" @click="scrollPrevious">
+								<?= $themeIcons->renderHtml('arrow-left', 'text-black hover:text-black mx-auto', 24, 24, ['aria-hidden' => 'true']) ?>
+							</button>
+						<?php endif; ?>
+						<?php if ($showNavigation): ?>
+							<button aria-label="<?= $escaper->escapeHtml(__('Next')) ?>" tabindex="-1"
+								class="block bg-white w-11 h-11 text-black rounded-lg outline-none focus:outline-none z-20 cursor-pointer shadow-whizzy-header"
+								:class="{ 'opacity-25 pointer-events-none' : active >= itemCount-pageSize }"
+								@click="scrollNext">
+								<?= $themeIcons->renderHtml('arrow-right', 'text-black hover:text-black mx-auto', 24, 24, ['aria-hidden' => 'true']) ?>
+							</button>
+						<?php endif; ?>
+					</div>
+					<?php if ($showPagination): ?>
+						<div class="flex flex-wrap w-full md:w-auto justify-center relative mt-2">
+							<?php for ($i = 0; $i < $itemCount; $i++): ?>
+								<span
+									class="transition-all bg-black shrink-0 block w-2 h-2 m-1 bg-black bg-opacity-25 rounded-full shadow cursor-pointer"
+									:class="{'bg-opacity-100 w-5': active === <?= (int)$i ?>,'bg-opacity-25': active !== <?= (int)$i ?>,'hidden': (pageSize !== 1 && !!(<?= (int)$i ?> % pageSize))}"
+									@click="scrollTo(<?= (int)$i ?>)">
+								</span>
+							<?php endfor; ?>
+						</div>
+					<?php endif; ?>
+				</template>
+			</div>
+		</div>
+	<?php endif; ?>
+</div>
+<?php
+if ($sharedItemRendererTemplate)
+{
+	$sliderItemRenderer->setTemplate($sharedItemRendererTemplate);
+}
+?>

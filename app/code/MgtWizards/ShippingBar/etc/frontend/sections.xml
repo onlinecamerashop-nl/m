@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author MgtWizards Team
+ * @copyright Copyright (c) 2016-2017 MgtWizards (http://shopwhizzy.com/)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Customer:etc/sections.xsd">
+    <!-- checkout -->
+    <action name="checkout/cart/add">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/cart/delete">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/cart/updatePost">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/cart/updateItemOptions">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/cart/couponPost">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/cart/estimatePost">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/cart/estimateUpdatePost">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/onepage/saveOrder">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/sidebar/removeItem">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/sidebar/updateItemQty">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="checkout/klarna/index">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="rest/*/V1/carts/*/payment-information">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="rest/*/V1/guest-carts/*/payment-information">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="rest/*/V1/guest-carts/*/selected-payment-method">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="rest/*/V1/carts/*/selected-payment-method">
+        <section name="shipping-bar"/>
+    </action>
+    <!-- sales -->
+    <action name="sales/guest/reorder">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="sales/order/reorder">
+        <section name="shipping-bar"/>
+    </action>
+    <!-- wishlist -->
+    <action name="wishlist/index/cart">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="wishlist/index/fromcart">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="wishlist/index/allcart">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="wishlist/shared/allcart">
+        <section name="shipping-bar"/>
+    </action>
+    <action name="wishlist/shared/cart">
+        <section name="shipping-bar"/>
+    </action>
+    <!-- paypal, braintree etc. -->
+    <action name="*/placeOrder">
+        <section name="shipping-bar"/>
+    </action>
+    <!-- authorizenet -->
+    <action name="*/place">
+        <section name="shipping-bar"/>
+    </action>
+    <!-- multishipping -->
+    <action name="multishipping/checkout/overviewPost">
+        <section name="shipping-bar"/>
+    </action>
+    <!-- bss commerce ajaxcart -->
+    <action name="ajaxcart">
+        <section name="shipping-bar"/>
+    </action>
+</config>

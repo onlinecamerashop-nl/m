@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+-->
+<page
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd"
+>
+    <body>
+        <attribute name="class" value="page-main-full-width"/>
+
+        <referenceBlock name="page.main.title" remove="true" />
+
+        <referenceBlock name="product.info.details">
+            <arguments>
+                <argument name="divider" xsi:type="boolean">false</argument> <!-- Show divider between items (true/false) -->
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="description">
+            <arguments>
+                <argument name="title" xsi:type="string" translate="true">Description</argument>
+            </arguments>
+        </referenceBlock>
+
+        <block class="Magento\Framework\View\Element\Template" name="usp-product" as="usp-product" template="Magento_Catalog::product/view/usp-product.phtml"/>
+
+        <referenceBlock name="product.detail.page">
+            <block class="Magento\Catalog\Block\Product\View" name="product.info.additional.blocks" template="Magento_Catalog::product/view/product-info-additional-blocks.phtml" after="product.info"></block>
+            <block class="Magefan\Blog\Block\Catalog\Product\RelatedPosts" name="product.info.blog.relatedposts"  template="Magefan_Blog::post/view/relatedposts-slider.phtml" after="-"></block>
+            <container name="product.mirasvit.kits"></container>
+        </referenceBlock>
+
+        <referenceBlock name="product.info">
+            <arguments>
+                <argument name="attributes" xsi:type="array">
+                    <item name="color" xsi:type="array"><item name="code" xsi:type="string">xxx</item></item>
+                    <item name="size" xsi:type="array"><item name="code" xsi:type="string">xxx</item></item>
+                    <item name="gender" xsi:type="array"><item name="code" xsi:type="string">xxx</item></item>
+                    <item name="material" xsi:type="array"><item name="code" xsi:type="string">xxx</item></item>
+                    <item name="style_general" xsi:type="array"><item name="code" xsi:type="string">xxx</item></item>
+                </argument>
+            </arguments>
+            <container name="product.info.below.title.wrapper" htmlTag="div" htmlClass="below-title-wrapper flex justify-between items-center gap-2"></container>
+        </referenceBlock>
+
+        <move element="mst_brand_product_page_logo" destination="product.info.below.title.wrapper" before="-" />
+
+        <referenceBlock name="product.media">
+            <!-- Choose Gallery Layout -->
+			<action method="setTemplate">
+				<argument name="template" xsi:type="helper" helper="ShopWhizzy\DigitalTheme\Helper\UpdaterTemplate::setGalleryLayout"/>
+			</action>
+        </referenceBlock>
+    </body>
+</page>

@@ -1,0 +1,61 @@
+<?php
+/**
+ * @author Amasty Team
+ * @copyright Copyright (c) Amasty (https://www.amasty.com)
+ * @package Custom Stock Status Hyva compatibility
+ */
+?>
+<?php
+/** @var \Amasty\Stockstatus\Block\CustomStockStatus $block */
+/** @var \Magento\Framework\Escaper $escaper */
+// phpcs:disable Generic.Files.LineLength.TooLong
+?>
+<?php $stockStatusInformation = $block->getProduct()->getExtensionAttributes()->getStockstatusInformation() ?>
+<?php $isPopupOpened = $block->isWrapperNeed() && $block->isSourcePopupOpenedByStatus() ?>
+
+<?php if ($isPopupOpened): ?>
+    <button onclick="window.dispatchEvent(new CustomEvent('open-stock-status-modal'));"
+        class="amstockstatus-status-container stock amstock-button -link flex flex-wrap items-start"
+        data-amstock-js="open-popup">
+    <?php else: ?>
+        <div class="rounded-lg bg-whizzy-primary-lighter p-3 mt-3">
+            <div
+                class="amstockstatus-status-container stock flex gap-x-1 items-center <?= /* @noEscape */ $block->getAvailability(); ?>">
+            <?php endif; ?>
+
+            <?php if ($block->isDefaultStatusDisplayed()): ?>
+                <p class="default-stock-satus flex items-center justify-start align-middle available gap-x-2 stock mr-4
+        <?= /* @noEscape */ $block->getAvailability(); ?>">
+                    <span
+                        class="stock-marker w-3 h-3 <?= $block->getAvailability() === 'available' ? 'bg-green-500' : 'bg-red-500' ?> rounded-full flex-shrink-0"></span>
+                    <span><?= $escaper->escapeHtml($block->getDefaultStatus()) ?></span>
+                </p>
+            <?php endif; ?>
+
+            <?= $block->getChildHtml(\Amasty\Stockstatus\Block\CustomStockStatus::BEFORE_CONTAINER) ?>
+
+            <?php if ($stockStatusInformation->getStatusIcon()): ?>
+                <div class="amstockstatus_icon_wrap">
+                    <img src="<?= $escaper->escapeUrl($stockStatusInformation->getStatusIcon()) ?>"
+                        class="amstockstatus_icon <?= $block->isInProductList() ? 'block' : '' ?>"
+                        alt="<?= $escaper->escapeHtml($stockStatusInformation->getStatusMessage()) ?>"
+                        title="<?= $escaper->escapeHtml($stockStatusInformation->getStatusMessage()) ?>" />
+                </div>
+            <?php endif; ?>
+
+            <?php if (!$block->isIconOnly()): ?>
+                <span
+                    class="text-xs sm:text-sm tracking-tight amstockstatus amsts_<?= $escaper->escapeHtml($stockStatusInformation->getStatusId()) ?> <?= $block->isInProductList() ? 'inline-block align-middle' : '' ?>">
+                    <?= $escaper->escapeHtml($stockStatusInformation->getStatusMessage(), ['a', 'span', 'i', 'b', 'p', 'br']) ?>
+                </span>
+            <?php endif; ?>
+
+            <?= $block->getChildHtml(\Amasty\Stockstatus\Block\CustomStockStatus::AFTER_CONTAINER) ?>
+            <?php if ($isPopupOpened): ?>
+                <?= /* @noEscape */ $block->getTooltipHtml($stockStatusInformation->getTooltipText()) ?>
+    </button>
+<?php else: ?>
+    <?= /* @noEscape */ $block->getTooltipHtml($stockStatusInformation->getTooltipText()) ?>
+    </div>
+    </div>
+<?php endif; ?>

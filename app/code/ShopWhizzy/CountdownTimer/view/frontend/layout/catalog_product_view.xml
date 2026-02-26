@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<!--
+ *
+ * ShopWhizzy Countdown Timer Module
+ *
+ * @category  ShopWhizzy
+ * @package   ShopWhizzy_CountdownTimer
+ * @author    ShopWhizzy Team
+ *
+ -->
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="product.info.additional">
+        	<block class="ShopWhizzy\CountdownTimer\Block\Timer" name="shopwhizzy.countdowntimer" as="countdowntimer" before="-" template="timer.phtml">
+        	</block>
+        </referenceBlock>
+    </body>
+</page>

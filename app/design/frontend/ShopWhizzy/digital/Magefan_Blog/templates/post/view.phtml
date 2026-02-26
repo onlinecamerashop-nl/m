@@ -1,0 +1,126 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ */
+?>
+<?php
+/**
+ * Blog post view template
+ *
+ * @var $block \Magefan\Blog\Block\Post\View
+ */
+
+$_post = $block->getPost();
+$_postUrl = $_post->getPostUrl();
+$_postName = $block->escapeHtml($_post->getTitle(), null);
+$_author = $_post->getAuthor();
+$_authorName = $_author->getTitle();
+$_publishDate = $_post->getPublishDate();
+$featuredAuthorImage = $_author->getFeaturedListImage() ?: $_author->getFeaturedImage();
+$_categoriesCount = $_post->getCategoriesCount();
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+?>
+<div class="post-view">
+    <div class="post-holder post-holder-<?= (int)$_post->getId() ?>">
+
+        <?php if ($block->displayAddThisToolbox()): ?>
+            <div class="post-header">
+                <!-- Post Sharing -->
+                <div class="share-elements flex items-center gap-2 mb-6">
+                    <div class="icon-wrapper mr-2">
+                        <?= $themeIcons->renderHtml('share', 'text-whizzy-graylighter', 24, 24, ['aria-hidden' => 'true']) ?>
+                    </div>
+                    <div class="icon-wrapper cursor-pointer"
+                        onclick="mfShareWindowOpen('<?= $block->escapeUrl($_postUrl) ?>', 'facebook')">
+                        <?= $themeIcons->renderHtml('facebook', 'text-black hover:text-whizzy-primary', 24, 24, ['aria-hidden' => 'true']) ?>
+                    </div>
+
+                    <div class="icon-wrapper cursor-pointer"
+                        onclick="mfShareWindowOpen('<?= $block->escapeUrl($_postUrl) ?>', 'twitter')">
+                        <?= $themeIcons->renderHtml('twitter', 'text-black hover:text-whizzy-primary', 24, 24, ['aria-hidden' => 'true']) ?>
+                    </div>
+
+                    <div class="icon-wrapper cursor-pointer" onclick="mfShareWindowOpen('<?= $_postUrl ?>', 'pinterest')">
+                        <?= $themeIcons->renderHtml('pinterest', 'text-black hover:text-whizzy-primary', 24, 24, ['aria-hidden' => 'true']) ?>
+                    </div>
+                </div>
+                <!-- END Post Sharing -->
+            </div>
+        <?php endif; ?>
+
+        <div class="post-content">
+            <div class="post-description clearfix">
+                <?php if ($featuredImage = $_post->getFeaturedImage())
+                { ?>
+                    <?php
+                    $featuredImgAlt = $_post->getData('featured_img_alt');
+                    if (!$featuredImgAlt)
+                    {
+                        $featuredImgAlt = $_postName;
+                    }
+                    ?>
+
+                    <div
+                        class="mb-6 lg:mb-8 relative z-10 after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-full after:bg-gradient-to-t after:from-black/50 after:via-black/25 after:to-transparent overflow-hidden rounded-lg">
+                        <img class="post-ftimg-hld w-full rounded-lg" src="<?= $block->escapeUrl($featuredImage) ?>"
+                            alt="<?= $block->escapeHtml($featuredImgAlt) ?>" />
+
+                        <div class="z-20 absolute top-0 right-0 left-0 bottom-0">
+                            <div class="h-full w-full relative">
+                                <div class="z-20 absolute top-6 lg:top-12 px-2 lg:px-8">
+                                    <div class="item post-categories">
+                                        <span class="blog-post-meta-cats flex flex-wrap">
+                                            <?php $n = 0; ?>
+                                            <?php foreach ($_post->getParentCategories() as $ct)
+                                            { ?>
+                                                <?php $n++; ?>
+                                                <a title="<?= $block->escapeHtml($ct->getTitle()) ?>"
+                                                    href="<?= $block->escapeUrl($ct->getCategoryUrl()) ?>"
+                                                    class="w-fit tracking-wide transition-all duration-200 bg-white/75 hover:bg-white rounded py-1.5 px-2.5 me-2 cursor-pointer text-xs lg:text-sm font-medium text-black transition-all duration-200">
+                                                    <?= $block->escapeHtml($ct->getTitle()) ?>
+                                                </a>
+                                            <?php } ?>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-4 lg:gap-8 z-20 absolute bottom-8 lg:bottom-16 px-2 lg:px-8">
+                                    <div class="font-semibold leading-wide text-xl lg:text-4xl text-white">
+                                        <?= /*@noEscape*/ $_postName ?>
+                                    </div>
+                                    <div class="flex flex-row gap-3 items-center font-semibold">
+                                        <?php if ($featuredAuthorImage): ?>
+                                            <div class="w-fit">
+                                                <img class="h-12 w-12 rounded-full" src="<?= $featuredAuthorImage ?>"
+                                                    alt="<?= $block->escapeHtml($_author->getName()) ?>" />
+                                            </div>
+                                        <?php endif ?>
+                                        <div>
+                                            <div class="text-white">
+                                                <?= $block->escapeHtml($_author->getTitle()) ?>
+                                            </div>
+                                            <div class="text-whizzy-separator text-xs lg:text-sm">
+                                                <span><?= __('Updated on') ?></span>
+                                                <span
+                                                    class="value"><?= $escaper->escapeHtml($_post->getPublishDate()) ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                <?php } ?>
+                <div class="post-text-hld text-start">
+                    <?= /*@noEscape*/ $block->getContent() ?>
+                    <div class="clear clearfix"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-bottom mt-8">
+            <?= $block->getChildHtml('blog.post.bottom') ?>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,230 @@
+<?php
+/**
+ * Hyvä Themes - https://hyva.io
+ * Copyright © Hyvä Themes 2020-present. All rights reserved.
+ * This product is licensed per Magento install
+ * See https://hyva.io/license
+ */
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Hyva\PaymentIcons\ViewModel\PaymentIconsLight;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var PaymentIconsLight $paymentIcons */
+$paymentIcons = $viewModels->require(PaymentIconsLight::class);
+
+$paymentIconsWidth = 48;
+$paymentIconsHeight = 32;
+
+// Remove any child blocks that don't need to be part of the footer columns
+$footerColumns = array_diff(
+    $block->getChildNames(),
+    array('footer-copyright', 'form.subscribe', 'footer-content-before', 'footer-content-after')
+);
+$themeIcons = $viewModels->require(\MgtWizards\Base\ViewModel\ThemeIcons::class);
+
+?>
+<div class="bg-whizzy-beige text-whizzy-body flex flex-col">
+    <div class="container py-10 lg:pt-24 lg:pb-12 mx-auto">
+        <?= $block->getChildHtml('footer-content-before') ?>
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-y-6 lg:gap-x-8">
+            <div class="col-span-2">
+                <?= $this->getLayout()->createBlock("Magento\Theme\Block\Html\Header\Logo")->setTemplate("Magento_Theme::html/footer/logo-footer.phtml")->toHtml(); ?>
+
+                <div class="grid gap-4 lg:gap-6">
+
+                    <div class="text-sm">
+                        <p class="font-semibold">
+                            <?= __('Al 20 jaar specialist in professionele beveiligingscamera’s') ?>
+                        </p>
+                        <p><?= __('Wij leveren A-merken zoals Dahua, Hikvision, UNV, Hanwha en OEM. Koop bij de vakman voor topservice op afstand of op locatie.') ?>
+                        </p>
+                    </div>
+
+                    <div class="text-xs lg:text-sm flex flex-col gap-y-1.5">
+                        <span><?= __('Adres: Piersonstraat 13, 1112 AV Diemen, Nederland') ?></span>
+                        <span><?= __('Werktijden: 8.00-21.00 uur Ma-Vr') ?></span>
+                        <span><?= __('Bel ons: 020-7767788') ?></span>
+                        <span><?= __('Email: info@onlinecamerashop.nl') ?></span>
+                    </div>
+
+                    <div class="flex flex-col gap-1 w-full">
+                        <div class="flex flex-row gap-1 lg:gap-2 text-black">
+                            <a class="text-black" href="https://www.facebook.com/OnlineCameraShopnl" target="_blank"
+                                rel="noopener noreferrer nofollow" title="Facebook">
+                                <?= $themeIcons->renderHtml('facebook-01', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                            <a class="text-black" href="https://www.instagram.com/onlinecamerashop" target="_blank"
+                                rel="noopener noreferrer nofollow" title="Instagram">
+                                <?= $themeIcons->renderHtml('instagram', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                            <a class="text-black" href="https://x.com/bewakingscamera" target="_blank" title="Twitter">
+                                <?= $themeIcons->renderHtml('new-twitter-rectangle', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                            <a class="text-black" href="https://www.youtube.com/onlinecamerashopnl" target="_blank"
+                                rel="noopener noreferrer nofollow" title="YouTube">
+                                <?= $themeIcons->renderHtml('youtube', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                            <a class="text-black" href="https://www.linkedin.com/company/onlinecamerashop/about"
+                                target="_blank" rel="noopener noreferrer nofollow" title="LinkedIn">
+                                <?= $themeIcons->renderHtml('linkedin', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                            <a class="text-black" href="https://nl.pinterest.com/stetrin/bewakingscamera-producten"
+                                target="_blank" rel="noopener noreferrer nofollow" title="Pinterest">
+                                <?= $themeIcons->renderHtml('pinterest', 'hover:text-whizzy-primary', 28, 28) ?>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="https://www.feedbackcompany.com/nl-nl/reviews/onlinecamerashop-nl/" target="_blank"
+                            rel="noopener noreferrer nofollow">
+                            <img src="<?= $escaper->escapeUrl($block->getUrl()) . 'media/wysiwyg/reviews_online_camera_shop.svg' ?>"
+                                alt="reviews" style="max-width: 240px">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <nav aria-label="<?= $escaper->escapeHtmlAttr('Info') ?>">
+                    <div class="mb-4 font-semibold uppercase">
+                        <?= $escaper->escapeHtmlAttr('Info') ?>
+                    </div>
+                    <ul class="flex flex-col gap-y-1 text-whizzy-graylighter pb-4 lg:pb-0">
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'blog' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Blog')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'camerabewaking' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Camerabewaking')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'info-online-camera-shop' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Over ons')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'privacy' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Privacy')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'reparatie-cctv-beveiligingscamera-laptop-smartphone-tv' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Reparatie service')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'cctv-software-downloads' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Vraagbaak')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'boek-een-beveiligingscamera-demo' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Boek een demo')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'klachtenpagina' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Klachtenpagina')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'offerte-aanvraag' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Offerte aanvraag')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'boek-een-beveiligingscamera-demo' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Demo afspraak')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'service-onlinecamerashop' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Support aanvraag')) ?></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div>
+                <nav aria-label="<?= $escaper->escapeHtmlAttr('Service') ?>">
+                    <div class="mb-4 font-semibold uppercase">
+                        <?= $escaper->escapeHtmlAttr('Service') ?>
+                    </div>
+                    <ul class="flex flex-col gap-y-1 text-whizzy-graylighter pb-4 lg:pb-0">
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'contact' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Contact')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'betalingen' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Betaalmogelijkheden')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'verzendingen-en-retourneren' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Verzenden & Retourneren')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'conditions' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Algemene voorwaarden')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'camera-installatie-onlinecamerashop-nl' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Camera installatie')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'brands' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Winkel op merk')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'product-not-found' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Product niet gevonden?')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'meldkamer-aansluiting' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Meldkamer PAC aansluiting')) ?></a>
+                        </li>
+                        <li>
+                            <a href="<?= $escaper->escapeUrl($block->getUrl()) . 'koop-camera-op-rekening' ?>"
+                                class="text-whizzy-body hover:text-whizzy-primary text-sm"><?= $escaper->escapeHtml(__('Cameratoezicht kopen op rekening')) ?></a>
+                        </li>
+                        <li>
+                            <a id="help-button-footer"
+                                href="<?= $this->getUrl() . 'blog/start-je-zoektocht-de-ultieme-keuzehulp.html' ?>"
+                                class="flex items-center text-whizzy-body hover:text-whizzy-primary text-sm">
+                                <?= $themeIcons->renderHtml('help-button', 'mr-1 max-w-10', 40, 40) ?>
+                                <?= $escaper->escapeHtml(__('Keuzehulp')) ?>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="col-span-2">
+                <?= $block->getChildHtml('subscribe') ?>
+                <div class="flex gap-2 lg:gap-3 flex-wrap items-center mt-8 lg:mt-12"
+                    aria-label="<?= $escaper->escapeHtml(__('Payment Providers')) ?>">
+                    <?= $themeIcons->renderHtml('money', '', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->idealHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $themeIcons->renderHtml('maestro', '', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->mastercardHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->paypalHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->visaHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $themeIcons->renderHtml('bank-transfer', '', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $themeIcons->renderHtml('ing', '', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->americanExpressHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->bancontactHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->kbcHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->rivertyHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->belfiusHtml('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                    <?= $paymentIcons->in3Html('', $paymentIconsWidth, $paymentIconsHeight) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-8 mx-auto border-t border-whizzy-separator">
+        <div class="text-center">
+            <?= $block->getChildHtml('copyright') ?>
+        </div>
+    </div>
+
+</div>

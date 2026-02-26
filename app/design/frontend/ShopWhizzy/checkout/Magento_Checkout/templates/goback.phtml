@@ -1,0 +1,15 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+$url = $storeManager->getStore()->getBaseUrl();
+?>
+<div class="checkout-go-back-action">
+	<a href="<?= $url . 'checkout/cart' ?>">
+		<?= __('Edit Cart') ?>
+	</a>
+</div>

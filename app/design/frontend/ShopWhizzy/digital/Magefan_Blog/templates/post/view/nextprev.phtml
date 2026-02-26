@@ -1,0 +1,53 @@
+<?php
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ */
+?>
+<?php
+/**
+ * Blog post next and prev post links
+ *
+ * @var $block \Magefan\Blog\Block\Post\View\NextPrev
+ */
+?>
+
+<?php if ($block->displayLinks())
+{ ?>
+    <?php
+    $prevPost = $block->getPrevPost();
+    $nextPost = $block->getNextPost();
+    ?>
+    <?php if ($prevPost || $nextPost)
+    { ?>
+        <div
+            class="post-nextprev-hld flex flex-col lg:flex-row gap-6 justify-between bg-whizzy-artic p-6 lg:p-8 rounded-lg my-10">
+            <div class="post-prev w-full lg:w-1/2">
+                <?php if ($prevPost)
+                { ?>
+                    <?php $title = $prevPost->getTitle() ?>
+                    <a class="nextprev-link prev-link text-left _hover:underline text-black"
+                        href="<?= $block->escapeUrl($prevPost->getPostUrl()) ?>"
+                        title="<?= $block->escapeHtml(__('Read %1', $title)) ?>">
+                        <span
+                            class="text-left block text-whizzy-graylighter text-sm"><?= $block->escapeHtml(__('Previous')) ?></span>
+                        <span class="text-left block font-semibold text-xl"><?= $block->escapeHtml($title) ?></span>
+                    </a>
+                <?php } ?>
+            </div>
+
+            <div class="post-next w-full lg:w-1/2">
+                <?php if ($nextPost)
+                { ?>
+                    <?php $title = $nextPost->getTitle() ?>
+                    <a class="nextprev-link next-link text-right _hover:underline text-black"
+                        href="<?= $block->escapeUrl($nextPost->getPostUrl()) ?>"
+                        title="<?= $block->escapeHtml(__('Read %1', $title)) ?>">
+                        <span class="text-right block text-whizzy-graylighter text-sm"><?= $block->escapeHtml(__('Next')) ?></span>
+                        <span class="text-right block font-semibold text-xl"><?= $block->escapeHtml($title) ?></span>
+                    </a>
+                <?php } ?>
+            </div>
+        </div>
+    <?php } ?>
+<?php } ?>
